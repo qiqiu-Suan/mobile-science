@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>手机原理科普 · 导航中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#08090e;--surface:#10131a;--surface-hover:#171c28;--border:#1e2436;--accent:#00e5a0;--accent-dim:#00e5a030;--accent-2:#4a9eff;--text-primary:#e8ecf4;--text-secondary:#8b93a8;--text-muted:#4a5168;--glow:0 0 40px var(--accent-dim)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 20%,#00e5a008,transparent 50%),radial-gradient(ellipse at 85% 80%,#4a9eff08,transparent 50%);pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,var(--text-muted) .5px,transparent .5px);background-size:40px 40px;opacity:.1;pointer-events:none;z-index:0}
+    .container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px}
+
+    /* 顶栏 */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid var(--border);margin-bottom:60px}
+    .logo{display:flex;align-items:center;gap:14px}
+    .logo-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--glow);font-family:'Syne',sans-serif;font-weight:800;color:var(--bg)}
+    .logo-text{font-family:'Syne','Noto Sans SC',sans-serif;font-weight:800;font-size:20px;background:linear-gradient(135deg,var(--text-primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .logo-sub{font-size:12px;color:var(--text-muted);font-weight:300;letter-spacing:2px;text-transform:uppercase}
+
+    /* Hero */
+    .hero{text-align:center;padding:40px 0 80px}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:8px 20px;font-size:13px;color:var(--text-secondary);margin-bottom:28px;animation:fadeDown .6s ease forwards}
+    .hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+    .hero-title{font-family:'Syne','Noto Sans SC',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;line-height:1.15;margin-bottom:20px;animation:fadeUp .8s ease forwards .1s;opacity:0}
+    .hero-title .hl{background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-desc{font-size:clamp(15px,2vw,18px);color:var(--text-secondary);max-width:560px;margin:0 auto;line-height:1.8;font-weight:300;animation:fadeUp .8s ease forwards .25s;opacity:0}
+    .hero-slogan{margin-top:28px;animation:fadeUp .8s ease forwards .4s;opacity:0}
+    .hero-slogan span{display:inline-block;font-family:'Syne','Noto Sans SC',sans-serif;font-size:clamp(16px,2.5vw,20px);font-weight:700;padding:10px 28px;border-radius:100px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--bg);letter-spacing:1px}
+
+    /* 区域标签 */
+    .section-label{font-size:12px;font-weight:500;color:var(--text-muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:12px}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    /* 卡片 */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;margin-bottom:80px}
+    .card{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 28px 24px;position:relative;overflow:hidden;transition:all .35s cubic-bezier(.22,1,.36,1);animation:fadeUp .6s ease forwards;opacity:0;cursor:pointer}
+    .card:nth-child(1){animation-delay:.1s}.card:nth-child(2){animation-delay:.16s}.card:nth-child(3){animation-delay:.22s}.card:nth-child(4){animation-delay:.28s}.card:nth-child(5){animation-delay:.34s}.card:nth-child(6){animation-delay:.4s}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .35s ease}
+    .card::after{content:'';position:absolute;top:-60%;left:-20%;width:140%;height:140%;background:radial-gradient(circle,var(--accent-dim),transparent 60%);opacity:0;transition:opacity .4s ease;pointer-events:none}
+    .card:hover{background:var(--surface-hover);border-color:var(--accent);transform:translateY(-4px);box-shadow:var(--glow)}
+    .card:hover::before{opacity:1}.card:hover::after{opacity:1}.card:hover .card-keyword{opacity:.1}.card:hover .card-title{color:var(--accent)}.card:hover .card-arrow{opacity:1}.card:hover .card-divider{background:var(--accent);width:60px}
+    .card-content{position:relative;z-index:1}
+    .card-keyword{font-family:'Syne','Noto Sans SC',sans-serif;font-size:48px;font-weight:800;line-height:1;opacity:.055;position:absolute;top:20px;left:50%;transform:translateX(-50%);pointer-events:none;transition:opacity .35s ease;white-space:nowrap;letter-spacing:10px;z-index:0}
+    .card-keyword.k1{color:#00e5a0}.card-keyword.k2{color:#4a9eff}.card-keyword.k3{color:#ff6b6b}.card-keyword.k4{color:#ffd93d}.card-keyword.k5{color:#c084fc}.card-keyword.k6{color:#fb923c}
+    .card-top{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;position:relative;z-index:1}
+    .card-num{font-family:'Syne',sans-serif;font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:2px}
+    .card-dot{width:3px;height:3px;border-radius:50%;background:var(--text-muted)}
+    .card-tag{font-size:11px;color:var(--text-muted);letter-spacing:1px}
+    .card-title{font-size:22px;font-weight:700;color:var(--text-primary);transition:color .3s ease;position:relative;z-index:1;text-align:center}
+    .card-divider{width:40px;height:1px;background:var(--border);margin:24px auto;position:relative;z-index:1;transition:all .35s ease}
+    .card-desc{font-size:14px;color:var(--text-secondary);line-height:1.8;font-weight:300;position:relative;z-index:1;text-align:center}
+    .card-footer{display:flex;justify-content:flex-end;margin-top:20px;position:relative;z-index:1}
+    .card-arrow{font-size:16px;color:var(--accent);opacity:.2;transition:all .3s ease}
+    .card:hover .card-arrow{transform:translate(3px,-3px);opacity:.9}
+
+    /* 弹窗 */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,4,10,.88);backdrop-filter:blur(8px);z-index:1000;animation:fadeIn .3s ease}
+    .modal-overlay.active{display:flex;flex-direction:column}
+    .modal-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+    .modal-title-area{display:flex;align-items:center;gap:12px}
+    .modal-title-area .mod-label{font-family:'Syne',sans-serif;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;background:var(--bg);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+    .modal-title{font-size:15px;font-weight:600;color:var(--text-primary)}
+    .modal-actions{display:flex;gap:8px}
+    .modal-btn{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);transition:all .2s ease;font-family:'Noto Sans SC',sans-serif}
+    .modal-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .modal-btn.primary{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+    .modal-btn.primary:hover{opacity:.85}
+    .modal-body{flex:1;overflow:hidden}
+    .modal-body iframe{width:100%;height:100%;border:none;background:#fff}
+
+    /* 3D 拆解 */
+    .teardown-section{margin-bottom:80px}
+    .teardown-header{text-align:center;margin-bottom:36px}
+    .teardown-title{font-family:'Syne','Noto Sans SC',sans-serif;font-size:clamp(24px,4vw,32px);font-weight:700;margin-bottom:8px}
+    .teardown-title .brand{background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .teardown-sub{font-size:14px;color:var(--text-muted)}
+    .teardown-viewport{width:100%;height:520px;display:flex;align-items:center;justify-content:center;position:relative;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;background:radial-gradient(ellipse at 50% 50%,#0d1117,var(--bg)),linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:100% 100%,40px 40px,40px 40px;border:1px solid var(--border);border-radius:20px;overflow:hidden}
+    .teardown-viewport:active{cursor:grabbing}
+    .teardown-viewport::before{content:'EXPLODED VIEW';position:absolute;top:16px;left:20px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-muted);opacity:.5;pointer-events:none}
+    .teardown-viewport::after{content:'DRAG TO ROTATE · PINCH TO ZOOM';position:absolute;bottom:16px;right:20px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-muted);opacity:.4;pointer-events:none}
+    .teardown-perspective{perspective:1100px;width:190px;height:400px;display:flex;align-items:center;justify-content:center}
+    .teardown-scene{position:relative;width:190px;height:400px;transform-style:preserve-3d}
+    .t-layer{position:absolute;top:0;left:0;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.22,1,.36,1),filter .3s ease;pointer-events:auto}
+    .t-layer:hover{filter:brightness(1.2)}.t-layer.dimmed{filter:brightness(.25)}
+    .t-layer>.t-part{width:100%;height:100%;position:relative}
+    .t-label{position:absolute;right:-200px;top:50%;transform:translateY(-50%);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;white-space:nowrap;width:180px;opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:10}
+    .t-label-name{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:6px}
+    .t-label-info{font-size:11px;color:var(--text-secondary);line-height:1.6}
+    .t-layer:hover .t-label{opacity:1}
+
+    .phone-shape{width:100%;height:100%;border-radius:24px;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.03)}
+    .cam-area{position:absolute;top:10px;left:10px;width:96px;height:112px;border-radius:20px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:5px;padding:10px}
+    .cam-area .lens{border-radius:50%;background:radial-gradient(circle at 38% 32%,#2a2a52,#0c0c1a);border:2px solid #3e3e62}
+    .cam-area .lens.main{border-color:var(--accent);box-shadow:0 0 6px var(--accent-dim)}
+    .cam-area .flash-or-sensor{border-radius:50%;background:radial-gradient(circle,#2a2a1a,#14140a);border:1px solid #3a3a2a}
+
+    .t-back .phone-shape{background:linear-gradient(155deg,#222248,#1a1a38,#24244a,#1e1e3c);border:1.5px solid #30305a}
+    .t-back .glass-flare{position:absolute;top:15%;right:10%;width:45%;height:35%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.04),transparent 70%);transform:rotate(-20deg);pointer-events:none}
+    .t-back .cam-area{background:linear-gradient(155deg,#1e1e3e,#181836);border:2px solid #2e2e55;box-shadow:inset 0 2px 6px rgba(0,0,0,.3),0 1px 0 #2a2a50,0 2px 0 #262648,0 3px 0 #22224a,0 6px 12px rgba(0,0,0,.2)}
+
+    .t-camera .cam-area{background:linear-gradient(180deg,#14142e,#101028);border:2px solid #2e2e50;box-shadow:0 3px 0 #1e1e3a,0 6px 0 #1a1a34,0 9px 0 #16162e,0 12px 0 #121228,0 15px 0 #0e0e22,0 18px 0 #0a0a1c,0 21px 25px rgba(0,0,0,.35)}
+    .t-camera .flex-cable{position:absolute;top:122px;left:38px;width:40px;height:4px;border-radius:2px;background:#8b6914;opacity:.5}
+
+    .t-coil .coil-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);border-radius:50%;border:2.5px solid #8b6914}
+    .t-coil .coil-ring:nth-child(1){width:130px;height:130px;opacity:.4}
+    .t-coil .coil-ring:nth-child(2){width:110px;height:110px;opacity:.3}
+    .t-coil .coil-ring:nth-child(3){width:90px;height:90px;opacity:.2}
+    .t-coil .coil-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,#1a1810,#0a0a08);border:1.5px solid #5a4a10;opacity:.35}
+    .t-coil .nfc{position:absolute;top:16px;right:16px;width:32px;height:46px;border-radius:6px;border:2px solid #6a5210;opacity:.3}
+
+    .t-board .pcb{position:absolute;top:0;left:0;right:0;height:160px;background:linear-gradient(135deg,#15301a,#1a3a1e,#123018);border:1.5px solid #2a4a2e;border-radius:24px 24px 6px 6px;overflow:hidden}
+    .t-board .cam-cutout{position:absolute;top:10px;left:10px;width:96px;height:112px;border-radius:20px;border:1.5px dashed rgba(74,120,78,.4);background:rgba(0,0,0,.2)}
+    .t-board .cam-cutout::after{content:'CAM';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'DM Mono',monospace;font-size:8px;color:rgba(74,120,78,.3)}
+    .t-board .chip{position:absolute;background:#0a0a0a;border:1px solid #3a3a3a}
+    .t-board .chip-soc{top:16px;left:118px;width:52px;height:52px;border-radius:6px;border-width:1.5px}
+    .t-board .chip-ram{top:76px;left:118px;width:36px;height:24px;border-radius:4px}
+    .t-board .chip-rom{top:76px;left:160px;width:24px;height:24px;border-radius:4px}
+    .t-board .chip-pmic{top:108px;left:118px;width:28px;height:20px;border-radius:3px}
+    .t-board .chip-lbl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'DM Mono',monospace;font-size:7px;color:#5a5a5a}
+    .t-board .usb{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:34px;height:12px;border-radius:6px;background:#3a3a3a;border:1px solid #5a5a5a}
+    .t-board .trace{position:absolute;height:1px;background:#3a5a3e;opacity:.3}
+
+    .t-batt .cell{position:absolute;top:170px;left:12px;right:12px;bottom:68px;border-radius:14px;background:linear-gradient(180deg,#0f1a22,#0a1218);border:1.5px solid #1a2a38}
+    .t-batt .cell-lbl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'DM Mono',monospace;font-size:11px;color:#2a4050;letter-spacing:3px}
+    .t-batt .conn{position:absolute;top:170px;right:30px;width:30px;height:8px;border-radius:3px;background:#1a3020;border:1px solid #2a5040}
+    .t-batt .speaker{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:56px;height:16px;border-radius:5px;background:#1a1a2a;border:1px solid #2a2a3a}
+    .t-batt .speaker::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:2px;border-radius:1px;background:repeating-linear-gradient(90deg,#2a2a3a 0,#2a2a3a 3px,transparent 3px,transparent 6px)}
+    .t-batt .motor{position:absolute;bottom:38px;left:20px;width:34px;height:18px;border-radius:6px;background:linear-gradient(180deg,#22223a,#1a1a2e);border:1px solid #2e2e44}
+    .t-batt .motor::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:4px;border-radius:2px;background:#3a3a52}
+
+    .t-screen .phone-shape{background:#0c0c18;border:1.5px solid #252545;box-shadow:0 0 20px rgba(74,158,255,.06)}
+    .t-screen .display{position:absolute;top:8px;left:6px;right:6px;bottom:8px;border-radius:20px;background:linear-gradient(160deg,#10141e,#0c1018);border:1.5px solid #222838;box-shadow:inset 0 0 40px rgba(74,158,255,.04);overflow:hidden}
+    .t-screen .punch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:#080810;border:1.5px solid #252540}
+    .t-screen .ui-line{position:absolute;left:18px;height:7px;border-radius:4px;background:rgba(74,158,255,.08)}
+    .t-screen .display::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(0,229,160,.03),transparent 60%);pointer-events:none}
+
+    /* 控制 */
+    .teardown-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px;flex-wrap:wrap;padding:0 12px}
+    .control-group{display:flex;align-items:center;gap:8px}
+    .control-label{font-size:12px;color:var(--text-muted);white-space:nowrap}
+    input[type="range"]{-webkit-appearance:none;appearance:none;width:120px;height:4px;background:var(--border);border-radius:2px;outline:none;cursor:pointer}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 10px var(--accent-dim);cursor:pointer}
+    input[type="range"]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 10px var(--accent-dim);cursor:pointer}
+    .ctrl-btn{padding:10px 16px;border-radius:8px;font-size:13px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);transition:all .25s ease;font-family:'Noto Sans SC',sans-serif;-webkit-tap-highlight-color:transparent;cursor:pointer}
+    .ctrl-btn:hover,.ctrl-btn:active{border-color:var(--accent);color:var(--accent)}
+    .ctrl-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+    .zoom-group{display:flex;align-items:center;gap:4px}
+    .zoom-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;font-family:'Syne',sans-serif;-webkit-tap-highlight-color:transparent;cursor:pointer}
+    .zoom-btn:hover,.zoom-btn:active{border-color:var(--accent);color:var(--accent)}
+    .zoom-info{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);min-width:42px;text-align:center}
+    .parts-list{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+    .part-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-secondary);transition:all .25s ease;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .part-chip:hover,.part-chip:active{border-color:var(--accent);color:var(--accent)}
+    .part-chip .dot-c{width:8px;height:8px;border-radius:50%}
+
+    .footer{text-align:center;padding:32px 0 48px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+
+    @media(max-width:640px){
+      .grid{grid-template-columns:1fr}
+      .topbar{margin-bottom:36px}
+      .hero{padding:40px 0 60px}
+      .card-keyword{font-size:36px}
+      .teardown-viewport{height:420px}
+      .teardown-perspective{width:160px;height:340px}
+      .teardown-scene{width:160px;height:340px}
+      .t-label{display:none}
+      input[type="range"]{width:80px}
+      .control-label{font-size:11px}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <div><div class="logo-text">手机原理科普</div><div class="logo-sub">NAVIGATION HUB</div></div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-badge"><span class="dot"></span>探索手机背后的科学</div>
+    <h1 class="hero-title">从芯片到屏幕<br><span class="hl">解码掌中世界</span></h1>
+    <p class="hero-desc">一部手机，万种科学。选择下方模块，深入了解手机每一个零件背后的工作原理。</p>
+    <div class="hero-slogan"><span>帮助你更好地选择自己的手机</span></div>
+  </section>
+
+  <div class="section-label">科普模块</div>
+  <div class="grid">
+    <a class="card" data-file="处理器与芯片.html"><div class="card-content"><div class="card-keyword k4" data-keyword>芯片</div><div class="card-top"><span class="card-num">01</span><span class="card-dot"></span><span class="card-tag">半导体</span></div><h3 class="card-title">处理器与芯片</h3><div class="card-divider"></div><p class="card-desc">手机CPU/GPU架构解析、制程工艺、SoC如何集成万千功能</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+    <a class="card" data-file="摄像头与成像.html"><div class="card-content"><div class="card-keyword k3" data-keyword>光学</div><div class="card-top"><span class="card-num">02</span><span class="card-dot"></span><span class="card-tag">成像</span></div><h3 class="card-title">摄像头与成像</h3><div class="card-divider"></div><p class="card-desc">CMOS传感器原理、镜头光学设计、计算摄影如何"算"出好照片</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+    <a class="card" data-file="超高刷屏幕真相.html"><div class="card-content"><div class="card-keyword k6" data-keyword>阴谋</div><div class="card-top"><span class="card-num">03</span><span class="card-dot"></span><span class="card-tag">阴谋</span></div><h3 class="card-title">超高刷屏幕真相</h3><div class="card-divider"></div><p class="card-desc">超高刷新率屏幕真正的缺点和优点</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+    <a class="card" data-file="屏幕显示技术.html"><div class="card-content"><div class="card-keyword k5" data-keyword>屏幕</div><div class="card-top"><span class="card-num">04</span><span class="card-dot"></span><span class="card-tag">显示</span></div><h3 class="card-title">屏幕显示技术</h3><div class="card-divider"></div><p class="card-desc">LCD vs OLED vs Mini-LED、像素排列、刷新率与触控采样</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+    <a class="card" data-file="电池与充电.html"><div class="card-content"><div class="card-keyword k1" data-keyword>电池</div><div class="card-top"><span class="card-num">05</span><span class="card-dot"></span><span class="card-tag">能源</span></div><h3 class="card-title">电池与充电技术</h3><div class="card-divider"></div><p class="card-desc">锂电池工作原理、快充技术揭秘、无线充电是怎么实现的</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+    <a class="card" data-file="传感器与定位.html"><div class="card-content"><div class="card-keyword k6" data-keyword>传感</div><div class="card-top"><span class="card-num">06</span><span class="card-dot"></span><span class="card-tag">定位</span></div><h3 class="card-title">传感器与定位</h3><div class="card-divider"></div><p class="card-desc">GPS/北斗定位原理、陀螺仪与加速度计、指纹识别技术</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+    <a class="card" data-file="通信与信号.html"><div class="card-content"><div class="card-keyword k2" data-keyword>通信</div><div class="card-top"><span class="card-num">07</span><span class="card-dot"></span><span class="card-tag">信号</span></div><h3 class="card-title">通信与信号</h3><div class="card-divider"></div><p class="card-desc">从1G到5G的演进、信号是怎么传输的、基站和天线的秘密</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+  </div>
+
+  <section class="teardown-section">
+    <div class="section-label">内部透视</div>
+    <div class="teardown-header">
+      <h2 class="teardown-title">现代旗舰手机 · <span class="brand">3D 拆解</span></h2>
+      <p class="teardown-sub">拖拽旋转 · 滚轮/双指缩放 · 悬停查看组件信息</p>
+    </div>
+
+    <div class="teardown-viewport" id="viewport">
+      <div class="teardown-perspective">
+        <div class="teardown-scene" id="scene">
+
+          <div class="t-layer" style="--i:0">
+            <div class="t-part t-back"><div class="phone-shape"><div class="glass-flare"></div><div class="cam-area"><div class="lens main"></div><div class="lens"></div><div class="lens"></div><div class="flash-or-sensor"></div></div></div></div>
+            <div class="t-label"><div class="t-label-name">后盖</div><div class="t-label-info">玻璃材质 · 摄像头凸起</div></div>
+          </div>
+
+          <div class="t-layer" style="--i:1">
+            <div class="t-part t-camera"><div class="cam-area"><div class="lens main"></div><div class="lens"></div><div class="lens"></div><div class="flash-or-sensor"></div></div><div class="flex-cable"></div></div>
+            <div class="t-label"><div class="t-label-name">影像模组</div><div class="t-label-info">主摄 · 超广角 · 长焦<br>光学防抖 · 柔性排线</div></div>
+          </div>
+
+          <div class="t-layer" style="--i:2">
+            <div class="t-part t-coil"><div class="coil-ring"></div><div class="coil-ring"></div><div class="coil-ring"></div><div class="coil-center"></div><div class="nfc"></div></div>
+            <div class="t-label"><div class="t-label-name">无线充电线圈</div><div class="t-label-info">无线充电 · NFC天线</div></div>
+          </div>
+
+          <div class="t-layer" style="--i:3">
+            <div class="t-part t-board">
+              <div class="pcb">
+                <div class="cam-cutout"></div>
+                <div class="chip chip-soc"><span class="chip-lbl">处理器</span></div>
+                <div class="chip chip-ram"><span class="chip-lbl">内存</span></div>
+                <div class="chip chip-rom"><span class="chip-lbl">存储</span></div>
+                <div class="chip chip-pmic"><span class="chip-lbl">电源</span></div>
+                <div class="trace" style="top:42px;left:118px;width:64px"></div>
+                <div class="trace" style="top:72px;left:120px;width:50px"></div>
+                <div class="trace" style="top:106px;left:150px;width:30px"></div>
+                <div class="usb"></div>
+              </div>
+            </div>
+            <div class="t-label"><div class="t-label-name">主板</div><div class="t-label-info">处理器 · 内存 · 存储<br>电源管理 · 射频模块</div></div>
+          </div>
+
+          <div class="t-layer" style="--i:4">
+            <div class="t-part t-batt"><div class="cell"></div><div class="cell-lbl">BATTERY</div><div class="conn"></div><div class="motor"></div><div class="speaker"></div></div>
+            <div class="t-label"><div class="t-label-name">电池 · 扬声器 · 马达</div><div class="t-label-info">锂聚合物电池<br>底部扬声器 · 线性马达</div></div>
+          </div>
+
+          <div class="t-layer" style="--i:5">
+            <div class="t-part t-screen"><div class="phone-shape"><div class="display"><div class="punch"></div><div class="ui-line" style="top:36px;width:140px"></div><div class="ui-line" style="top:52px;width:100px"></div><div class="ui-line" style="top:68px;width:75px"></div><div class="ui-line" style="top:84px;width:110px"></div></div></div></div>
+            <div class="t-label"><div class="t-label-name">屏幕总成</div><div class="t-label-info">AMOLED面板 · 触控层<br>屏下指纹 · 保护玻璃</div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="teardown-controls">
+      <div class="control-group">
+        <span class="control-label">拆解</span>
+        <input type="range" id="explode-slider" min="0" max="100" value="35">
+      </div>
+      <div class="control-group">
+        <span class="control-label">缩放</span>
+        <div class="zoom-group">
+          <button class="zoom-btn" id="btn-zoom-out" type="button">−</button>
+          <span class="zoom-info" id="zoom-display">100%</span>
+          <button class="zoom-btn" id="btn-zoom-in" type="button">+</button>
+        </div>
+      </div>
+      <button class="ctrl-btn" id="btn-auto" type="button">自动旋转</button>
+      <button class="ctrl-btn" id="btn-reset" type="button">复位</button>
+    </div>
+
+    <div class="parts-list">
+      <div class="part-chip" data-goto="0"><span class="dot-c" style="background:#30305a"></span>后盖</div>
+      <div class="part-chip" data-goto="1"><span class="dot-c" style="background:#2e2e50"></span>影像模组</div>
+      <div class="part-chip" data-goto="2"><span class="dot-c" style="background:#8b6914"></span>充电线圈</div>
+      <div class="part-chip" data-goto="3"><span class="dot-c" style="background:#2a5a3a"></span>主板</div>
+      <div class="part-chip" data-goto="4"><span class="dot-c" style="background:#1a2a38"></span>电池组件</div>
+      <div class="part-chip" data-goto="5"><span class="dot-c" style="background:#252545"></span>屏幕</div>
+    </div>
+  </section>
+
+  <footer class="footer"><p>手机原理科普导航中心</p></footer>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-bar">
+    <div class="modal-title-area">
+      <span class="mod-label" id="modal-file">-</span>
+      <div><div class="modal-title" id="modal-title">加载中...</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="btn-new-tab">新标签页打开 ↗</button>
+      <button class="modal-btn primary" id="btn-close">✕ 关闭</button>
+    </div>
+  </div>
+  <div class="modal-body"><iframe id="modal-iframe" src="about:blank"></iframe></div>
+</div>
+
+<script>
+  /* 弹窗 */
+  (function(){
+    var modal=document.getElementById('modal'),mi=document.getElementById('modal-iframe'),mt=document.getElementById('modal-title'),mf=document.getElementById('modal-file'),cf='';
+    document.querySelectorAll('.card-keyword[data-keyword]').forEach(function(el){el.textContent=el.getAttribute('data-keyword')||el.textContent});
+    document.querySelectorAll('.card[data-file]').forEach(function(card){card.addEventListener('click',function(e){e.preventDefault();cf=this.getAttribute('data-file');mt.textContent=this.querySelector('.card-title').textContent;mf.textContent=cf;mi.src=cf;modal.classList.add('active');document.body.style.overflow='hidden'})});
+    function closeModal(){modal.classList.remove('active');mi.src='about:blank';document.body.style.overflow=''}
+    document.getElementById('btn-close').addEventListener('click',closeModal);
+    modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('active'))closeModal()});
+    document.getElementById('btn-new-tab').addEventListener('click',function(){if(cf)window.open(cf,'_blank')});
+  })();
+
+  /* 3D 拆解 */
+  ;(function(){
+    var vp=document.getElementById('viewport'),sc=document.getElementById('scene'),sl=document.getElementById('explode-slider'),ba=document.getElementById('btn-auto'),br=document.getElementById('btn-reset'),bi=document.getElementById('btn-zoom-in'),bo=document.getElementById('btn-zoom-out'),zd=document.getElementById('zoom-display'),layers=document.querySelectorAll('.t-layer'),chips=document.querySelectorAll('.part-chip');
+    var rx=-18,ry=-28,scale=1,dragging=false,lastX=0,lastY=0,pinchD0=0,scale0=1,autoR=false,rafId=null,S_MIN=0.4,S_MAX=2.5;
+    function render(){var s=scale;sc.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg) scale3d('+s+','+s+','+s+')'}
+    function renderExplode(v){for(var i=0;i<layers.length;i++){var idx=parseInt(layers[i].style.getPropertyValue('--i'));layers[i].style.transform='translateZ('+(v*idx*.7)+'px)'}}
+    function renderZoom(){zd.textContent=Math.round(scale*100)+'%'}
+    function applyZoom(d){scale=Math.max(S_MIN,Math.min(S_MAX,scale+d));renderZoom();render()}
+    vp.addEventListener('mousedown',function(e){dragging=true;lastX=e.clientX;lastY=e.clientY;e.preventDefault()});
+    document.addEventListener('mousemove',function(e){if(!dragging)return;ry+=(e.clientX-lastX)*.5;rx-=(e.clientY-lastY)*.5;if(rx<-70)rx=-70;if(rx>40)rx=40;lastX=e.clientX;lastY=e.clientY;render()});
+    document.addEventListener('mouseup',function(){dragging=false});
+    vp.addEventListener('wheel',function(e){e.preventDefault();applyZoom(e.deltaY>0?-0.08:0.08)},{passive:false});
+    function tDist(t){var dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;return Math.sqrt(dx*dx+dy*dy)}
+    vp.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches;if(t.length===1){dragging=true;lastX=t[0].clientX;lastY=t[0].clientY}else if(t.length===2){dragging=false;pinchD0=tDist(t);scale0=scale}},{passive:false});
+    vp.addEventListener('touchmove',function(e){e.preventDefault();var t=e.touches;if(t.length===1&&dragging){ry+=(t[0].clientX-lastX)*.5;rx-=(t[0].clientY-lastY)*.5;if(rx<-70)rx=-70;if(rx>40)rx=40;lastX=t[0].clientX;lastY=t[0].clientY;render()}else if(t.length===2){var d=tDist(t);scale=Math.max(S_MIN,Math.min(S_MAX,scale0*(d/pinchD0)));renderZoom();render()}},{passive:false});
+    vp.addEventListener('touchend',function(e){if(e.touches.length===0)dragging=false},{passive:true});
+    vp.addEventListener('gesturestart',function(e){e.preventDefault()});
+    vp.addEventListener('gesturechange',function(e){e.preventDefault()});
+    bi.addEventListener('click',function(e){e.stopPropagation();applyZoom(.15)});
+    bo.addEventListener('click',function(e){e.stopPropagation();applyZoom(-.15)});
+    sl.addEventListener('input',function(){renderExplode(parseFloat(this.value))});
+    ba.addEventListener('click',function(e){e.stopPropagation();autoR=!autoR;this.classList.toggle('active',autoR);if(autoR)tick();else if(rafId)cancelAnimationFrame(rafId)});
+    function tick(){if(!autoR)return;ry+=.3;render();rafId=requestAnimationFrame(tick)}
+    br.addEventListener('click',function(e){e.stopPropagation();rx=-18;ry=-28;scale=1;sl.value=35;render();renderExplode(35);renderZoom();if(autoR){autoR=false;ba.classList.remove('active');if(rafId)cancelAnimationFrame(rafId)}});
+    chips.forEach(function(chip){chip.addEventListener('click',function(){var t=parseInt(this.getAttribute('data-goto'));for(var i=0;i<layers.length;i++){if(i===t){layers[i].classList.remove('dimmed');layers[i].style.filter='brightness(1.5)'}else{layers[i].classList.add('dimmed')}}setTimeout(function(){for(var j=0;j<layers.length;j++){layers[j].classList.remove('dimmed');layers[j].style.filter=''}},1500)})});
+    render();renderExplode(parseFloat(sl.value));renderZoom();
+  })();
+</script>
+</body>
+</html>
