@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>屏幕的史诗 — 手机显示技术硬核科普</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080d;
+  --surface:#0e1118;
+  --surface2:#151a24;
+  --accent:#00e5ff;
+  --accent2:#ff6b35;
+  --accent3:#b388ff;
+  --text:#e8eaf0;
+  --text-muted:#6b7394;
+  --glass:rgba(14,17,24,.72);
+  --radius:16px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Noto Sans SC',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.8;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.035;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+/* ===== GRID LINES BG ===== */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(6,8,13,.7);
+  border-bottom:1px solid rgba(0,229,255,.08);
+  padding:0 2rem;
+}
+nav .inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:56px;
+}
+nav .logo{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:1.1rem;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+nav .nav-links{display:flex;gap:1.5rem;list-style:none}
+nav .nav-links a{
+  color:var(--text-muted);text-decoration:none;font-size:.82rem;
+  transition:color .3s;letter-spacing:.03em;
+}
+nav .nav-links a:hover{color:var(--accent)}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100vh;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:6rem 2rem 4rem;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;
+  width:700px;height:700px;
+  top:-120px;left:50%;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(0,229,255,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;
+  width:500px;height:500px;
+  bottom:-100px;right:-100px;
+  background:radial-gradient(circle,rgba(255,107,53,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:1;max-width:800px}
+.hero-badge{
+  display:inline-block;padding:.35rem 1rem;
+  border:1px solid rgba(0,229,255,.3);border-radius:999px;
+  font-size:.75rem;color:var(--accent);letter-spacing:.1em;
+  margin-bottom:2rem;
+  animation:fadeDown .8s ease both;
+}
+.hero h1{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:clamp(2.2rem,6vw,4.2rem);
+  line-height:1.25;margin-bottom:1.5rem;
+  animation:fadeUp .8s ease .15s both;
+}
+.hero h1 .grad1{
+  background:linear-gradient(135deg,var(--accent),#00b8d4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero h1 .grad2{
+  background:linear-gradient(135deg,var(--accent2),#ffd740);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero .sub{
+  font-size:1.1rem;color:var(--text-muted);
+  max-width:560px;margin:0 auto 2.5rem;
+  animation:fadeUp .8s ease .3s both;
+}
+.hero .cta{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.75rem 2rem;border:none;border-radius:999px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  color:var(--bg);font-weight:700;font-size:.95rem;
+  cursor:pointer;text-decoration:none;
+  transition:transform .3s,box-shadow .3s;
+  animation:fadeUp .8s ease .45s both;
+}
+.hero .cta:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(0,229,255,.25);
+}
+.scroll-indicator{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.15em;
+  animation:fadeUp .8s ease .6s both;
+}
+.scroll-indicator .mouse{
+  width:20px;height:32px;border:2px solid var(--text-muted);
+  border-radius:10px;position:relative;
+}
+.scroll-indicator .mouse::after{
+  content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  width:3px;height:8px;background:var(--accent);border-radius:2px;
+  animation:scrollDot 1.5s ease infinite;
+}
+
+/* ===== SECTIONS ===== */
+section{position:relative;z-index:1;padding:5rem 2rem}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.75rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.section-label::before{
+  content:'';display:block;width:24px;height:1px;background:var(--accent);
+}
+.section-title{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:clamp(1.6rem,4vw,2.6rem);
+  margin-bottom:1rem;line-height:1.35;
+}
+.section-desc{color:var(--text-muted);max-width:640px;margin-bottom:3rem;font-size:.95rem}
+
+/* ===== COMPARISON CARDS ===== */
+.compare-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+}
+@media(max-width:768px){.compare-grid{grid-template-columns:1fr}}
+.card{
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:var(--radius);
+  padding:2.5rem 2rem;
+  position:relative;overflow:hidden;
+  transition:transform .4s,border-color .4s,box-shadow .4s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(0,229,255,.15);
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+}
+.card.lcd::before{background:linear-gradient(90deg,#4fc3f7,#00bcd4)}
+.card.oled::before{background:linear-gradient(90deg,#ff6b35,#ffd740)}
+.card .card-icon{
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;margin-bottom:1.5rem;
+}
+.card.lcd .card-icon{background:rgba(79,195,247,.1)}
+.card.oled .card-icon{background:rgba(255,107,53,.1)}
+.card h3{font-size:1.3rem;margin-bottom:.25rem}
+.card .card-sub{font-size:.8rem;color:var(--text-muted);margin-bottom:1.5rem}
+.card .analogy{
+  background:var(--surface2);border-radius:10px;
+  padding:1rem 1.2rem;margin-bottom:1.5rem;
+  font-size:.88rem;border-left:3px solid var(--accent);
+}
+.card.oled .analogy{border-left-color:var(--accent2)}
+.card .pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.card .pros h4,.card .cons h4{
+  font-size:.78rem;letter-spacing:.08em;margin-bottom:.6rem;
+}
+.card .pros h4{color:#69f0ae}
+.card .cons h4{color:#ff8a80}
+.card .pros li,.card .cons li{
+  font-size:.82rem;margin-bottom:.4rem;list-style:none;
+  padding-left:1.1rem;position:relative;color:var(--text-muted);
+}
+.card .pros li::before{content:'✦';position:absolute;left:0;color:#69f0ae;font-size:.6rem;top:.25rem}
+.card .cons li::before{content:'✦';position:absolute;left:0;color:#ff8a80;font-size:.6rem;top:.25rem}
+
+/* ===== VS DIVIDER ===== */
+.vs-divider{
+  display:flex;align-items:center;justify-content:center;
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:2;
+}
+@media(min-width:769px){
+  .compare-wrap{position:relative}
+  .compare-grid{gap:0}
+  .vs-badge{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1rem;color:var(--accent);
+    box-shadow:0 0 30px rgba(0,229,255,.2);
+  }
+}
+@media(max-width:768px){.vs-divider{display:none}}
+
+/* ===== ANIMATED COMPARISON BAR ===== */
+.bar-chart{
+  margin:3rem 0;display:flex;flex-direction:column;gap:1.2rem;
+}
+.bar-item label{
+  display:block;font-size:.82rem;margin-bottom:.4rem;color:var(--text-muted);
+}
+.bar-row{display:flex;gap:.5rem;align-items:center}
+.bar-track{
+  flex:1;height:28px;background:var(--surface2);border-radius:6px;
+  position:relative;overflow:hidden;
+}
+.bar-fill{
+  height:100%;border-radius:6px;display:flex;align-items:center;
+  padding-left:.75rem;font-size:.72rem;font-weight:700;color:var(--bg);
+  width:0;transition:width 1.2s cubic-bezier(.22,1,.36,1);
+}
+.bar-fill.lcd-bar{background:linear-gradient(90deg,#00bcd4,#4fc3f7)}
+.bar-fill.oled-bar{background:linear-gradient(90deg,#ff6b35,#ffd740)}
+.bar-tag{
+  font-size:.7rem;min-width:32px;text-align:center;
+  color:var(--text-muted);
+}
+
+/* ===== PIXEL SECTION ===== */
+.pixel-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;
+}
+.pixel-card{
+  background:var(--surface);border:1px solid rgba(255,255,255,.04);
+  border-radius:var(--radius);padding:2rem 1.5rem;
+  text-align:center;transition:transform .4s,border-color .3s;
+}
+.pixel-card:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.12)}
+.pixel-diagram{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:2px;
+  margin:0 auto 1.5rem;max-width:200px;
+}
+.pixel-diagram .px{
+  border-radius:3px;transition:transform .2s;
+}
+.pixel-diagram .px:hover{transform:scale(1.3)}
+.pixel-diagram .r{background:#ef5350}
+.pixel-diagram .g{background:#66bb6a}
+.pixel-diagram .b{background:#42a5f5}
+.pixel-card h4{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:1.1rem;margin-bottom:.15rem;
+}
+.pixel-card .nick{
+  font-size:.75rem;color:var(--accent);margin-bottom:.75rem;
+}
+.pixel-card p{font-size:.84rem;color:var(--text-muted);line-height:1.7}
+
+/* ===== REFRESH RATE ===== */
+.refresh-visual{
+  display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+  margin-bottom:3rem;
+}
+@media(max-width:768px){.refresh-visual{grid-template-columns:1fr}}
+.refresh-demo{
+  background:var(--surface);border-radius:var(--radius);
+  padding:2rem;text-align:center;border:1px solid rgba(255,255,255,.04);
+}
+.refresh-demo .ball-track{
+  height:120px;position:relative;overflow:hidden;
+  border-radius:8px;background:var(--surface2);
+  margin-bottom:1rem;
+}
+.refresh-demo .ball{
+  width:20px;height:20px;border-radius:50%;
+  position:absolute;top:50px;
+}
+.refresh-demo .ball-60{
+  background:#ff8a80;
+  animation:ballMove60 1.6s linear infinite;
+}
+.refresh-demo .ball-120{
+  background:#69f0ae;
+  animation:ballMove120 .8s linear infinite;
+}
+.refresh-demo .ball-120,.refresh-demo .ball-60{left:10px}
+@keyframes ballMove60{
+  0%{left:10px}50%{left:calc(100% - 30px)}100%{left:10px}
+}
+@keyframes ballMove120{
+  0%{left:10px}50%{left:calc(100% - 30px)}100%{left:10px}
+}
+.refresh-demo h4{font-size:1.1rem;margin-bottom:.3rem}
+.refresh-demo .hz{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:2.2rem;margin-bottom:.3rem;
+}
+.refresh-demo .hz-60{color:#ff8a80}
+.refresh-demo .hz-120{color:#69f0ae}
+.refresh-demo .desc{font-size:.82rem;color:var(--text-muted)}
+
+.info-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;
+}
+.info-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:1.8rem;border:1px solid rgba(255,255,255,.04);
+  transition:border-color .3s;
+}
+.info-card:hover{border-color:rgba(0,229,255,.1)}
+.info-card .ic{font-size:1.8rem;margin-bottom:.75rem}
+.info-card h4{font-size:1rem;margin-bottom:.5rem}
+.info-card p{font-size:.84rem;color:var(--text-muted);line-height:1.7}
+
+/* ===== XIAOMI SUPER PIXEL ===== */
+.xiaomi-section{
+  background:linear-gradient(180deg,transparent,rgba(255,107,53,.03),transparent);
+}
+.super-pixel-hero{
+  text-align:center;padding:3rem 2rem;
+  background:var(--surface);border-radius:var(--radius);
+  border:1px solid rgba(255,107,53,.1);
+  margin-bottom:3rem;position:relative;overflow:hidden;
+}
+.super-pixel-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,107,53,.08),transparent 70%);
+  pointer-events:none;
+}
+.super-pixel-hero h3{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:clamp(1.4rem,3.5vw,2.2rem);
+  margin-bottom:1rem;position:relative;
+}
+.super-pixel-hero h3 span{
+  background:linear-gradient(135deg,var(--accent2),#ffd740);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.super-pixel-hero p{
+  color:var(--text-muted);max-width:600px;margin:0 auto;
+  font-size:.95rem;position:relative;
+}
+.sp-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:1.5rem;
+}
+.sp-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:2rem;border:1px solid rgba(255,255,255,.04);
+  position:relative;overflow:hidden;
+  transition:transform .4s,border-color .3s;
+}
+.sp-card:hover{transform:translateY(-3px);border-color:rgba(255,107,53,.12)}
+.sp-card .num{
+  font-family:'ZCOOL KuaiLe',sans-serif;
+  font-size:2.8rem;opacity:.08;position:absolute;top:1rem;right:1.5rem;
+  color:var(--accent2);
+}
+.sp-card h4{font-size:1.05rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.sp-card h4 .emoji{font-size:1.2rem}
+.sp-card p{font-size:.84rem;color:var(--text-muted);line-height:1.8}
+.sp-card .highlight{
+  display:inline-block;background:rgba(255,107,53,.1);
+  color:var(--accent2);padding:.1rem .5rem;border-radius:4px;
+  font-size:.82rem;font-weight:700;
+}
+
+/* ===== FOOTER ===== */
+footer{
+  text-align:center;padding:4rem 2rem;
+  border-top:1px solid rgba(255,255,255,.04);
+  position:relative;z-index:1;
+}
+footer .emoji-big{font-size:2.5rem;margin-bottom:1rem}
+footer p{font-size:.85rem;color:var(--text-muted);margin-bottom:.3rem}
+footer .warn{
+  display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;
+  background:rgba(255,107,53,.08);border-radius:999px;
+  font-size:.78rem;color:var(--accent2);
+}
+
+/* ===== FLOATING ELEMENTS ===== */
+.float-pixel{
+  position:fixed;z-index:0;border-radius:3px;opacity:.15;
+  pointer-events:none;
+}
+
+/* ===== REVEAL ANIMATION ===== */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ===== KEYFRAMES ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scrollDot{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(10px)}}
+@keyframes pulse{0%,100%{opacity:.12}50%{opacity:.25}}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="inner">
+    <div class="logo">屏 幕 的 史 诗</div>
+    <ul class="nav-links">
+      <li><a href="#lcd-oled">LCD vs OLED</a></li>
+      <li><a href="#pixel">像素排列</a></li>
+      <li><a href="#refresh">刷新率</a></li>
+      <li><a href="#xiaomi">超级像素</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">📡 SCIENCE · NOT MAGIC</div>
+    <h1>你每天盯8小时的那块屏<br>到底<span class="grad1">怎么发光</span>的？</h1>
+    <p class="sub">从"瞎眼屏"到"护眼神器"，从"钻石排列"到"周冬雨"——一篇用段子讲清楚的手机屏幕硬核科普</p>
+    <a href="#lcd-oled" class="cta">开始学习 ↓</a>
+  </div>
+  <div class="scroll-indicator">
+    <div class="mouse"></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+
+<!-- ===== LCD vs OLED ===== -->
+<section id="lcd-oled">
+  <div class="section-inner">
+    <div class="section-label reveal">CHAPTER 01</div>
+    <h2 class="section-title reveal">江湖两大门派<br>LCD 与 OLED 的华山论剑</h2>
+    <p class="section-desc reveal">屏幕江湖，两派相争数十年。一个像"老实人经济适用男"，一个像"才华横溢但脾气大的偶像派"。来，咱掰开了揉碎了说。</p>
+
+    <div class="compare-wrap">
+      <div class="compare-grid">
+        <!-- LCD Card -->
+        <div class="card lcd reveal">
+          <div class="card-icon">💡</div>
+          <h3>LCD — 背光大佬</h3>
+          <p class="card-sub">液晶显示 · Liquid Crystal Display</p>
+          <div class="analogy">
+            🖼️ <strong>一句话理解：</strong>像一个有背光灯的彩色画框。底下LED灯哗哗照白光，上面液晶分子控制"开合"，再透过红绿蓝滤光片——世界就亮了。
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>✅ 优点</h4>
+              <ul>
+                <li>DC调光护眼，低亮度无频闪</li>
+                <li>不烧屏，寿命长</li>
+                <li>成本亲民，性价比高</li>
+                <li>色彩准确，色域稳定</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>❌ 缺点</h4>
+              <ul>
+                <li>做不薄，弯不了</li>
+                <li>黑色发灰，对比度弱</li>
+                <li>可视角度一般</li>
+                <li>无法做息屏显示</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- OLED Card -->
+        <div class="card oled reveal">
+          <div class="card-icon">✨</div>
+          <h3>OLED — 自发光艺术家</h3>
+          <p class="card-sub">有机发光二极管 · Organic LED</p>
+          <div class="analogy">
+            🌌 <strong>一句话理解：</strong>像一片能自发光的像素星空。每个RGB像素点都是独立LED灯。想显示黑色？关灯就行。所以黑得纯粹，亮得惊艳。
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>✅ 优点</h4>
+              <ul>
+                <li>无限对比度，色彩惊艳</li>
+                <li>轻薄如纸，能做曲面/折叠</li>
+                <li>显示黑色极省电</li>
+                <li>支持息屏显示，响应超快</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>❌ 缺点</h4>
+              <ul>
+                <li>低亮度PWM频闪伤眼</li>
+                <li>有机材料会老化，可能烧屏</li>
+                <li>成本较高</li>
+                <li>峰值亮度持续时间有限</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animated comparison bars -->
+    <div class="bar-chart reveal">
+      <h3 style="font-size:1.1rem;margin-bottom:1.5rem">📊 硬核参数对比</h3>
+
+      <div class="bar-item">
+        <label>对比度</label>
+        <div class="bar-row">
+          <div class="bar-tag">LCD</div>
+          <div class="bar-track"><div class="bar-fill lcd-bar" data-width="25%">1500:1</div></div>
+        </div>
+        <div class="bar-row" style="margin-top:.3rem">
+          <div class="bar-tag">OLED</div>
+          <div class="bar-track"><div class="bar-fill oled-bar" data-width="95%">∞:1</div></div>
+        </div>
+      </div>
+
+      <div class="bar-item">
+        <label>屏幕厚度</label>
+        <div class="bar-row">
+          <div class="bar-tag">LCD</div>
+          <div class="bar-track"><div class="bar-fill lcd-bar" data-width="70%">~3mm (偏厚)</div></div>
+        </div>
+        <div class="bar-row" style="margin-top:.3rem">
+          <div class="bar-tag">OLED</div>
+          <div class="bar-track"><div class="bar-fill oled-bar" data-width="25%">~1mm (超薄)</div></div>
+        </div>
+      </div>
+
+      <div class="bar-item">
+        <label>护眼程度 (频闪)</label>
+        <div class="bar-row">
+          <div class="bar-tag">LCD</div>
+          <div class="bar-track"><div class="bar-fill lcd-bar" data-width="85%">DC调光，稳如老狗</div></div>
+        </div>
+        <div class="bar-row" style="margin-top:.3rem">
+          <div class="bar-tag">OLED</div>
+          <div class="bar-track"><div class="bar-fill oled-bar" data-width="50%">高频PWM改善中</div></div>
+        </div>
+      </div>
+
+      <div class="bar-item">
+        <label>形态自由度 (能弯能折)</label>
+        <div class="bar-row">
+          <div class="bar-tag">LCD</div>
+          <div class="bar-track"><div class="bar-fill lcd-bar" data-width="10%">直板机专属</div></div>
+        </div>
+        <div class="bar-row" style="margin-top:.3rem">
+          <div class="bar-tag">OLED</div>
+          <div class="bar-track"><div class="bar-fill oled-bar" data-width="95%">曲面/折叠/卷轴</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PIXEL ARRANGEMENT ===== -->
+<section id="pixel">
+  <div class="section-inner">
+    <div class="section-label reveal">CHAPTER 02</div>
+    <h2 class="section-title reveal">像素的排列密码<br>钻石、周冬雨和"公摊面积"</h2>
+    <p class="section-desc reveal">屏幕由无数像素组成，每个像素由红(R)绿(G)蓝(B)三个子像素"凑"出来。但怎么"凑"？这里头的门道，比开发商卖房还复杂。</p>
+
+    <div class="pixel-cards">
+      <!-- RGB -->
+      <div class="pixel-card reveal">
+        <div class="pixel-diagram" id="px-rgb"></div>
+        <h4>标准 RGB 排列</h4>
+        <div class="nick">LCD 的"三好学生"</div>
+        <p>每个像素都有自己独立的 R、G、B 三子像素，整整齐齐，一个萝卜一个坑。<br><strong>优点：</strong>显示最精细，没有"公摊"。<br><strong>常见于：</strong>LCD屏幕。</p>
+      </div>
+
+      <!-- Diamond -->
+      <div class="pixel-card reveal">
+        <div class="pixel-diagram" id="px-diamond"></div>
+        <h4>钻石排列</h4>
+        <div class="nick">Diamond Pentile · 三星专利</div>
+        <p>子像素呈菱形排列，两个像素共享红蓝子像素，绿色独立且最多。<br><strong>优点：</strong>OLED里显示效果最好。<br><strong>缺点：</strong>依然有"像素公摊"，精细度约等于RGB的81%。</p>
+      </div>
+
+      <!-- Zhou Dongyu -->
+      <div class="pixel-card reveal">
+        <div class="pixel-diagram" id="px-zhou"></div>
+        <h4>周冬雨排列</h4>
+        <div class="nick">Delta 排列 · 国产破局者</div>
+        <p>网友觉得长得像周冬雨的脸（两个小眼睛一个鼻子...）由此得名。<br><strong>背景：</strong>钻石排列有专利，国产屏厂另辟蹊径。<br><strong>现状：</strong>技术迭代后已大幅改善，国产之光！</p>
+      </div>
+    </div>
+
+    <!-- Fun explanation -->
+    <div style="margin-top:2.5rem" class="reveal">
+      <div class="card" style="border-left:3px solid var(--accent3)">
+        <h3 style="font-size:1rem;margin-bottom:.75rem">🏠 用人话翻译一下"像素公摊"</h3>
+        <p style="font-size:.9rem;color:var(--text-muted);line-height:1.9">
+          想象你住宿舍——<br>
+          <strong style="color:#69f0ae">RGB排列：</strong>一人一间，独立卫浴，想干嘛干嘛。<br>
+          <strong style="color:#ffd740">钻石排列：</strong>两人一间，共用卫浴（红蓝共享）。为了活命（蓝色寿命短）不得不挤一挤。显示效果还行，但你永远知道隔壁有人。<br>
+          <strong style="color:var(--accent3)">周冬雨排列：</strong>另一种户型设计，国产方案，目标是提供不输前者的居住体验，同时打破垄断。<br><br>
+          所谓"公摊"，就是你花1080P的钱，实际只得到了大约720P的"套内面积"——因为有些子像素是和邻居共享的。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REFRESH RATE ===== -->
+<section id="refresh">
+  <div class="section-inner">
+    <div class="section-label reveal">CHAPTER 03</div>
+    <h2 class="section-title reveal">流畅的玄学<br>刷新率与触控采样率</h2>
+    <p class="section-desc reveal">为什么你的手机有的时候"丝般顺滑"，有的时候"卡成PPT"？这俩兄弟说了算——一个管你看到的，一个管你摸到的。</p>
+
+    <!-- Visual demo -->
+    <div class="refresh-visual reveal">
+      <div class="refresh-demo">
+        <div class="ball-track">
+          <div class="ball ball-60"></div>
+        </div>
+        <div class="hz hz-60">60Hz</div>
+        <h4>基础刷新率</h4>
+        <p class="desc">每秒刷新60次画面<br>够用，但回不去了</p>
+      </div>
+      <div class="refresh-demo">
+        <div class="ball-track">
+          <div class="ball ball-120"></div>
+        </div>
+        <div class="hz hz-120">120Hz</div>
+        <h4>高刷新率</h4>
+        <p class="desc">每秒刷新120次画面<br>一旦用了，60Hz就是PPT</p>
+      </div>
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-cards reveal">
+      <div class="info-card">
+        <div class="ic">🖥️</div>
+        <h4>刷新率 (Refresh Rate)</h4>
+        <p>屏幕每秒<strong>刷新画面</strong>的次数，单位Hz。60Hz就是每秒翻60页的连环画，120Hz就是翻120页——<strong>动画更连贯，滑动更丝滑</strong>。打游戏的快乐，有一半是它给的。</p>
+      </div>
+      <div class="info-card">
+        <div class="ic">👆</div>
+        <h4>触控采样率 (Touch Sampling)</h4>
+        <p>屏幕每秒<strong>检测手指位置</strong>的次数，单位也是Hz。240Hz就是每秒扫240次你的手指在哪。<strong>采样率越高，操作越跟手</strong>——打王者团战时，这可能就是生死之差。</p>
+      </div>
+      <div class="info-card">
+        <div class="ic">🆚</div>
+        <h4>它俩啥关系？</h4>
+        <p><strong>刷新率是"眼睛"（输出），采样率是"手"（输入）。</strong>眼睛看到画面，手操作屏幕，两者缺一不可。游戏党：采样率甚至比刷新率更重要！</p>
+      </div>
+      <div class="info-card">
+        <div class="ic">💡</div>
+        <h4>LTPO 是什么？</h4>
+        <p>智能刷新率调节技术。看静态文字时降到1Hz省电，刷视频时飙到120Hz流畅。<strong>不是一直最高才好，聪明才是真的好。</strong>目前旗舰标配。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== XIAOMI SUPER PIXEL ===== -->
+<section id="xiaomi" class="xiaomi-section">
+  <div class="section-inner">
+    <div class="section-label reveal">CHAPTER 04</div>
+    <h2 class="section-title reveal">国产之光<br>小米「超级像素」技术</h2>
+    <p class="section-desc reveal">当大家都在"像素公摊"的内卷路上狂奔时，小米和TCL华星光电联手搞了个大事——让每个像素重新拥有独立完整的RGB。</p>
+
+    <div class="super-pixel-hero reveal">
+      <h3>告别共享，<span>像素独立</span></h3>
+      <p>超级像素让每个像素都拥有独立的红、绿、蓝三个子像素，彻底消灭"公摊面积"，子像素总数达938万——媲美传统2K屏的清晰度。</p>
+    </div>
+
+    <div class="sp-grid">
+      <div class="sp-card reveal">
+        <div class="num">01</div>
+        <h4><span class="emoji">🔬</span> 原理：回归真RGB</h4>
+        <p>传统OLED为了延长蓝色像素寿命而采用Pentile共享排列，但牺牲了精细度。超级像素采用<strong>全新红色发光材料+独立RGB三色排列</strong>，在保证寿命的同时实现了每个像素的完全独立。</p>
+      </div>
+      <div class="sp-card reveal">
+        <div class="num">02</div>
+        <h4><span class="emoji">⚡</span> 功耗：比1.5K还省电</h4>
+        <p>听起来"独立RGB"很费电？恰恰相反！逻辑分辨率只需1.5K级别，GPU渲染负担轻。加上高效驱动电路，结果是：<span class="highlight">清晰度看齐2K，功耗比传统2K低26%，甚至比普通1.5K还低！</span></p>
+      </div>
+      <div class="sp-card reveal">
+        <div class="num">03</div>
+        <h4><span class="emoji">📊</span> 效果：938万子像素</h4>
+        <p>在1.5K级别的物理分辨率下，因为是完整RGB排列（每像素3个子像素），子像素总数达到<span class="highlight">938万</span>，和传统2K钻石排列屏相当。视觉精细度直接拉满。</p>
+      </div>
+      <div class="sp-card reveal">
+        <div class="num">04</div>
+        <h4><span class="emoji">🚀</span> 意义：新赛道开启</h4>
+        <p>屏幕竞争从<strong>"堆参数"（比分辨率数字大）进入"拼内功"（比像素质量和能效）</strong>的新阶段。搭载于小米17 Pro Max，预计会引领旗舰屏幕新趋势。</p>
+      </div>
+    </div>
+
+    <!-- Summary card -->
+    <div style="margin-top:2rem" class="reveal">
+      <div class="card" style="text-align:center;border:1px solid rgba(255,107,53,.15)">
+        <p style="font-size:.95rem;color:var(--text-muted);line-height:2">
+          <strong style="color:var(--text);font-size:1.1rem">一句话总结超级像素：</strong><br>
+          别人还在纠结"公摊面积"多大的时候，<br>
+          小米直接把"套内面积"做到了和"建筑面积"一样大，<br>
+          而且物业费（功耗）还更低了。<br>
+          <span style="color:var(--accent2)">——就离谱。</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="emoji-big">📱</div>
+  <p>看到这里的都是真爱</p>
+  <p style="font-size:.78rem;color:var(--text-muted)">技术在进步，选择在变多，但保护眼睛最好的方式始终是——</p>
+  <div class="warn">⚠️ 放下手机，多看看远方（虽然你现在正在盯屏幕看这句话）</div>
+  <p style="margin-top:2rem;font-size:.7rem;color:var(--text-muted)">屏幕的史诗 · 手机显示技术科普 · 用段子讲硬核</p>
+</footer>
+
+<script>
+// ===== Intersection Observer for reveals =====
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// ===== Animated bars =====
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const bars = entry.target.querySelectorAll('.bar-fill');
+      bars.forEach((bar, i) => {
+        setTimeout(() => {
+          bar.style.width = bar.dataset.width;
+        }, i * 150);
+      });
+      barObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.bar-chart').forEach(el => barObserver.observe(el));
+
+// ===== Generate pixel diagrams =====
+function createDiagram(containerId, pattern) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  const size = 10;
+  const colors = pattern === 'rgb'
+    ? ['r','g','b','r','g','b','r','g','b','r',
+       'g','b','r','g','b','r','g','b','r','g',
+       'b','r','g','b','r','g','b','r','g','b']
+    : pattern === 'diamond'
+    ? ['g','r','g','b','g','r','g','b','g','r',
+       'r','g','b','g','r','g','b','g','r','g',
+       'g','b','g','r','g','b','g','r','g','b']
+    : ['g','r','g','b','g','r','g','b','g','r',
+       'b','g','r','g','b','g','r','g','b','g',
+       'g','b','g','r','g','b','g','r','g','b'];
+  colors.forEach((c2, i) => {
+    const px = document.createElement('div');
+    px.className = 'px ' + c2;
+    px.style.width = size + 'px';
+    px.style.height = size + 'px';
+    c.appendChild(px);
+  });
+}
+createDiagram('px-rgb', 'rgb');
+createDiagram('px-diamond', 'diamond');
+createDiagram('px-zhou', 'zhou');
+
+// ===== Smooth scroll for nav links =====
+document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ===== Nav shrink on scroll =====
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 50
+    ? 'rgba(6,8,13,.92)' : 'rgba(6,8,13,.7)';
+}, { passive: true });
+</script>
+
+</body>
+</html>
