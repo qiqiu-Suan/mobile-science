@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>妙妙 · 穹顶</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet"></noscript>
+<style>
+:root{
+  --bg:#0c0c0e;--surface:#141416;--surface2:#1a1a1e;
+  --accent:#E83030;--accent-dim:#B91C1C;--accent-light:#FF5252;--accent-glow:rgba(232,48,48,0.12);
+  --redmi:#E53935;--redmi-dim:rgba(229,57,53,0.12);
+  --green:#34C759;--green-dim:rgba(52,199,89,0.12);
+  --blue:#5AC8FA;--blue-dim:rgba(90,200,250,0.12);
+  --gold:#FFD700;--gold-dim:rgba(255,215,0,0.12);
+  --text:#e8e4dc;--text-muted:#7a7670;--text-dim:rgba(255,255,255,0.35);
+  --border:rgba(255,255,255,0.06);
+  --glass-bg:rgba(18,18,21,0.55);--glass-border:rgba(255,255,255,0.07);
+  --spring:cubic-bezier(0.2,0.8,0.2,1);--bounce:cubic-bezier(0.34,1.56,0.64,1);
+  --accent-grad:linear-gradient(90deg,var(--accent),var(--accent-light));
+  --gold-grad:linear-gradient(90deg,var(--gold),#FFA500);
+  --gyro-x:0;--gyro-y:0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans SC','PingFang SC',sans-serif;font-weight:400;background:var(--bg);color:var(--text);line-height:1.75;overflow-x:hidden;font-size:15.5px;}
+::selection{background:rgba(232,48,48,0.3);color:#fff;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(232,48,48,0.2);border-radius:980px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(232,48,48,0.4);}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022;pointer-events:none;z-index:9999;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at calc(50% + var(--gyro-x)*15px) calc(50% + var(--gyro-y)*15px),rgba(232,48,48,0.03) 0%,transparent 50%),radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.25) 100%);pointer-events:none;z-index:9998;transition:background 0.3s ease;}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+#progress{position:fixed;top:0;left:0;height:2px;background:var(--accent-grad);z-index:200;width:0;transition:width 0.1s linear;}
+#progress-pill{position:fixed;top:14px;right:60px;z-index:101;width:36px;height:16px;border-radius:980px;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid var(--glass-border);overflow:hidden;display:none;}
+#progress-pill .fill{height:100%;background:var(--accent-grad);border-radius:980px;width:0;transition:width 0.15s;}
+#progress-pill .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:0.05em;}
+@media(max-width:600px){#progress-pill{display:block;}}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .8s var(--spring),visibility .8s;}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none;}
+#loader .loader-logo{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:28px;color:var(--accent);opacity:0;animation:loaderFade .6s var(--spring) .1s forwards;}
+#loader .loader-bar{width:120px;height:3px;background:var(--border);border-radius:980px;overflow:hidden;opacity:0;animation:loaderFade .6s var(--spring) .3s forwards;}
+#loader .loader-bar::after{content:'';display:block;width:40%;height:100%;background:var(--accent);border-radius:980px;animation:loaderSlide 1s var(--spring) infinite;}
+@keyframes loaderSlide{0%{transform:translateX(-100%);}100%{transform:translateX(350%);}}
+@keyframes loaderFade{to{opacity:1;}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(12,12,14,0.6);backdrop-filter:blur(40px) saturate(1.8);-webkit-backdrop-filter:blur(40px) saturate(1.8);border-bottom:1px solid var(--glass-border);transition:all .35s var(--spring);will-change:height;}
+nav::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(to bottom,rgba(12,12,14,0.3),transparent);pointer-events:none;}
+nav.shrink{height:48px;}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:56px;transition:height .35s var(--spring);}
+nav.shrink .container{height:48px;}
+nav .logo{font-family:'DM Mono',monospace;font-weight:500;font-size:13px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;cursor:pointer;transition:letter-spacing .3s var(--spring);}
+nav .logo:hover{letter-spacing:.22em;}
+nav .nav-links{display:flex;gap:4px;list-style:none;}
+nav .nav-links a{font-size:13px;color:var(--text-muted);text-decoration:none;transition:all .3s var(--spring);letter-spacing:.02em;padding:6px 14px;border-radius:980px;cursor:pointer;min-height:32px;display:flex;align-items:center;position:relative;background:rgba(255,255,255,0.03);}
+nav .nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.06);}
+nav .nav-links a.active{color:var(--accent);background:var(--accent-glow);}
+nav .nav-links a::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--accent);border-radius:980px;transition:width .3s var(--spring);}
+nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
+.mobile-tabbar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(12,12,14,0.75);backdrop-filter:blur(40px) saturate(2);-webkit-backdrop-filter:blur(40px) saturate(2);border-top:1px solid var(--glass-border);padding:6px 0 env(safe-area-inset-bottom, 8px);justify-content:space-around;align-items:center;}
+.mobile-tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;padding:6px 12px;border-radius:12px;transition:all .3s var(--spring);}
+.mobile-tabbar a .tab-icon{font-size:18px;line-height:1;opacity:.5;transition:opacity .3s;}
+.mobile-tabbar a .tab-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--text-dim);letter-spacing:.05em;transition:color .3s;}
+.mobile-tabbar a.active{background:var(--accent-glow);}
+.mobile-tabbar a.active .tab-icon{opacity:1;}
+.mobile-tabbar a.active .tab-label{color:var(--accent);}
+@media(max-width:600px){.mobile-tabbar{display:flex;}nav .nav-links{display:none;}}
+.back-top{position:fixed;bottom:72px;right:16px;width:40px;height:40px;border-radius:980px;background:var(--glass-bg);backdrop-filter:blur(30px);border:1px solid var(--glass-border);color:var(--accent);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(20px);transition:all .35s var(--spring);z-index:99;pointer-events:none;}
+.back-top.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.back-top:hover{background:var(--accent-glow);transform:translateY(-2px);}
+.hero{padding:160px 0 80px;position:relative;overflow:hidden;}
+.hero-glass{position:absolute;top:35%;left:50%;width:400px;height:250px;background:radial-gradient(ellipse,rgba(232,48,48,0.06),transparent 70%);border-radius:50%;pointer-events:none;filter:blur(60px);transition:transform 0.4s ease;z-index:0;}
+.hero-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;position:relative;z-index:2;}
+.hero h1{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(38px,6vw,68px);line-height:1.2;letter-spacing:-.02em;margin-bottom:28px;position:relative;z-index:2;}
+.hero h1 .highlight{color:var(--accent);position:relative;}
+.hero h1 .highlight::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:3px;background:var(--accent-grad);opacity:.4;border-radius:2px;}
+.hero-sub{font-size:16.5px;color:var(--text-muted);max-width:640px;line-height:1.85;position:relative;z-index:2;}
+.hero-sidebar{position:absolute;right:max(32px,calc((100vw - 1080px)/2 - 4px));top:50%;transform:translateY(-50%);display:flex;flex-direction:row;gap:14px;pointer-events:none;user-select:none;z-index:1;transition:transform 0.4s ease;}
+.hero-sidebar .char-col{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+.hero-sidebar .char-col .s-char{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:52px;line-height:1;color:var(--accent);opacity:.15;position:relative;animation:sidebarGlow 4s ease-in-out infinite;text-shadow:0 0 20px rgba(232,48,48,0.1);-webkit-text-stroke:1px rgba(232,48,48,0.06);}
+.hero-sidebar .char-col:nth-child(1){--col-delay:0s;}.hero-sidebar .char-col:nth-child(2){--col-delay:0.4s;}.hero-sidebar .char-col:nth-child(3){--col-delay:0.8s;}
+@keyframes sidebarGlow{0%,100%{opacity:.1;}50%{opacity:.3;}}
+@media(max-width:1200px){.hero-sidebar .s-char{font-size:42px;}.hero-sidebar{right:16px;gap:10px;}}
+@media(max-width:800px){.hero-sidebar{display:none;}}
+.section{padding:80px 0;position:relative;}
+.section:nth-child(even){background:rgba(255,255,255,0.006);}
+.section-tag{display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;background:rgba(232,48,48,0.06);border-radius:980px;padding:4px 16px;}
+.section-watermark{position:absolute;top:20px;right:20px;font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(80px,12vw,160px);color:rgba(255,255,255,0.018);line-height:1;pointer-events:none;user-select:none;z-index:0;}
+.section h2{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(28px,4vw,44px);line-height:1.25;margin-bottom:20px;letter-spacing:-.01em;position:relative;z-index:1;}
+.section-desc{font-size:15px;color:var(--text-muted);max-width:600px;margin-bottom:48px;border-left:2px solid var(--accent-dim);padding-left:16px;line-height:1.8;}
+.warn-box{display:flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(52,199,89,0.15);border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--green);line-height:1.5;}
+.warn-box svg{flex-shrink:0;width:16px;height:16px;}
+.spec-card{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(1.8);-webkit-backdrop-filter:blur(40px) saturate(1.8);border:1px solid var(--glass-border);border-radius:20px;padding:36px 32px 28px;overflow:hidden;transition:all .4s var(--bounce);position:relative;box-shadow:0 1px 3px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.16),0 24px 48px rgba(0,0,0,.08);opacity:0;transform:translateY(24px) blur(6px);-webkit-tap-highlight-color:transparent;}
+.spec-card.card-visible{opacity:1;transform:translateY(0) blur(0);}
+.spec-card::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 50%);pointer-events:none;}
+.spec-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.08) 20%,rgba(255,255,255,0.08) 80%,transparent 100%);pointer-events:none;}
+.spec-card:hover{border-color:rgba(232,48,48,0.15);transform:translateY(-3px);box-shadow:0 1px 3px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.2),0 24px 48px rgba(0,0,0,.12),0 0 40px var(--accent-glow);}
+.spec-card.pressed{transform:scale(0.97) !important;transition-duration:0.1s !important;}
+.spec-card.best{border-color:rgba(232,48,48,0.25);border-left:3px solid var(--accent);}
+.spec-card .card-badge{position:absolute;top:16px;right:16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);background:var(--accent-glow);backdrop-filter:blur(12px);padding:4px 10px;border-radius:980px;z-index:1;}
+.spec-card .card-rank{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-dim);margin-bottom:8px;}
+.spec-card h3{font-family:'Noto Sans SC',sans-serif;font-weight:800;font-size:22px;margin-bottom:6px;letter-spacing:-.02em;}
+.spec-card .card-desc{font-size:14.5px;color:var(--text-muted);line-height:1.75;margin-bottom:20px;}
+.spec-card .card-desc strong{color:var(--text);font-weight:600;}
+.spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:600px){.spec-grid{grid-template-columns:1fr 1fr;}}
+.spec-item{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:10px 12px;transition:all .3s var(--spring);position:relative;}
+.spec-item:hover{background:rgba(255,255,255,0.04);transform:scale(1.02);}
+.spec-item .spec-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:4px;font-weight:400;}
+.spec-item .spec-value{font-size:13px;font-weight:600;color:var(--text);}
+.spec-item .spec-value.gold{background:var(--accent-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.spec-item .spec-value.td-good{color:var(--green);}
+.spec-item .spec-value.td-accent{color:var(--accent);}
+.spec-item .spec-value.td-gold{color:var(--gold);}
+.cam-card{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(1.8);border:1px solid var(--glass-border);border-radius:20px;padding:28px 24px;box-shadow:0 1px 3px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.16);transition:all .4s var(--spring);}
+.cam-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.2),0 0 0 1px var(--accent-glow);}
+.cam-card h4{font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:18px;margin-bottom:4px;}
+.cam-card .cam-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-dim);letter-spacing:.1em;margin-bottom:16px;}
+.cam-lens{display:flex;flex-direction:column;gap:12px;}
+.cam-lens-item{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:14px 16px;}
+.cam-lens-item .lens-name{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+.cam-lens-item p{font-size:13px;color:var(--text-muted);line-height:1.6;}
+.cam-lens-item p strong{color:var(--text);font-weight:600;}
+.cam-verdict{margin-top:16px;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.6;}
+.cam-verdict.good{background:var(--green-dim);color:var(--green);border:1px solid rgba(52,199,89,0.1);}
+.verdict-banner{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(1.8);border:1px solid var(--accent-glow);border-radius:20px;padding:28px 32px;margin-top:40px;display:flex;align-items:flex-start;gap:16px;position:relative;overflow:hidden;transition:border-color .4s var(--spring);}
+.verdict-banner::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 40%);pointer-events:none;}
+.verdict-banner:hover{border-color:rgba(232,48,48,0.2);}
+.verdict-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.verdict-text{font-size:15px;line-height:1.8;color:var(--text);}
+.verdict-text strong{color:var(--accent);font-weight:600;}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+@media(max-width:800px){.feat-grid{grid-template-columns:1fr;}}
+.feat-card{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(1.8);border:1px solid var(--glass-border);border-radius:20px;padding:28px 24px;box-shadow:0 1px 3px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.16);transition:all .4s var(--spring);opacity:0;transform:translateY(24px) blur(6px);}
+.feat-card.card-visible{opacity:1;transform:translateY(0) blur(0);}
+.feat-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.2),0 0 0 1px var(--accent-glow);transform:translateY(-3px);}
+.feat-card .feat-icon{font-size:28px;margin-bottom:12px;display:inline-block;}
+.feat-card h4{font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:18px;margin-bottom:8px;}
+.feat-card p{font-size:14px;color:var(--text-muted);line-height:1.7;}
+.feat-card p strong{color:var(--text);font-weight:600;}
+/* Size Hero Card */
+.size-hero-card{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(1.8);border:1px solid rgba(255,215,0,0.15);border-radius:24px;padding:40px 36px;overflow:hidden;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.16),0 24px 48px rgba(0,0,0,.08),0 0 60px rgba(255,215,0,0.04);opacity:0;transform:translateY(24px) blur(6px);transition:all .4s var(--bounce);}
+.size-hero-card.card-visible{opacity:1;transform:translateY(0) blur(0);}
+.size-hero-card::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(255,215,0,0.02) 0%,transparent 40%,rgba(232,48,48,0.02) 100%);pointer-events:none;}
+.size-hero-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold-grad);opacity:0.4;pointer-events:none;}
+.size-hero-card .sh-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;}
+.size-hero-card .sh-icon{width:56px;height:56px;border-radius:16px;background:var(--gold-dim);border:1px solid rgba(255,215,0,0.15);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.size-hero-card .sh-header-text h3{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:24px;letter-spacing:-.02em;margin-bottom:2px;}
+.size-hero-card .sh-header-text .sh-sub{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+.size-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:600px){.size-strip{grid-template-columns:repeat(2,1fr);}}
+.size-strip-item{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:18px 16px;text-align:center;transition:all .3s var(--spring);}
+.size-strip-item:hover{background:rgba(255,255,255,0.04);transform:translateY(-2px);border-color:rgba(255,215,0,0.12);}
+.size-strip-item .ss-value{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:28px;line-height:1;margin-bottom:4px;background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.size-strip-item .ss-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.size-hero-card .sh-desc{font-size:14.5px;color:var(--text-muted);line-height:1.8;padding:16px 20px;background:rgba(255,215,0,0.03);border:1px solid rgba(255,215,0,0.06);border-radius:14px;}
+.size-hero-card .sh-desc strong{color:var(--text);font-weight:600;}
+/* Price */
+.price-section{padding:0;position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.price-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(229,57,53,0.15) 0%,rgba(180,0,0,0.08) 40%,#0c0c0e 80%);}
+.price-bg::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.03;pointer-events:none;}
+.price-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(229,57,53,0.06) 0%,transparent 60%);animation:pricePulse 4s ease-in-out infinite;pointer-events:none;}
+@keyframes pricePulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
+.price-content{position:relative;z-index:2;text-align:center;padding:40px 24px;}
+.price-label{font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:24px;opacity:0;animation:priceFadeIn 0.8s var(--spring) 0.2s forwards;}
+.price-row{display:flex;align-items:baseline;justify-content:center;gap:8px;opacity:0;animation:priceFadeIn 0.8s var(--spring) 0.5s forwards;}
+.price-number{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(80px,18vw,180px);line-height:1;color:var(--redmi);letter-spacing:-.04em;text-shadow:0 0 60px rgba(229,57,53,0.3),0 0 120px rgba(229,57,53,0.15),0 4px 8px rgba(0,0,0,0.3);}
+.price-unit{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(36px,8vw,72px);line-height:1;color:var(--redmi);}
+.price-sub{font-size:17px;color:rgba(255,255,255,0.5);max-width:560px;margin:24px auto 0;line-height:1.8;opacity:0;animation:priceFadeIn 0.8s var(--spring) 0.8s forwards;}
+.price-sub strong{color:var(--redmi);font-weight:700;}
+@keyframes priceFadeIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.divider{height:2px;background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,0.04) 50%,transparent 95%);margin:0;}
+.ripple{position:absolute;border-radius:50%;background:rgba(232,48,48,0.15);transform:scale(0);animation:rippleAnim 0.6s ease-out forwards;pointer-events:none;z-index:5;}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+@keyframes flashHighlight{0%{box-shadow:inset 0 0 0 2px transparent;}30%{box-shadow:inset 0 0 0 2px rgba(232,48,48,0.2);}100%{box-shadow:inset 0 0 0 2px transparent;}}
+.fade-in{opacity:0;transform:translateY(28px);transition:opacity .6s var(--spring),transform .6s var(--spring);}
+.fade-in.from-left{transform:translateX(-30px);}
+.fade-in.visible{opacity:1;transform:translate(0);}
+.section.flash{animation:flashHighlight .8s var(--spring);}
+footer{padding:48px 0;text-align:center;border-top:1px solid transparent;margin-top:80px;background:#050505;}
+footer::before{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);margin-bottom:48px;}
+footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:.1em;}
+.section-toggle{display:none;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;}
+.section-toggle .toggle-arrow{transition:transform .3s var(--spring);display:inline-block;margin-left:8px;font-size:14px;color:var(--text-dim);}
+.section-toggle.open .toggle-arrow{transform:rotate(180deg);}
+.section-toggle span{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(24px,6vw,36px);}
+/* Toast */
+.toast-wrap{position:fixed;bottom:80px;right:16px;z-index:150;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:340px;}
+.toast{background:rgba(18,18,21,0.85);backdrop-filter:blur(40px) saturate(1.8);-webkit-backdrop-filter:blur(40px) saturate(1.8);border:1px solid rgba(232,48,48,0.12);border-radius:16px;padding:16px 20px;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.3),0 0 30px rgba(232,48,48,0.04);animation:toastIn .5s var(--spring) forwards;opacity:0;transform:translateX(50px);}
+.toast.out{animation:toastOut .35s var(--spring) forwards;}
+.toast .toast-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.toast .toast-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:toastDotPulse 2s ease-in-out infinite;}
+@keyframes toastDotPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
+.toast .toast-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-dim);}
+.toast .toast-body{font-size:13px;color:var(--text);line-height:1.65;}
+.toast .toast-body strong{color:var(--accent);font-weight:600;}
+@keyframes toastIn{from{opacity:0;transform:translateX(50px);}to{opacity:1;transform:translateX(0);}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(50px);}}
+@media(max-width:600px){
+  .toast-wrap{bottom:90px;right:10px;left:10px;max-width:none;}
+  .section-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 0;}
+  .section h2.desktop-only{display:none;}
+  .section-collapsible{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s var(--spring),opacity .3s var(--spring);}
+  .section-collapsible.open{max-height:9999px;opacity:1;}
+  .hero{padding:120px 0 60px;}.hero h1{font-size:clamp(28px,8vw,44px);}
+  .section{padding:60px 0;}.section h2{font-size:clamp(24px,6vw,36px);}
+  .spec-card{padding:24px 20px 20px;}
+  .verdict-banner{padding:20px;flex-direction:column;gap:12px;}
+  .cam-card{padding:20px 16px;}
+  .fade-in{transition-duration:.35s;}
+  .spec-card:hover,.feat-card:hover,.cam-card:hover{transform:none;}
+  .back-top{bottom:72px;}
+  .spec-grid{grid-template-columns:1fr 1fr;}
+  .feat-grid{grid-template-columns:1fr;}
+  .size-hero-card{padding:28px 20px;}
+  .size-strip{gap:8px;}
+  .size-strip-item{padding:14px 10px;}
+  .size-strip-item .ss-value{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="progress-pill"><div class="fill"></div><div class="pct">0%</div></div>
+<div id="loader"><div class="loader-logo">妙妙</div><div class="loader-bar"></div></div>
+
+<nav id="mainNav"><div class="container"><div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">妙妙 · 穹顶</div><ul class="nav-links"><li><a href="#processor" data-section="processor">处理器</a></li><li><a href="#camera" data-section="camera">影像</a></li><li><a href="#screen" data-section="screen">屏幕</a></li><li><a href="#battery" data-section="battery">续航</a></li><li><a href="#other" data-section="other">全面</a></li><li><a href="#price" data-section="price">价格</a></li></ul></div></nav>
+<nav class="mobile-tabbar" id="mobileTabbar"><a href="#processor" data-section="processor"><span class="tab-icon">⚡</span><span class="tab-label">处理器</span></a><a href="#camera" data-section="camera"><span class="tab-icon">📷</span><span class="tab-label">影像</span></a><a href="#screen" data-section="screen"><span class="tab-icon">🖥</span><span class="tab-label">屏幕</span></a><a href="#battery" data-section="battery"><span class="tab-icon">🔋</span><span class="tab-label">续航</span></a><a href="#price" data-section="price"><span class="tab-icon">💰</span><span class="tab-label">价格</span></a></nav>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- HERO -->
+<header class="hero" id="heroSection">
+  <div class="hero-glass" id="heroGlass"></div>
+  <div class="container">
+    <div class="hero-tag">妙妙品牌 · 穹顶系列</div>
+    <h1>这不只是一台手机<br>这是<span class="highlight">人类的感谢</span></h1>
+    <p class="hero-sub">0.2nm工艺 · 室温超导 · 8英寸半画幅 · 360倍真光学变焦 · 70000mAh · 600W快充 · 8K屏幕 · 1999元。一切参数皆为穹顶之上。</p>
+  </div>
+  <div class="hero-sidebar" id="heroSidebar"><div class="char-col"><span class="s-char">妙</span><span class="s-char">妙</span><span class="s-char">品</span><span class="s-char">牌</span></div><div class="char-col"><span class="s-char">穹</span><span class="s-char">顶</span><span class="s-char">之</span><span class="s-char">上</span></div><div class="char-col"><span class="s-char">人</span><span class="s-char">类</span><span class="s-char">感</span><span class="s-char">谢</span></div></div>
+</header>
+<div class="divider"></div>
+
+<!-- PROCESSOR -->
+<section class="section" id="processor">
+  <div class="container fade-in from-left">
+    <div class="section-watermark">01</div>
+    <div class="section-tag">01 / 处理器</div>
+    <div class="section-toggle" onclick="toggleSection(this)"><span>妙妙 × 骁龙 · 穹顶之心</span><span class="toggle-arrow">▼</span></div>
+    <h2 class="desktop-only section-collapsible open">妙妙 × 骁龙 · 穹顶之心</h2>
+    <p class="section-desc section-collapsible open">妙妙与骁龙共同研发的新一代处理器。0.2nm工艺、室温超导新材料、巅峰性能与极致能效的终极合一。</p>
+    <div class="warn-box section-collapsible open" style="margin-bottom:24px;max-width:700px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>100%的人类感谢妙妙。</strong>超超大核频率达到了10GHz，这是人类半导体史上从未有过的里程碑。</span></div>
+    <div class="spec-card best section-collapsible open">
+      <div class="card-badge">穹顶之心</div>
+      <div class="card-rank">妙妙 × 骁龙 · 联合研发</div>
+      <h3>穹顶处理器</h3>
+      <div class="card-desc">采用<strong>0.2nm工艺</strong>，<strong>室温超导新材料</strong>。CPU：2超超大核+4超大核+2大核，超超大核<strong>10GHz</strong>。L2缓存<strong>16GB</strong>。GPU <strong>6GHz</strong>、缓存<strong>18GB</strong>。AI可本地部署<strong>上百个顶级大模型</strong>。运行<strong>几乎不发热</strong>，峰值仅需<strong>6W</strong>，日用<strong>0.2W~0.5W</strong>。</div>
+      <div class="spec-grid">
+        <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value td-gold">0.2nm</div></div>
+        <div class="spec-item"><div class="spec-label">合作方</div><div class="spec-value">妙妙 × 骁龙</div></div>
+        <div class="spec-item"><div class="spec-label">新材料</div><div class="spec-value td-good">室温超导</div></div>
+        <div class="spec-item"><div class="spec-label">CPU架构</div><div class="spec-value">2超超大+4超大+2大核</div></div>
+        <div class="spec-item"><div class="spec-label">超超大核频率</div><div class="spec-value td-gold">10GHz</div></div>
+        <div class="spec-item"><div class="spec-label">GPU频率</div><div class="spec-value td-gold">6GHz</div></div>
+        <div class="spec-item"><div class="spec-label">L2缓存</div><div class="spec-value td-accent">16GB</div></div>
+        <div class="spec-item"><div class="spec-label">GPU缓存</div><div class="spec-value td-accent">18GB</div></div>
+        <div class="spec-item"><div class="spec-label">AI能力</div><div class="spec-value td-good">本地部署上百大模型</div></div>
+        <div class="spec-item"><div class="spec-label">峰值功耗</div><div class="spec-value td-good">仅6W跑满</div></div>
+        <div class="spec-item"><div class="spec-label">日用功耗</div><div class="spec-value td-good">0.2W ~ 0.5W</div></div>
+        <div class="spec-item"><div class="spec-label">发热</div><div class="spec-value td-good">几乎不发热</div></div>
+      </div>
+    </div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">⚡</div><div class="verdict-text"><strong>0.2nm + 室温超导。</strong>超超大核10GHz、GPU 6GHz、L2 16GB、GPU缓存18GB。本地部署上百大模型。6W跑满峰值，日用0.2W~0.5W，几乎不发热。</div></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- CAMERA -->
+<section class="section" id="camera">
+  <div class="container fade-in">
+    <div class="section-watermark">02</div>
+    <div class="section-tag">02 / 影像</div>
+    <div class="section-toggle" onclick="toggleSection(this)"><span>一颗镜头 · 改写光学极限</span><span class="toggle-arrow">▼</span></div>
+    <h2 class="desktop-only section-collapsible open">一颗镜头 · 改写光学极限</h2>
+    <p class="section-desc section-collapsible open">只有一颗超级镜头。8英寸半画幅、12亿像素、0.2到360倍真光学连续变焦。一颗足以。</p>
+    <div class="cam-card section-collapsible open">
+      <h4>穹顶 · 超级镜头</h4>
+      <div class="cam-sub">8英寸半画幅 · 12亿像素 · 0.2-360x真光学连续变焦 · 蔡司7G · 超级LOFIC · 徕卡哈苏蔡司三重合作</div>
+      <div class="cam-lens">
+        <div class="cam-lens-item" style="border-color:rgba(255,215,0,0.12);background:rgba(255,215,0,0.04);"><div class="lens-name">传感器 · 8英寸半画幅 · 12亿像素</div><p><strong>8英寸半画幅超大传感器</strong>，12亿像素。感光面积远超任何手机，进光量与细节能力达到前所未有的级别。</p></div>
+        <div class="cam-lens-item" style="border-color:rgba(232,48,48,0.12);background:rgba(232,48,48,0.04);"><div class="lens-name">变焦 · 0.2-360倍 · 真光学连续变焦</div><p><strong>0.2到360倍真光学连续变焦</strong>，怎么放大都不损失画质。真正的光学无损变焦，一颗镜头全覆盖。</p></div>
+        <div class="cam-lens-item"><div class="lens-name">光圈 · f/0.23 · 无极可变光圈</div><p><strong>f/0.23超大光圈</strong>，无极可变。通光量史无前例，暗光突破物理极限。</p></div>
+        <div class="cam-lens-item"><div class="lens-name">光学 · 蔡司顶级7G玻璃镜片 · 蔡司顶级镀膜</div><p><strong>蔡司顶级7G玻璃镜片</strong> + <strong>蔡司顶级镀膜</strong>，光线损失<strong>几乎为零</strong>。</p></div>
+        <div class="cam-lens-item"><div class="lens-name">动态范围 · 超级LOFIC · 65EV</div><p><strong>65EV动态范围</strong>。逆光、暗光、大光比，细节从不丢失。</p></div>
+        <div class="cam-lens-item"><div class="lens-name">对焦 · 最近2cm</div><p>最近对焦<strong>2cm</strong>，花蕊纹理、水滴世界，纤毫毕现。</p></div>
+        <div class="cam-lens-item" style="border-color:rgba(255,215,0,0.12);background:rgba(255,215,0,0.04);"><div class="lens-name">合作 · 徕卡 · 哈苏 · 蔡司 · 三重顶级</div><p><strong>徕卡、哈苏、蔡司</strong>三重顶级品牌合作。色彩、光学、算法全面拉满。</p></div>
+      </div>
+      <div class="cam-verdict good">8英寸半画幅 + 12亿像素 + 0.2-360x真光学变焦 + f/0.23 + 蔡司7G + 65EV + 2cm微距 + 徕卡哈苏蔡司 —— 一颗镜头，改写光学极限。</div>
+    </div>
+    <div class="verdict-banner section-collapsible open" style="margin-top:32px;"><div class="verdict-icon">📷</div><div class="verdict-text"><strong>一颗镜头，不需要第二颗。</strong>8英寸半画幅、12亿像素、0.2-360倍真光学变焦、f/0.23、蔡司7G、65EV、徕卡哈苏蔡司三重合作。一颗足以改写一切。</div></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- SCREEN -->
+<section class="section" id="screen">
+  <div class="container fade-in from-left">
+    <div class="section-watermark">03</div>
+    <div class="section-tag">03 / 屏幕</div>
+    <div class="section-toggle" onclick="toggleSection(this)"><span>穹顶之屏 · 无限刷新率</span><span class="toggle-arrow">▼</span></div>
+    <h2 class="desktop-only section-collapsible open">穹顶之屏 · 无限刷新率</h2>
+    <p class="section-desc section-collapsible open">8K超级像素LTPO，真RGB排列，无限高刷新率，全亮度真DC调光，无黑边设计，永不烧屏。</p>
+    <div class="spec-card best section-collapsible open">
+      <div class="card-badge">穹顶之屏</div>
+      <div class="card-rank">主屏 · 8K超级像素</div>
+      <h3>主屏</h3>
+      <div class="card-desc"><strong>8K超级像素LTPO</strong>，<strong>真RGB排列</strong>，全亮度<strong>真DC调光</strong>，<strong>无黑边设计</strong>，解决烧屏。最大全屏<strong>6000nit</strong>，最低<strong>1nit</strong>。色深<strong>32bit</strong>，<strong>无限高刷新率</strong>。玻璃硬度<strong>高于钻石</strong>，无碎屏无划痕。1200nit下功耗约<strong>0.12W</strong>。</div>
+      <div class="spec-grid">
+        <div class="spec-item"><div class="spec-label">分辨率</div><div class="spec-value td-gold">8K超级像素</div></div>
+        <div class="spec-item"><div class="spec-label">排列</div><div class="spec-value td-good">真RGB</div></div>
+        <div class="spec-item"><div class="spec-label">调光</div><div class="spec-value td-good">全亮度真DC</div></div>
+        <div class="spec-item"><div class="spec-label">刷新率</div><div class="spec-value td-gold">无限高</div></div>
+        <div class="spec-item"><div class="spec-label">最大亮度</div><div class="spec-value td-gold">全屏6000nit</div></div>
+        <div class="spec-item"><div class="spec-label">最低亮度</div><div class="spec-value">1nit</div></div>
+        <div class="spec-item"><div class="spec-label">色深</div><div class="spec-value td-accent">32bit</div></div>
+        <div class="spec-item"><div class="spec-label">玻璃硬度</div><div class="spec-value td-good">高于钻石</div></div>
+        <div class="spec-item"><div class="spec-label">黑边</div><div class="spec-value td-good">无黑边设计</div></div>
+        <div class="spec-item"><div class="spec-label">烧屏</div><div class="spec-value td-good">已解决</div></div>
+        <div class="spec-item"><div class="spec-label">面板</div><div class="spec-value">LTPO</div></div>
+        <div class="spec-item"><div class="spec-label">1200nit功耗</div><div class="spec-value td-good">约0.12W</div></div>
+      </div>
+    </div>
+    <div class="spec-card section-collapsible open" style="margin-top:20px;">
+      <div class="card-rank">背屏 · 与主屏素质相同</div>
+      <h3>背屏</h3>
+      <div class="card-desc"><strong>背屏</strong>与主屏<strong>屏幕素质完全相同</strong>。8K超级像素、真RGB、无限高刷新率、6000nit、32bit色深、无黑边，无任何缩水。</div>
+      <div class="spec-grid">
+        <div class="spec-item"><div class="spec-label">分辨率</div><div class="spec-value td-gold">8K超级像素</div></div>
+        <div class="spec-item"><div class="spec-label">排列</div><div class="spec-value td-good">真RGB</div></div>
+        <div class="spec-item"><div class="spec-label">刷新率</div><div class="spec-value td-gold">无限高</div></div>
+        <div class="spec-item"><div class="spec-label">亮度</div><div class="spec-value">与主屏相同</div></div>
+      </div>
+    </div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">🖥</div><div class="verdict-text"><strong>8K + 真RGB + 无限高刷新率 + 全亮度真DC + 无黑边。</strong>全屏6000nit、32bit、高于钻石硬度、1200nit仅0.12W。烧屏已解决。背屏与主屏完全相同。</div></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- BATTERY -->
+<section class="section" id="battery">
+  <div class="container fade-in">
+    <div class="section-watermark">04</div>
+    <div class="section-tag">04 / 续航与充电</div>
+    <div class="section-toggle" onclick="toggleSection(this)"><span>70000mAh · 无限寿命</span><span class="toggle-arrow">▼</span></div>
+    <h2 class="desktop-only section-collapsible open">70000mAh · 无限寿命</h2>
+    <p class="section-desc section-collapsible open">70000mAh，600W有线，450W无线，300W反充。充电不发热，寿命无限不损耗。</p>
+    <div class="spec-card best section-collapsible open">
+      <div class="card-badge">永不断电</div>
+      <div class="card-rank">续航 · 充电 · 寿命</div>
+      <h3>电池与充电系统</h3>
+      <div class="card-desc"><strong>70000mAh</strong>。<strong>600W有线</strong>、<strong>450W无线</strong>、<strong>300W反向充电</strong>。充电发热已解决。电池寿命<strong>无限不损耗</strong>。</div>
+      <div class="spec-grid">
+        <div class="spec-item"><div class="spec-label">电池容量</div><div class="spec-value td-gold">70000mAh</div></div>
+        <div class="spec-item"><div class="spec-label">有线快充</div><div class="spec-value td-accent">600W</div></div>
+        <div class="spec-item"><div class="spec-label">无线快充</div><div class="spec-value td-accent">450W</div></div>
+        <div class="spec-item"><div class="spec-label">反向充电</div><div class="spec-value td-accent">300W</div></div>
+        <div class="spec-item"><div class="spec-label">充电发热</div><div class="spec-value td-good">已解决</div></div>
+        <div class="spec-item"><div class="spec-label">电池寿命</div><div class="spec-value td-good">无限不损耗</div></div>
+      </div>
+    </div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">🔋</div><div class="verdict-text"><strong>70000mAh + 600W + 450W + 300W反充。</strong>充电不发热，寿命无限不损耗。配合0.2W日用功耗，永不断电。</div></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- OTHER -->
+<section class="section" id="other">
+  <div class="container fade-in from-left">
+    <div class="section-watermark">05</div>
+    <div class="section-tag">05 / 全面配置</div>
+    <div class="section-toggle" onclick="toggleSection(this)"><span>每一项都是顶级</span><span class="toggle-arrow">▼</span></div>
+    <h2 class="desktop-only section-collapsible open">每一项都是顶级</h2>
+    <p class="section-desc section-collapsible open">尺寸、重量、防护、散热、马达、外放、解锁、材质、内存、接口——无一妥协。</p>
+    <div class="size-hero-card section-collapsible open">
+      <div class="sh-header">
+        <div class="sh-icon">📐</div>
+        <div class="sh-header-text">
+          <h3>穹顶之形</h3>
+          <div class="sh-sub">尺寸 · 重量 · 手感 · 设计</div>
+        </div>
+      </div>
+      <div class="size-strip">
+        <div class="size-strip-item"><div class="ss-value">6.3"-7"</div><div class="ss-label">自由定制</div></div>
+        <div class="size-strip-item"><div class="ss-value">6.7mm</div><div class="ss-label">机身厚度</div></div>
+        <div class="size-strip-item"><div class="ss-value">0.78mm</div><div class="ss-label">背屏/镜头突起</div></div>
+        <div class="size-strip-item"><div class="ss-value">167g</div><div class="ss-label">整机重量</div></div>
+      </div>
+      <div class="sh-desc"><strong>直屏设计</strong>，中框<strong>反包微曲</strong>处理，棱角与弧度完美过渡，握持感是目前所有手机中最舒服的。屏幕尺寸支持<strong>6.3英寸到7英寸自由定制</strong>。机身厚度仅<strong>6.7mm</strong>，背屏与摄像头突起仅<strong>0.78mm</strong>，整机重量仅<strong>167g</strong>。在70000mAh电池和8英寸半画幅相机模组的前提下做到如此轻薄，工业设计登峰造极。</div>
+    </div>
+    <div class="feat-grid section-collapsible open" style="margin-top:20px;">
+      <div class="feat-card"><div class="feat-icon">🛡</div><h4>顶级防水防尘</h4><p>200年内<strong>0进水可能</strong>，防<strong>任何液体</strong>和<strong>任何灰尘</strong>。做到了<strong>防水溅也防手贱</strong>。抗摔能力顶级，任意角度<strong>3000米砸钉子</strong>无磕碰无划痕。</p></div>
+      <div class="feat-card"><div class="feat-icon">❄️</div><h4>3D循环冷泵（真水冷版）</h4><p>穹顶处理器发热量极小，散热只需<strong>3D循环冷泵真水冷版</strong>，几乎完全解决内部积热。无需风扇，无需大面积散热片。</p></div>
+      <div class="feat-card"><div class="feat-icon">🔓</div><h4>超声波指纹 + 3D人脸识别</h4><p><strong>超声波指纹</strong> + <strong>3D人脸识别</strong>双重生物识别。全场景秒解锁，安全与便捷兼得。</p></div>
+      <div class="feat-card"><div class="feat-icon">💎</div><h4>水晶金属融合中框 + 陶瓷背板</h4><p>中框<strong>水晶金属融合</strong>工艺，背板<strong>陶瓷材质</strong>。质感、手感、坚固全部拉满。</p></div>
+      <div class="feat-card"><div class="feat-icon">📳</div><h4>1260mm³ 超强3D立体马达</h4><p><strong>1260立方毫米</strong>超强3D立体马达。触感细腻、方向感强、震感有力。</p></div>
+      <div class="feat-card"><div class="feat-icon">🔊</div><h4>2.1声道 · 对称大音腔 + 隐藏式低音炮</h4><p>顶级<strong>对称大音腔双扬</strong> + <strong>隐藏式低音炮</strong>，组成<strong>2.1声道</strong>。外放浑厚，低频澎湃。</p></div>
+      <div class="feat-card"><div class="feat-icon">📡</div><h4>全频段信号 · USB 8.2</h4><p>支持<strong>全频段信号</strong>，信号永远满格。<strong>USB 8.2</strong>接口，传输突破天际。</p></div>
+      <div class="feat-card"><div class="feat-icon">🧠</div><h4>DDR16内存 · 256G+64TB</h4><p><strong>DDR16</strong>超高速内存。<strong>256GB内存+64TB存储</strong>，永不告急。</p></div>
+    </div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">✨</div><div class="verdict-text"><strong>6.3"-7"定制 · 直屏反包微曲 · 6.7mm · 0.78mm突起 · 167g · 200年防水 · 3000米抗摔 · 水冷 · 超声波+3D人脸 · 水晶金属+陶瓷 · 1260mm³马达 · 2.1声道 · USB 8.2 · DDR16 · 256G+64TB。</strong>每一项顶级中的顶级，没有任何妥协。</div></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- PRICE -->
+<section class="price-section" id="price">
+  <div class="price-bg"></div>
+  <div class="price-content">
+    <div class="price-label">妙妙 · 穹顶</div>
+    <div class="price-row"><div class="price-number">1999</div><div class="price-unit">元</div></div>
+    <div class="price-sub">0.2nm · 室温超导 · 8英寸半画幅 · 360倍真光学变焦<br>70000mAh · 600W · 8K无限刷新率 · 无限电池寿命<br>6.3"-7"自由定制 · 直屏反包微曲 · 6.7mm · 167g<br>200年防水 · 3000米抗摔 · 徕卡哈苏蔡司<br><strong>1999元。穹顶之上，震撼人心。</strong></div>
+  </div>
+</section>
+<footer><div class="container"><p>妙妙 · 穹顶系列 · 仅供参考 · 以实际产品为准</p></div></footer>
+
+<script>
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').classList.add('done');},600);});
+const progressBar=document.getElementById('progress'),pillFill=document.querySelector('#progress-pill .fill'),pillPct=document.querySelector('#progress-pill .pct');
+function updateProgress(){const s=window.scrollY,d=document.documentElement.scrollHeight-window.innerHeight,p=d>0?Math.min(100,Math.round(s/d*100)):0;progressBar.style.width=p+'%';if(pillFill){pillFill.style.width=p+'%';pillPct.textContent=p+'%';}}
+const navEl=document.getElementById('mainNav'),backTop=document.getElementById('backTop'),sections=document.querySelectorAll('.section[id],.price-section[id]'),navLinks=document.querySelectorAll('nav a[data-section]'),tabLinks=document.querySelectorAll('.mobile-tabbar a[data-section]');let currentSection='';
+function updateNav(){const sy=window.scrollY;navEl.classList.toggle('shrink',sy>80);backTop.classList.toggle('show',sy>500);let cur='';sections.forEach(s=>{if(sy>=s.offsetTop-200)cur=s.id;});if(cur!==currentSection){currentSection=cur;navLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===cur));tabLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===cur));}}
+const cardObserver=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>{e.target.classList.add('card-visible');},i*60);cardObserver.unobserve(e.target);}});},{threshold:0.1});
+document.querySelectorAll('.spec-card,.feat-card,.cam-card,.size-hero-card').forEach(el=>cardObserver.observe(el));
+const fadeObserver=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(el=>fadeObserver.observe(el));
+document.querySelectorAll('nav a[href^="#"],.mobile-tabbar a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');}});});
+let ticking=false;window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{updateProgress();updateNav();ticking=false;});ticking=true;}},{passive:true});
+function toggleSection(el){el.classList.toggle('open');el.parentElement.querySelectorAll('.section-collapsible').forEach(c=>c.classList.toggle('open'));}
+
+/* Toast */
+const toasts=[
+"妙妙手机信号太强，邻居的WiFi都自动连过来了",
+"用妙妙手机拍照，三个摄影师当场转行送外卖",
+"妙妙手机太薄6.7mm，差点被风吹进下水道",
+"167g + 70000mAh = 违反物理定律",
+"室温超导处理器，冬天想暖手都暖不了，因为它不发热",
+"360倍光学变焦，拍到了月球上嫦娥的朋友圈",
+"600W快充，充完电外卖还没送到",
+"用了妙妙手机，相机、充电宝、暖手宝全部下岗",
+"70000mAh充一次用一年，充完发现已经过年了",
+"10GHz处理器，打开计算器终于不卡了",
+"8K屏幕太清晰，代码里的bug都看得一清二楚",
+"f/0.23光圈，连黑洞边缘的光都能拍到",
+"室温超导材料，物理学家看了集体辞职",
+"0.2nm工艺，比你前任的心还小",
+"本地部署上百个AI大模型，它比我聪明太多了",
+"背屏和主屏一样好，翻过来就是一台新手机",
+"1999的价格，我以为小数点往前移了一位",
+"6W跑满峰值，一节5号电池都嫌功率太大",
+"日用0.2W功耗，手机待机比关机还省电",
+"USB 8.2接口，传完整个互联网只要3秒",
+"DDR16内存，打开400个Chrome标签页毫无压力",
+"64TB存储，装下整个Steam游戏库还剩63.5TB",
+"陶瓷背板太滑，但它抗摔3000米所以无所谓",
+"2.1声道外放，邻居以为我在家里开演唱会",
+"超声波指纹解锁，戴着手套也能秒解",
+"防水防尘200年，这手机能传给曾曾曾曾孙",
+"32bit色深，比人眼能分辨的颜色多了亿点点",
+"无限高刷新率，眼睛表示已经放弃跟上了",
+"6000nit亮度，白天也能当手电筒闪瞎路人",
+"屏幕硬度高于钻石，前女友拿钻戒划了半天白划",
+"167g拿在手里感觉沉甸甸——因为承载着1999的重量",
+"马达振动太细腻，打字打上瘾了，键盘已吃灰",
+"镜头只凸起0.78mm，设计师为此秃了三次头",
+"直屏设计+反包微曲，手感好到不想放下来",
+"300W反向充电，给邻居的电动车充电都绰绰有余",
+"450W无线充电，手机放桌上3秒就满了",
+"电池寿命无限不损耗，这手机比你活得还久",
+"全频段信号，珠穆朗玛峰顶也能流畅刷短视频",
+"水晶金属中框，拿出去比大金链子还有面子",
+"妙妙手机太完美了，我找缺点找了三天三夜没找到",
+"买了妙妙手机后，我卖了相机、充电宝和暖手宝，小赚一笔",
+"蔡司徕卡哈苏三重合作，拍照自带大师buff",
+"2cm最近对焦距离，拍到了蚂蚁脸上的青春痘",
+"真光学连续变焦0.2-360倍，从被窝拍到月球",
+"LOFIC 65EV动态范围，对着太阳拍都不过曝",
+"真RGB排列，终于不用忍受彩虹色的绿屏了",
+"真DC调光，熬夜玩手机眼睛也不累了（但还是别熬夜）",
+"无黑边设计，屏幕到边框全是屏，屏占比200%",
+"尺寸自由定制，每个人都拿到专属手机，再也没人说'太大了'",
+"妙妙手机建议零售价1999，友商建议集体转行",
+"12亿像素放大100倍还能数清对面楼里蚂蚁的腿毛",
+"内置上百个AI大模型，你的手机比你更了解你自己",
+"600W快充的充电头比手机还重，但谁在乎呢",
+"3000米砸钉子无划痕，这手机是来当防弹衣的吧",
+"200年防水认证，手机掉马里亚纳海沟捞出来还能用",
+"6.7mm厚度比银行卡还薄，但里面有70000mAh电池，工程师头发全没了",
+"妙妙手机唯一的缺点——你再也看不上其他手机了"
+];
+let toastIdx=[];
+function shuffleToasts(){toastIdx=[...Array(toasts.length).keys()];for(let i=toastIdx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[toastIdx[i],toastIdx[j]]=[toastIdx[j],toastIdx[i]];}}
+shuffleToasts();let toastPos=0;
+function showToast(){
+  if(toastPos>=toastIdx.length){shuffleToasts();toastPos=0;}
+  const text=toasts[toastIdx[toastPos++]];
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className='toast';
+  el.innerHTML='<div class="toast-head"><div class="toast-dot"></div><div class="toast-label">妙妙彩蛋</div></div><div class="toast-body">'+text+'</div>';
+  wrap.appendChild(el);
+  const readTime=Math.max(4000,Math.min(8000,text.length*120));
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>{if(el.parentNode)el.parentNode.removeChild(el);},400);},readTime);
+}
+function scheduleNext(){const delay=15000+Math.random()*25000;setTimeout(()=>{showToast();scheduleNext();},delay);}
+setTimeout(()=>{showToast();scheduleNext();},8000);
+</script>
+</body>
+</html>
