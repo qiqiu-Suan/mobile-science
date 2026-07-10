@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手机性能科普</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-deep:#080810;--accent:#FF6900;--accent-light:#F5A623;--text-primary:#e8e4dc;--text-secondary:#8a857e;--text-muted:#555566;--ram:#33aaff;--ok:#b4ff39;--warn:#e74c3c;--purple:#AB47BC}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg-deep);color:var(--text-primary);line-height:1.8;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 600px 600px at 15% 10%,rgba(255,105,0,.1) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 85% 85%,rgba(245,166,35,.07) 0%,transparent 70%),radial-gradient(ellipse 700px 400px at 50% 50%,rgba(51,170,255,.04) 0%,transparent 70%),radial-gradient(ellipse 400px 400px at 70% 20%,rgba(171,71,188,.05) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 30% 80%,rgba(180,255,57,.03) 0%,transparent 70%)}
+.noise-overlay{position:fixed;inset:0;opacity:.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+.container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 24px}
+a{color:var(--accent);text-decoration:none}
+
+/* ===== [1] 漂浮光斑 ===== */
+.light-spot{position:fixed;border-radius:50%;pointer-events:none;z-index:0;will-change:transform}
+.ls-1{width:clamp(300px,50vw,600px);height:clamp(300px,50vw,600px);background:rgba(255,105,0,.045);filter:blur(80px);animation:lsFloat1 28s ease-in-out infinite}
+.ls-2{width:clamp(250px,40vw,500px);height:clamp(250px,40vw,500px);background:rgba(51,170,255,.04);filter:blur(70px);animation:lsFloat2 32s ease-in-out infinite}
+.ls-3{width:clamp(200px,35vw,450px);height:clamp(200px,35vw,450px);background:rgba(171,71,188,.035);filter:blur(75px);animation:lsFloat3 26s ease-in-out infinite}
+@keyframes lsFloat1{0%,100%{transform:translate(5vw,15vh) scale(1)}25%{transform:translate(55vw,25vh) scale(1.1)}50%{transform:translate(25vw,65vh) scale(.95)}75%{transform:translate(65vw,45vh) scale(1.05)}}
+@keyframes lsFloat2{0%,100%{transform:translate(70vw,60vh) scale(1)}25%{transform:translate(20vw,75vh) scale(1.08)}50%{transform:translate(60vw,15vh) scale(.92)}75%{transform:translate(35vw,40vh) scale(1.04)}}
+@keyframes lsFloat3{0%,100%{transform:translate(40vw,80vh) scale(1)}33%{transform:translate(75vw,20vh) scale(1.06)}66%{transform:translate(10vw,50vh) scale(.94)}}
+
+/* ===== [10] 暗角 ===== */
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:9997;box-shadow:inset 0 0 120px 20px rgba(0,0,0,.35)}
+
+/* ===== [2] 阅读进度条 ===== */
+.reading-bar{position:fixed;top:52px;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-light),var(--ram));z-index:1001;transition:width .08s linear}
+
+/* ===== NAV ===== */
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,8,16,.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06);height:52px;display:flex;align-items:center}
+.site-nav .inner{max-width:1200px;margin:0 auto;padding:0 16px;width:100%;display:flex;align-items:center;justify-content:space-between}
+.site-nav .brand{font-family:'Space Mono',monospace;font-weight:700;font-size:.85rem;color:var(--accent);letter-spacing:.04em}
+.site-nav .links{display:flex;gap:4px;flex-wrap:wrap}
+.site-nav .links a{font-size:10px;font-family:'Space Mono',monospace;padding:4px 8px;border-radius:5px;color:var(--text-muted);transition:all .2s;text-transform:uppercase;letter-spacing:.02em;position:relative}
+.site-nav .links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+/* [16] 导航呼吸光点 */
+.site-nav .links a::after{content:'';position:absolute;top:3px;right:3px;width:4px;height:4px;border-radius:50%;animation:navDot 3s ease-in-out infinite}
+.site-nav .links a:nth-child(1)::after{background:#e74c3c;animation-delay:0s}
+.site-nav .links a:nth-child(2)::after{background:#33aaff;animation-delay:.5s}
+.site-nav .links a:nth-child(3)::after{background:#A2AAAD;animation-delay:1s}
+.site-nav .links a:nth-child(4)::after{background:#5c6bc0;animation-delay:1.5s}
+.site-nav .links a:nth-child(5)::after{background:#AB47BC;animation-delay:2s}
+.site-nav .links a:nth-child(6)::after{background:#9B7653;animation-delay:2.5s}
+@keyframes navDot{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.6;transform:scale(1.4)}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:100px 24px 60px;position:relative}
+.hero-badge{display:inline-block;padding:5px 16px;background:rgba(255,105,0,.08);border:1px solid rgba(255,105,0,.12);border-radius:50px;font-size:12px;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:24px;animation:fadeDown .8s ease forwards;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.hero h1{font-size:clamp(32px,8vw,72px);font-weight:900;line-height:1.15;margin-bottom:24px;animation:fadeUp .8s ease .2s forwards;opacity:0;padding:0 8px}
+.hero h1 .gradient-text{background:linear-gradient(135deg,#FF6900,#F5A623,#FFF3E0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-intro{font-size:clamp(14px,2.5vw,17px);color:var(--text-secondary);max-width:680px;margin-bottom:16px;animation:fadeUp .8s ease .4s forwards;opacity:0;padding:0 8px}
+.hero-intro em{color:var(--accent-light);font-style:normal;font-weight:700}
+.hero-note{font-size:clamp(13px,2.5vw,15px);color:var(--text-muted);max-width:600px;animation:fadeUp .8s ease .55s forwards;opacity:0;line-height:1.9;padding:0 12px}
+.hero-note strong{color:var(--text-secondary)}
+.hero-nav{display:flex;gap:12px;justify-content:center;margin-top:24px;animation:fadeUp .8s ease .6s forwards;opacity:0}
+.hero-nav-card{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px 28px 12px 24px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
+.hero-nav-card::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);transition:all .3s}
+.hero-nav-card:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.hero-nav-card:hover::after{left:10%;right:10%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.hero-nav-card:hover .hero-nav-hint{color:var(--accent-light)}
+.hero-nav-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+.hero-nav-hint{font-size:10px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.04em;transition:color .3s}
+.hero-nav-hint .arrow{color:#F5A623}
+
+/* SECTIONS */
+section{padding:100px 0;position:relative}
+.section-header{text-align:center;margin-bottom:50px}
+.section-tag{display:inline-block;padding:4px 12px;background:rgba(255,105,0,.06);border:1px solid rgba(255,105,0,.1);border-radius:50px;font-size:10px;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.section-header h2{font-size:clamp(22px,5vw,42px);font-weight:900;margin-bottom:12px;position:relative;display:inline-block}
+/* [20] 标题打字下划线 */
+.section-header h2::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light));border-radius:2px;transition:width .6s cubic-bezier(.16,1,.3,1)}
+.section-header h2.typed::after{width:100%}
+.section-header p{color:var(--text-secondary);font-size:clamp(13px,2.5vw,15px);max-width:600px;margin:0 auto;padding:0 8px}
+
+/* [7] 板块分隔装饰 */
+.section-divider{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0;position:relative;z-index:2}
+.section-divider .sd-line{height:1px;flex:1;max-width:120px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.section-divider .sd-diamond{width:8px;height:8px;border:1px solid rgba(255,255,255,.1);transform:rotate(45deg);position:relative}
+.section-divider .sd-diamond::after{content:'';position:absolute;inset:2px;background:rgba(255,105,0,.3);border-radius:1px}
+
+/* SOC PARTS */
+.parts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.part-card{background:rgba(255,255,255,.02);backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 22px 20px;transition:all .35s ease;position:relative;overflow:hidden}
+.part-card::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.part-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--card-color);border-radius:2px 0 0 2px;opacity:.6}
+.part-card:hover{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);transform:translateY(-5px);box-shadow:0 24px 60px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06)}
+.part-card.featured{padding:28px 26px 24px}
+.part-num{position:absolute;top:14px;right:16px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:.1em;opacity:.3}
+.part-icon-wrap{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:15px;margin-bottom:14px;border:1px solid rgba(255,255,255,.04);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.part-card.featured .part-icon-wrap{width:46px;height:46px;border-radius:14px;font-size:17px}
+.part-name{font-size:17px;font-weight:900;margin-bottom:3px}
+.part-card.featured .part-name{font-size:20px}
+.part-role{font-size:11px;font-family:'Space Mono',monospace;color:var(--card-color);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
+.part-desc{font-size:13px;color:var(--text-secondary);line-height:1.75;margin-bottom:12px}
+.part-desc strong{color:var(--text-primary)}
+.part-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.03em;border:1px solid rgba(255,255,255,.04);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+/* [12] 芯片电路纹理 */
+.circuit-texture{background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h40v40H10z' fill='none' stroke='rgba(255,255,255,.02)' stroke-width='.5'/%3E%3Ccircle cx='10' cy='10' r='2' fill='rgba(255,255,255,.015)'/%3E%3Ccircle cx='50' cy='50' r='2' fill='rgba(255,255,255,.015)'/%3E%3Cpath d='M10 30h20v-20' fill='none' stroke='rgba(255,255,255,.015)' stroke-width='.5'/%3E%3Cpath d='M50 30h-20v20' fill='none' stroke='rgba(255,255,255,.015)' stroke-width='.5'/%3E%3C/svg%3E")}
+
+/* ========== 品牌卡片 ========== */
+.brand-nav-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:40px}
+.brand-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:20px;padding:36px 16px 32px;cursor:pointer;position:relative;overflow:hidden;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;will-change:transform,opacity;opacity:0;transition:border-color .4s,background .4s,box-shadow .4s}
+.brand-card:nth-child(1){animation:fromL .7s .0s cubic-bezier(.25,.8,.25,1) both}
+.brand-card:nth-child(2){animation:fromT .7s .08s cubic-bezier(.25,.8,.25,1) both}
+.brand-card:nth-child(3){animation:fromR .7s .16s cubic-bezier(.25,.8,.25,1) both}
+.brand-card:nth-child(4){animation:fromL .7s .24s cubic-bezier(.25,.8,.25,1) both}
+.brand-card:nth-child(5){animation:fromB .7s .32s cubic-bezier(.25,.8,.25,1) both}
+.brand-card:nth-child(6){animation:fromR .7s .40s cubic-bezier(.25,.8,.25,1) both}
+@keyframes fromL{from{opacity:0;transform:perspective(800px) rotateY(25deg) translateX(-80px)}to{opacity:1;transform:perspective(800px) rotateY(0) translateX(0)}}
+@keyframes fromT{from{opacity:0;transform:perspective(800px) rotateX(30deg) translateY(-80px)}to{opacity:1;transform:perspective(800px) rotateX(0) translateY(0)}}
+@keyframes fromR{from{opacity:0;transform:perspective(800px) rotateY(-25deg) translateX(80px)}to{opacity:1;transform:perspective(800px) rotateY(0) translateX(0)}}
+@keyframes fromB{from{opacity:0;transform:perspective(800px) rotateX(-20deg) translateY(80px)}to{opacity:1;transform:perspective(800px) rotateX(0) translateY(0)}}
+.brand-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;z-index:10;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);transition:all .4s}
+/* [17] 频谱条替代呼吸条 */
+.brand-card::after{content:'';position:absolute;bottom:8px;left:20%;right:20%;height:12px;z-index:10;display:flex;gap:3px;justify-content:center;background:none;border-radius:0;animation:none}
+.brand-card .bc-spec{position:absolute;bottom:8px;width:4px;border-radius:2px;z-index:10;animation:specBounce 1.2s ease-in-out infinite}
+.brand-card .bc-spec:nth-child(1){left:calc(50% - 14px);animation-delay:0s;height:6px}
+.brand-card .bc-spec:nth-child(2){left:calc(50% - 4px);animation-delay:.15s;height:10px}
+.brand-card .bc-spec:nth-child(3){left:calc(50% + 6px);animation-delay:.3s;height:4px}
+.brand-card .bc-spec:nth-child(4){left:calc(50% + 16px);animation-delay:.45s;height:8px}
+@keyframes specBounce{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
+.bc-pat{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.5;transition:opacity .4s}
+.brand-card:hover .bc-pat,.brand-card.is-touched .bc-pat{opacity:.9}
+.pat-diag{background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.015) 10px,rgba(255,255,255,.015) 11px)}
+.pat-dot{background-image:radial-gradient(circle,rgba(255,255,255,.03) 1px,transparent 1px);background-size:14px 14px}
+.pat-cross{background-image:repeating-linear-gradient(0deg,transparent,transparent 14px,rgba(255,255,255,.012) 14px,rgba(255,255,255,.012) 15px),repeating-linear-gradient(90deg,transparent,transparent 14px,rgba(255,255,255,.012) 14px,rgba(255,255,255,.012) 15px)}
+.pat-tri{background-image:repeating-linear-gradient(60deg,transparent,transparent 12px,rgba(255,255,255,.012) 12px,rgba(255,255,255,.012) 13px),repeating-linear-gradient(-60deg,transparent,transparent 12px,rgba(255,255,255,.012) 12px,rgba(255,255,255,.012) 13px)}
+.pat-hex{background-image:repeating-linear-gradient(60deg,transparent,transparent 20px,rgba(255,255,255,.01) 20px,rgba(255,255,255,.01) 21px),repeating-linear-gradient(120deg,transparent,transparent 20px,rgba(255,255,255,.01) 20px,rgba(255,255,255,.01) 21px),repeating-linear-gradient(0deg,transparent,transparent 20px,rgba(255,255,255,.01) 20px,rgba(255,255,255,.01) 21px)}
+.pat-wave{background-image:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.015) 0%,transparent 60%);background-size:30px 30px}
+.bc-glow{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:0}
+.brand-card.glow-ready .bc-glow{animation:glowPulse 5s ease-in-out infinite}
+.brand-card.glow-ready:nth-child(1) .bc-glow{animation-delay:0s}.brand-card.glow-ready:nth-child(2) .bc-glow{animation-delay:.8s}.brand-card.glow-ready:nth-child(3) .bc-glow{animation-delay:1.6s}.brand-card.glow-ready:nth-child(4) .bc-glow{animation-delay:.4s}.brand-card.glow-ready:nth-child(5) .bc-glow{animation-delay:1.2s}.brand-card.glow-ready:nth-child(6) .bc-glow{animation-delay:2s}
+@keyframes glowPulse{0%,100%{opacity:.04;transform:scale(1)}50%{opacity:.08;transform:scale(1.06)}}
+.bc-scan{position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.02),transparent);pointer-events:none;z-index:3;opacity:0}
+.brand-card.glow-ready .bc-scan{opacity:1;animation:autoScan 5s ease-in-out infinite}
+.brand-card.glow-ready:nth-child(1) .bc-scan{animation-delay:0s}.brand-card.glow-ready:nth-child(2) .bc-scan{animation-delay:.8s}.brand-card.glow-ready:nth-child(3) .bc-scan{animation-delay:1.6s}.brand-card.glow-ready:nth-child(4) .bc-scan{animation-delay:2.4s}.brand-card.glow-ready:nth-child(5) .bc-scan{animation-delay:3.2s}.brand-card.glow-ready:nth-child(6) .bc-scan{animation-delay:4s}
+@keyframes autoScan{0%{left:-60%}40%{left:110%}100%{left:110%}}
+.bc-mlight{position:absolute;width:260px;height:260px;border-radius:50%;pointer-events:none;z-index:5;background:radial-gradient(circle,rgba(255,255,255,.1) 0%,transparent 70%);opacity:0;transition:opacity .3s;transform:translate(-50%,-50%);will-change:left,top}
+.brand-card:hover .bc-mlight{opacity:1}
+.bc-streak{position:absolute;top:-50%;left:-50%;width:200%;height:200%;pointer-events:none;z-index:5;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.02) 45%,rgba(255,255,255,.04) 50%,rgba(255,255,255,.02) 55%,transparent 60%);transform:translateX(-100%);transition:transform .8s ease}
+.brand-card:hover .bc-streak{transform:translateX(20%)}
+.bc-wm{position:absolute;bottom:-15px;right:-5px;font-family:'Space Mono',monospace;font-weight:900;font-size:130px;line-height:1;color:var(--bc);opacity:.025;pointer-events:none;z-index:2;transition:opacity .4s;will-change:transform}
+.brand-card:hover .bc-wm{opacity:.055}
+.bc-badge{position:absolute;top:14px;right:14px;font-size:12px;pointer-events:none;z-index:6;animation:badgeFlash 5s ease-in-out infinite}
+.brand-card:nth-child(1) .bc-badge{animation-delay:0s}.brand-card:nth-child(2) .bc-badge{animation-delay:.7s}.brand-card:nth-child(3) .bc-badge{animation-delay:1.4s}.brand-card:nth-child(4) .bc-badge{animation-delay:2.1s}.brand-card:nth-child(5) .bc-badge{animation-delay:2.8s}.brand-card:nth-child(6) .bc-badge{animation-delay:3.5s}
+@keyframes badgeFlash{0%,80%,100%{opacity:.1;transform:scale(1)}88%{opacity:.35;transform:scale(1.2)}95%{opacity:.15;transform:scale(1)}}
+.brand-card:hover .bc-badge{opacity:.3!important;animation:none}
+.bc-ic{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:20px;border:1px solid rgba(255,255,255,.04);position:relative;z-index:6;transition:all .5s cubic-bezier(.25,.8,.25,1);will-change:transform}
+.brand-card:hover .bc-ic{transform:scale(1.12) rotate(360deg);box-shadow:0 0 24px rgba(255,255,255,.08)}
+.bc-nm{font-size:16px;font-weight:700;position:relative;z-index:6;transition:all .3s}
+.brand-card:hover .bc-nm{color:#fff;letter-spacing:.04em}
+.bc-sb{font-size:10px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;position:relative;z-index:6;transition:color .3s}
+.brand-card:hover .bc-sb{color:rgba(255,255,255,.35)}
+.brand-card .ripple-ring{position:absolute;border-radius:50%;border:1.5px solid var(--bc);pointer-events:none;z-index:20;width:20px;height:20px;transform:translate(-50%,-50%) scale(0);opacity:.4;animation:rippleOut .6s ease-out forwards}
+@keyframes rippleOut{to{transform:translate(-50%,-50%) scale(15);opacity:0}}
+.brand-card.long-press .bc-glow{animation:none!important;opacity:.2!important;transition:opacity .8s ease}
+.brand-card:hover{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.03);box-shadow:0 24px 60px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.02),inset 0 1px 0 rgba(255,255,255,.04)}
+.brand-card:hover::before{left:5%;right:5%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)}
+
+/* [18] 屏幕边缘闪光 */
+.edge-flash{position:fixed;top:0;bottom:0;width:3px;z-index:9998;opacity:0;pointer-events:none;transition:opacity .15s}
+.edge-flash.left{left:0}
+.edge-flash.right{right:0}
+.edge-flash.active{opacity:1}
+
+/* [6] 卡片触摸涟漪 */
+.card-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none;z-index:20;transform:scale(0);animation:cardRippleOut .5s ease-out forwards}
+@keyframes cardRippleOut{to{transform:scale(4);opacity:0}}
+
+/* 品牌铁律 */
+.brand-rec{max-width:800px;margin:0 auto 48px;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px 32px;position:relative;overflow:hidden}
+.brand-rec::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.brand-rec::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--accent),var(--accent-light));border-radius:3px 0 0 3px;opacity:.6}
+.brand-rec h3{font-size:18px;font-weight:900;margin-bottom:12px;color:var(--accent-light)}
+.brand-rec p{font-size:14px;color:var(--text-secondary);line-height:1.85;margin-bottom:8px}
+.brand-rec p:last-child{margin-bottom:0}
+.brand-rec strong{color:var(--text-primary)}
+
+/* 工艺 */
+.nm-intro{max-width:720px;margin:0 auto 40px;text-align:center;font-size:15px;color:var(--text-secondary);line-height:1.9;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px 32px}
+.nm-intro strong{color:var(--accent-light)}
+.nm-intro .highlight-num{color:var(--accent);font-weight:700;font-family:'Space Mono',monospace}
+.nm-track-wrap{max-width:900px;margin:0 auto 48px;padding:0 8px}
+.nm-labels{display:flex;justify-content:space-between;margin-bottom:12px;position:relative}
+.nm-label{text-align:center;flex:1;position:relative;cursor:default}
+.nm-label .nm-value{font-family:'Space Mono',monospace;font-weight:700;font-size:16px;margin-bottom:4px;transition:all .3s}
+.nm-label .nm-status{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.06em;text-transform:uppercase;transition:all .3s}
+.nm-label.old .nm-value{color:var(--text-muted)}.nm-label.old .nm-status{color:rgba(255,255,255,.15)}
+.nm-label.current .nm-value{color:var(--accent);text-shadow:0 0 20px rgba(255,105,0,.3)}.nm-label.current .nm-status{color:var(--accent)}
+.nm-label.next .nm-value{color:rgba(171,71,188,.7)}.nm-label.next .nm-status{color:rgba(171,71,188,.4)}
+.nm-bar-wrap{position:relative;height:10px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.04);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.nm-bar-fill{position:absolute;top:0;left:0;bottom:0;border-radius:10px;background:linear-gradient(90deg,rgba(255,255,255,.03),var(--accent),var(--accent-light));opacity:.7;transition:width 1.5s cubic-bezier(.16,1,.3,1)}
+.nm-bar-glow{position:absolute;top:-4px;right:-4px;bottom:-4px;width:24px;border-radius:50%;background:var(--accent);filter:blur(8px);opacity:.5}
+.nm-bar-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--bg-deep);box-shadow:0 0 12px rgba(255,105,0,.5)}
+.nm-chips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;max-width:900px;margin:0 auto}
+.nm-chip{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:16px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.nm-chip::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.nm-chip:hover{border-color:rgba(255,255,255,.1);transform:translateY(-3px)}
+.nm-chip .chip-nm{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em}
+.nm-chip .chip-name{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.nm-chip .chip-example{font-size:11px;color:var(--text-muted);line-height:1.5}
+.nm-chip.highlight{border-color:rgba(255,105,0,.15);background:rgba(255,105,0,.03)}
+.nm-chip.highlight .chip-nm{color:var(--accent)}
+
+/* 缓存 */
+.cache-intro{max-width:720px;margin:0 auto 48px;text-align:center;font-size:15px;color:var(--text-secondary);line-height:1.9;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px 32px}
+.cache-intro strong{color:var(--accent-light)}
+.cache-pyramid{max-width:800px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:14px}
+.cache-tier{background:rgba(255,255,255,.02);backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 28px;position:relative;overflow:hidden;transition:all .35s ease;display:flex;align-items:center;gap:20px;min-height:170px;width:100%}
+.cache-tier::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)}
+.cache-tier::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--tier-color);border-radius:3px 0 0 3px;opacity:.7}
+.cache-tier:hover{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);transform:translateY(-3px)}
+/* [15] 能量流动箭头 */
+.energy-flow{text-align:center;font-size:18px;color:rgba(255,255,255,.1);letter-spacing:4px;animation:energyPulse 2s ease-in-out infinite;position:relative;z-index:2}
+@keyframes energyPulse{0%,100%{opacity:.15;transform:translateY(0)}50%{opacity:.35;transform:translateY(3px)}}
+.tier-icon{width:52px;height:52px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid rgba(255,255,255,.04);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.tier-body{flex:1}
+.tier-header{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+.tier-name{font-size:18px;font-weight:900}
+.tier-meta{font-size:10px;font-family:'Space Mono',monospace;color:var(--tier-color);letter-spacing:.06em;text-transform:uppercase}
+.tier-desc{font-size:13px;color:var(--text-secondary);line-height:1.75}
+.tier-desc strong{color:var(--text-primary)}
+.speed-bar{display:flex;align-items:center;gap:8px;margin-top:10px}
+.speed-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.06em;white-space:nowrap}
+.speed-track{flex:1;height:6px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.speed-fill{height:100%;border-radius:6px;transition:width 1.2s ease}
+.cache-warn{max-width:800px;margin:40px auto 0;background:rgba(231,76,60,.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(231,76,60,.12);border-left:3px solid rgba(231,76,60,.5);border-radius:0 16px 16px 0;padding:24px 28px;font-size:14px;color:var(--text-secondary);line-height:1.85}
+.cache-warn strong{color:#e74c3c}
+
+/* CPU */
+.cpu-intro{max-width:720px;margin:0 auto 48px;text-align:center;font-size:15px;color:var(--text-secondary);line-height:1.9;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px 32px}
+.cpu-intro strong{color:var(--accent-light)}
+.core-types{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:800px;margin:0 auto 48px}
+.core-type{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 20px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.core-type::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.core-type::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c-color);border-radius:3px 0 0 3px;opacity:.6}
+.core-type:hover{border-color:rgba(255,255,255,.1);transform:translateY(-3px)}
+.core-icon{width:56px;height:56px;border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;border:1px solid rgba(255,255,255,.04)}
+.core-type-name{font-size:17px;font-weight:900;margin-bottom:4px}
+.core-type-role{font-size:10px;font-family:'Space Mono',monospace;color:var(--c-color);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.core-type-desc{font-size:13px;color:var(--text-secondary);line-height:1.7}
+.core-type-desc strong{color:var(--text-primary)}
+.core-configs{display:grid;gap:20px;max-width:900px;margin:0 auto}
+.core-config{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;position:relative;overflow:hidden;transition:all .35s}
+.core-config::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.core-config:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.config-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.config-name{font-size:18px;font-weight:900}
+.config-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--accent-light);letter-spacing:.06em;padding:3px 10px;border:1px solid rgba(245,166,35,.15);border-radius:20px;background:rgba(245,166,35,.05)}
+.core-blocks{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.core-block-prime{width:44px;height:44px;border-radius:10px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent-light);font-family:'Space Mono',monospace;position:relative}
+/* [13] 超大核脉冲波 */
+.core-block-prime::after{content:'';position:absolute;inset:-4px;border-radius:14px;border:1px solid rgba(245,166,35,.2);animation:corePulse 2s ease-out infinite}
+@keyframes corePulse{0%{transform:scale(1);opacity:.4}100%{transform:scale(1.5);opacity:0}}
+.core-block-perf{width:36px;height:36px;border-radius:8px;background:rgba(51,170,255,.12);border:1px solid rgba(51,170,255,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#33aaff;font-family:'Space Mono',monospace}
+.core-block-perf-dim{width:36px;height:36px;border-radius:8px;background:rgba(51,170,255,.06);border:1px solid rgba(51,170,255,.12);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(51,170,255,.5);font-family:'Space Mono',monospace}
+.core-block-eff{width:28px;height:28px;border-radius:6px;background:rgba(138,138,154,.08);border:1px solid rgba(138,138,154,.15);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text-muted);font-family:'Space Mono',monospace}
+.core-config-desc{font-size:13px;color:var(--text-secondary);line-height:1.75}
+.core-config-desc strong{color:var(--text-primary)}
+.cpu-cache-note{max-width:800px;margin:40px auto 0;background:rgba(245,166,35,.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(245,166,35,.1);border-left:3px solid rgba(245,166,35,.4);border-radius:0 16px 16px 0;padding:24px 28px;font-size:14px;color:var(--text-secondary);line-height:1.85}
+.cpu-cache-note strong{color:var(--accent-light)}
+
+/* GPU */
+.gpu-card{max-width:900px;margin:48px auto 0;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden;transition:all .35s}
+.gpu-card::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.gpu-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#33aaff,#06B6D4);border-radius:3px 0 0 3px;opacity:.6}
+.gpu-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-3px)}
+.gpu-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.gpu-icon-wrap{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:20px;color:#33aaff;background:rgba(51,170,255,.1);border:1px solid rgba(51,170,255,.15);flex-shrink:0;position:relative;overflow:hidden}
+.gpu-icon-wrap::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(51,170,255,.15),transparent 70%)}
+.gpu-title{font-size:22px;font-weight:900}
+.gpu-tag{font-size:10px;font-family:'Space Mono',monospace;color:#33aaff;letter-spacing:.06em;padding:3px 10px;border:1px solid rgba(51,170,255,.15);border-radius:20px;background:rgba(51,170,255,.05)}
+.gpu-body p{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:14px}
+.gpu-body p:last-child{margin-bottom:0}
+.gpu-body strong{color:var(--text-primary)}
+.gpu-body em{color:#33aaff;font-style:normal;font-weight:700}
+.gpu-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.cmp-card{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:24px 20px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.cmp-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent)}
+.cmp-card:hover{border-color:rgba(255,255,255,.08);transform:translateY(-2px)}
+.cmp-letter{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:900;font-size:18px;margin:0 auto 12px;border:1px solid rgba(255,255,255,.06)}
+.cmp-label{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.cmp-title{font-size:16px;font-weight:900;margin-bottom:6px}
+.cmp-desc{font-size:12px;color:var(--text-secondary);line-height:1.65}
+.gpu-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.spec{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:18px 12px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.spec::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent)}
+.spec:hover{border-color:rgba(255,255,255,.08)}
+.spec-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.spec-val{font-size:16px;font-weight:900;color:#33aaff}
+.spec-note{font-size:11px;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+.gpu-sum{margin-top:24px;padding:20px 22px;background:rgba(51,170,255,.03);border:1px solid rgba(51,170,255,.08);border-left:3px solid rgba(51,170,255,.4);border-radius:0 14px 14px 0;font-size:14px;color:var(--text-secondary);line-height:1.85}
+.gpu-sum strong{color:#33aaff}
+
+/* 其他部件 */
+.others-grid{display:grid;gap:16px;max-width:900px;margin:28px auto 0}
+.oc{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:28px 24px;position:relative;overflow:hidden;transition:all .35s}
+.oc::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.oc::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--oc);border-radius:3px 0 0 3px;opacity:.6}
+.oc:hover{border-color:rgba(255,255,255,.1);transform:translateY(-3px)}
+.oc-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.oc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:16px;border:1px solid rgba(255,255,255,.04);flex-shrink:0}
+.oc-title{font-size:18px;font-weight:900}
+.oc-subtitle{font-size:10px;font-family:'Space Mono',monospace;color:var(--oc);letter-spacing:.06em;text-transform:uppercase}
+.oc-body p{font-size:14px;color:var(--text-secondary);line-height:1.85;margin-bottom:10px}
+.oc-body p:last-child{margin-bottom:0}
+.oc-body strong{color:var(--text-primary)}
+.oc-body em{color:var(--oc);font-style:normal;font-weight:700}
+
+/* ========== 内存模块 ========== */
+.diff-card{max-width:900px;margin:0 auto 48px;border:1px solid rgba(255,105,0,.12);background:rgba(255,105,0,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden}
+.diff-card::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,105,0,.08),transparent)}
+.diff-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#e74c3c,var(--accent));border-radius:3px 0 0 3px;opacity:.6}
+.diff-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.diff-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:900;font-size:18px;color:#e74c3c;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.15);flex-shrink:0;position:relative;overflow:hidden}
+.diff-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(231,76,60,.12),transparent 70%)}
+.diff-title{font-size:20px;font-weight:900}
+.diff-sub{font-size:12px;color:var(--text-secondary)}
+.diff-body p{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:14px}
+.diff-body p:last-child{margin-bottom:0}
+.diff-body strong{color:var(--text-primary)}
+.diff-table{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.dt-col{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:20px 18px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.dt-col::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent)}
+.dt-col:hover{border-color:rgba(255,255,255,.08)}
+.dt-label{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.dt-name{font-size:22px;font-weight:900;margin-bottom:6px}
+.dt-aka{font-size:11px;font-family:'Space Mono',monospace;color:var(--text-muted);margin-bottom:8px}
+.dt-eg{font-size:13px;color:var(--text-secondary);line-height:1.65}
+.dt-eg strong{color:var(--text-primary)}
+.rec-bar{margin-top:24px;padding:24px;background:rgba(231,76,60,.04);border:1px solid rgba(231,76,60,.12);border-radius:14px;text-align:center;position:relative;overflow:hidden}
+.rec-bar::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(231,76,60,.15),transparent)}
+/* [5] 16+512 呼吸脉冲 */
+.rec-bar.breathe{animation:recBreathe 3s ease-in-out infinite}
+@keyframes recBreathe{0%,100%{border-color:rgba(231,76,60,.12);box-shadow:0 0 0 rgba(231,76,60,0)}50%{border-color:rgba(231,76,60,.3);box-shadow:0 0 30px rgba(231,76,60,.08)}}
+.rec-text{font-size:14px;color:var(--text-secondary);margin-bottom:10px}
+.rec-config{font-size:clamp(28px,5vw,42px);font-weight:900;letter-spacing:.02em}
+.rec-config .ram-num{color:#e74c3c;text-shadow:0 0 20px rgba(231,76,60,.3)}
+.rec-config .plus{color:var(--text-muted);margin:0 4px}
+.rec-config .sto-num{color:var(--ram);text-shadow:0 0 20px rgba(51,170,255,.2)}
+.rec-note{font-size:12px;color:var(--text-secondary);margin-top:8px}
+.rec-note strong{color:var(--text-primary)}
+.ram-intro-card{max-width:900px;margin:0 auto 48px;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden;transition:all .35s}
+.ram-intro-card::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.ram-intro-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--ram),#06B6D4);border-radius:3px 0 0 3px;opacity:.6}
+.ram-intro-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-3px)}
+.ram-intro-header{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.ram-intro-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:20px;color:var(--ram);background:rgba(51,170,255,.1);border:1px solid rgba(51,170,255,.15);flex-shrink:0;position:relative;overflow:hidden}
+.ram-intro-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(51,170,255,.15),transparent 70%)}
+.ram-intro-title{font-size:22px;font-weight:900}
+.ram-intro-tag{font-size:10px;font-family:'Space Mono',monospace;color:var(--ram);letter-spacing:.06em;padding:3px 10px;border:1px solid rgba(51,170,255,.15);border-radius:20px;background:rgba(51,170,255,.05)}
+.ram-intro-body p{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:14px}
+.ram-intro-body p:last-child{margin-bottom:0}
+.ram-intro-body strong{color:var(--text-primary)}
+.ram-intro-body em{color:var(--ram);font-style:normal;font-weight:700}
+.ram-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.ram-cmp{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:24px 20px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.ram-cmp::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent)}
+.ram-cmp:hover{border-color:rgba(255,255,255,.08);transform:translateY(-2px)}
+.ram-cmp-letter{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:900;font-size:18px;margin:0 auto 12px;border:1px solid rgba(255,255,255,.06)}
+.ram-cmp-label{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.ram-cmp-title{font-size:16px;font-weight:900;margin-bottom:6px}
+.ram-cmp-desc{font-size:12px;color:var(--text-secondary);line-height:1.65}
+.ram-bars{display:grid;gap:20px;max-width:900px;margin:0 auto}
+.ram-bar-card{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:28px 24px;position:relative;overflow:hidden;transition:all .35s}
+.ram-bar-card::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.ram-bar-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;opacity:.6;background:var(--rc)}
+.ram-bar-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-3px)}
+.rb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.rb-name{font-size:18px;font-weight:900}
+.rb-tag{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.06em;padding:3px 10px;border-radius:20px;border:1px solid}
+.rb-bar-wrap{position:relative;height:10px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.04);margin-bottom:12px}
+/* [4] 进度条填充动画 */
+.rb-bar-fill{height:100%;border-radius:10px;transition:none;position:relative;width:0}
+.rb-bar-fill.animate{transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+.rb-bar-fill .rb-glow{position:absolute;top:-4px;right:-6px;bottom:-4px;width:20px;border-radius:50%;filter:blur(6px);opacity:.5}
+/* [14] 扫描线 */
+.rb-bar-fill::after{content:'';position:absolute;top:0;left:-30%;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:scanLine 3.5s linear infinite}
+@keyframes scanLine{0%{left:-30%}100%{left:110%}}
+/* [4] 容量条刻度 */
+.rb-ticks{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
+.rb-tick{position:absolute;top:-3px;bottom:-3px;width:1px;background:rgba(255,255,255,.06)}
+.rb-tick-label{position:absolute;top:-18px;font-size:8px;font-family:'Space Mono',monospace;color:var(--text-muted);transform:translateX(-50%)}
+.rb-body{font-size:14px;color:var(--text-secondary);line-height:1.8}
+.rb-body strong{color:var(--text-primary)}
+/* [11] 数字计数器 */
+.counter-num{font-family:'Space Mono',monospace;display:inline-block;min-width:1.6em;text-align:right}
+
+/* 内存扩展 */
+.ram-ext{max-width:900px;margin:0 auto 48px;background:rgba(171,71,188,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(171,71,188,.1);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden}
+.ram-ext::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(171,71,188,.08),transparent)}
+.ram-ext::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--purple),#7B1FA2);border-radius:3px 0 0 3px;opacity:.6}
+.ram-ext-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.ram-ext-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:900;font-size:18px;color:var(--purple);background:rgba(171,71,188,.1);border:1px solid rgba(171,71,188,.15);flex-shrink:0;position:relative;overflow:hidden}
+.ram-ext-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(171,71,188,.12),transparent 70%)}
+.ram-ext-title{font-size:20px;font-weight:900}
+.ram-ext-sub{font-size:10px;font-family:'Space Mono',monospace;color:var(--purple);letter-spacing:.06em}
+.ram-ext-body p{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:14px}
+.ram-ext-body p:last-child{margin-bottom:0}
+.ram-ext-body strong{color:var(--text-primary)}
+.ram-ext-body em{color:var(--purple);font-style:normal;font-weight:700}
+.ram-ext-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.ram-ext-col{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:20px 18px;position:relative;overflow:hidden;transition:all .3s}
+.ram-ext-col::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent)}
+.ram-ext-col:hover{border-color:rgba(255,255,255,.08)}
+.ram-ext-col-title{font-size:14px;font-weight:900;margin-bottom:12px;font-family:'Space Mono',monospace;letter-spacing:.04em}
+.ram-ext-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:8px}
+.ram-ext-item:last-child{margin-bottom:0}
+.ram-ext-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:8px}
+.ram-ext-rec{margin-top:20px;padding:22px;background:rgba(171,71,188,.03);border:1px solid rgba(171,71,188,.1);border-radius:14px;position:relative;overflow:hidden}
+.ram-ext-rec::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(171,71,188,.1),transparent)}
+.ram-ext-rec-title{font-size:14px;font-weight:900;color:var(--purple);margin-bottom:14px;font-family:'Space Mono',monospace;letter-spacing:.04em}
+.ram-ext-rec-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.ram-ext-rec-row:last-child{margin-bottom:0}
+.ram-ext-rec-chip{font-size:11px;font-family:'Space Mono',monospace;font-weight:700;padding:3px 12px;border-radius:20px;border:1px solid;flex-shrink:0;letter-spacing:.04em}
+.ram-ext-rec-desc{font-size:13px;color:var(--text-secondary);line-height:1.7}
+.ram-ext-rec-desc strong{color:var(--text-primary)}
+
+/* [8] 存储选配样式 */
+.ram-storage{max-width:900px;margin:0 auto 48px;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:28px;position:relative;overflow:hidden}
+.ram-storage::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.ram-storage::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--accent-light),var(--accent));border-radius:3px 0 0 3px;opacity:.6}
+.ram-storage-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.ram-storage-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:900;font-size:16px;color:var(--accent-light);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.15);flex-shrink:0}
+.ram-storage-title{font-size:18px;font-weight:900}
+.ram-storage-body{font-size:14px;color:var(--text-secondary);line-height:1.85;margin-bottom:20px}
+.ram-storage-body strong{color:var(--text-primary)}
+.ram-storage-row{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:12px;align-items:center}
+.ram-sc{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:16px 12px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.ram-sc::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent)}
+.ram-sc:hover{border-color:rgba(255,255,255,.08)}
+.ram-sc.recommended{border-color:rgba(180,255,57,.2);background:rgba(180,255,57,.03);transform:scale(1.05);padding:20px 12px;box-shadow:0 0 30px rgba(180,255,57,.05)}
+.ram-sc.recommended .ram-sc-size{font-size:22px}
+.ram-sc.dimmed{opacity:.55}
+.ram-sc-size{font-family:'Space Mono',monospace;font-weight:700;font-size:18px;margin-bottom:4px}
+.ram-sc-verdict{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:6px;border:1px solid}
+.ram-sc-note{font-size:12px;color:var(--text-secondary);line-height:1.5}
+/* [9] 回到顶部 */
+.back-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.05);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;transform:translateY(20px);transition:all .3s;cursor:pointer;color:var(--text-primary);font-size:16px}
+.back-top.show{opacity:1;transform:translateY(0)}
+.back-top:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+
+/* 涨价 */
+.ram-reality{max-width:900px;margin:48px auto 48px;background:rgba(231,76,60,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(231,76,60,.08);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden}
+.ram-reality::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(231,76,60,.06),transparent)}
+.ram-reality::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#e74c3c,#c0392b);border-radius:3px 0 0 3px;opacity:.6}
+.ram-reality-header{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.ram-reality-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:20px;color:#e74c3c;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.15);flex-shrink:0;position:relative;overflow:hidden}
+.ram-reality-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(231,76,60,.15),transparent 70%)}
+.ram-reality-title{font-size:22px;font-weight:900}
+.ram-reality-tag{font-size:10px;font-family:'Space Mono',monospace;color:#e74c3c;letter-spacing:.06em;padding:3px 10px;border:1px solid rgba(231,76,60,.15);border-radius:20px;background:rgba(231,76,60,.05)}
+.ram-reality-body p{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:14px}
+.ram-reality-body p:last-child{margin-bottom:0}
+.ram-reality-body strong{color:var(--text-primary)}
+.ram-reality-body em{color:#e74c3c;font-style:normal;font-weight:700}
+.ram-reality-body em.ok{color:#b4ff39}
+
+/* 结论 */
+.ram-verdict{max-width:900px;margin:0 auto 48px;background:rgba(255,255,255,.02);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden}
+.ram-verdict::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.ram-verdict::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#b4ff39,#7cb342);border-radius:3px 0 0 3px;opacity:.6}
+.ram-verdict-header{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.ram-verdict-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:20px;color:#b4ff39;background:rgba(180,255,57,.06);border:1px solid rgba(180,255,57,.12);flex-shrink:0;position:relative;overflow:hidden}
+.ram-verdict-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(180,255,57,.12),transparent 70%)}
+.ram-verdict-title{font-size:22px;font-weight:900}
+.ram-verdict-body p{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:14px}
+.ram-verdict-body p:last-child{margin-bottom:0}
+.ram-verdict-body strong{color:var(--text-primary)}
+.ram-verdict-body em{color:#b4ff39;font-style:normal;font-weight:700}
+.ram-summary-bar{margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ram-sum-item{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:18px 12px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.ram-sum-item::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent)}
+.ram-sum-item:hover{border-color:rgba(255,255,255,.08)}
+.ram-sum-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.ram-sum-val{font-size:16px;font-weight:900}
+.ram-sum-note{font-size:11px;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+
+/* ANIMATIONS */
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);color:var(--text-muted);font-size:13px;animation:bounce 2s infinite}
+.scroll-hint::after{content:'↓';display:block;text-align:center;margin-top:6px;font-size:18px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-8px)}60%{transform:translateX(-50%) translateY(-4px)}}
+.fade-in{opacity:0;transform:translateY(28px);transition:all .6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ========== 响应式 ========== */
+@media(max-width:1024px){
+  .parts-grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .nm-chips-grid{grid-template-columns:repeat(3,1fr)}
+  .core-types{grid-template-columns:1fr;gap:12px;max-width:400px}
+  /* [3] 手机端品牌卡片横向滑动 */
+  .brand-nav-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;padding:8px 4px 16px;scrollbar-width:none}
+  .brand-nav-grid::-webkit-scrollbar{display:none}
+  .brand-card{min-width:140px;scroll-snap-align:center;flex-shrink:0}
+}
+@media(max-width:640px){
+  .site-nav .links{display:none}
+  .site-nav .inner{padding:0 14px}
+  .hero{padding:80px 16px 48px;min-height:auto;min-height:90vh}
+  .hero-badge{font-size:11px;padding:4px 14px;margin-bottom:20px}
+  .hero h1{margin-bottom:18px}
+  .hero-intro{font-size:14px;margin-bottom:12px}
+  .hero-note{font-size:13px}
+  section{padding:60px 0}
+  .container{padding:0 16px}
+  .section-header{margin-bottom:32px}
+  .section-header h2{font-size:22px}
+  .parts-grid{grid-template-columns:1fr;gap:12px;margin-top:28px}
+  .part-card{padding:20px 18px 18px;border-radius:14px}
+  .part-card.featured{padding:22px 20px 20px}
+  .part-card.featured .part-name{font-size:18px}
+  .part-name{font-size:16px}
+  .part-role{font-size:10px;margin-bottom:8px}
+  .part-desc{font-size:13px;line-height:1.7;margin-bottom:10px}
+  .part-tag{font-size:9px;padding:3px 8px}
+  .part-card:hover{transform:none}
+  .scroll-hint{bottom:24px;font-size:12px}
+  .nm-intro{padding:20px 18px;font-size:14px;margin-bottom:28px}
+  .nm-label .nm-value{font-size:14px}
+  .nm-bar-wrap{height:8px}
+  .nm-bar-dot{width:12px;height:12px}
+  .nm-chips-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .nm-chip{padding:12px}
+  .nm-chip .chip-name{font-size:13px}
+  .cache-intro{padding:20px 18px;font-size:14px;margin-bottom:32px}
+  .cache-tier{padding:18px 16px;gap:14px;flex-direction:column;align-items:flex-start;min-height:auto}
+  .tier-icon{width:44px;height:44px;font-size:20px}
+  .tier-name{font-size:16px}
+  .tier-desc{font-size:13px}
+  .speed-bar{margin-top:8px}
+  .cache-warn{padding:18px 16px;font-size:13px}
+  .hero-nav{flex-direction:column;align-items:center;gap:10px}
+  .hero-nav-card{width:100%;max-width:260px;justify-content:center;padding:10px 20px}
+  .cpu-intro{padding:20px 18px;font-size:14px;margin-bottom:32px}
+  .core-type{padding:18px 16px}
+  .core-config{padding:20px 18px}
+  .config-header{flex-direction:column;align-items:flex-start}
+  .core-block-prime{width:38px;height:38px;font-size:10px}
+  .core-block-perf,.core-block-perf-dim{width:32px;height:32px;font-size:9px}
+  .core-block-eff{width:24px;height:24px;font-size:8px}
+  .cpu-cache-note{padding:18px 16px;font-size:13px}
+  .brand-rec{padding:20px 18px}
+  .brand-rec h3{font-size:16px}
+  .brand-rec p{font-size:13px}
+  .brand-card{padding:24px 12px;gap:10px;border-radius:16px}
+  .brand-card:hover{transform:none}
+  .bc-ic{width:48px;height:48px;border-radius:14px;font-size:18px}
+  .bc-nm{font-size:14px}
+  .bc-mlight,.bc-streak{display:none}
+  .bc-wm{font-size:100px}
+  .gpu-card{padding:22px 18px}
+  .gpu-card:hover{transform:none}
+  .gpu-icon-wrap{width:48px;height:48px;font-size:18px;border-radius:14px}
+  .gpu-title{font-size:19px}
+  .gpu-compare{grid-template-columns:1fr}
+  .cmp-card:hover{transform:none}
+  .gpu-specs{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .spec{padding:14px 8px}
+  .spec-val{font-size:14px}
+  .spec:hover{transform:none}
+  .oc{padding:22px 18px}
+  .oc:hover{transform:none}
+  .diff-card{padding:22px 18px}
+  .diff-table{grid-template-columns:1fr}
+  .dt-col:hover{transform:none}
+  .ram-intro-card{padding:22px 18px}
+  .ram-intro-card:hover{transform:none}
+  .ram-intro-icon{width:48px;height:48px;font-size:18px;border-radius:14px}
+  .ram-intro-title{font-size:19px}
+  .ram-compare-grid{grid-template-columns:1fr}
+  .ram-cmp:hover{transform:none}
+  .ram-bar-card{padding:22px 18px}
+  .ram-bar-card:hover{transform:none}
+  .ram-reality{padding:22px 18px}
+  .ram-reality-icon{width:48px;height:48px;font-size:18px;border-radius:14px}
+  .ram-reality-title{font-size:19px}
+  .ram-ext{padding:22px 18px}
+  .ram-ext-icon{width:48px;height:48px;font-size:17px}
+  .ram-ext-title{font-size:19px}
+  .ram-ext-grid{grid-template-columns:1fr}
+  .ram-ext-col:hover{transform:none}
+  .ram-storage{padding:20px 16px}
+  .ram-storage-icon{width:42px;height:42px;font-size:15px}
+  .ram-storage-title{font-size:17px}
+  .ram-storage-row{grid-template-columns:1fr;gap:10px}
+  .ram-sc.recommended{transform:none}
+  .ram-sc:hover{transform:none}
+  .ram-verdict{padding:22px 18px}
+  .ram-verdict-icon{width:48px;height:48px;font-size:18px;border-radius:14px}
+  .ram-verdict-title{font-size:19px}
+  .ram-summary-bar{grid-template-columns:1fr}
+  .ram-sum-item:hover{transform:none}
+  .back-top{bottom:16px;right:16px;width:40px;height:40px;font-size:14px}
+  /* 手机端品牌卡片修复：改回2列网格 */
+  .brand-nav-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    overflow:visible;
+    padding:8px 4px 16px;
+    scroll-snap-type:none;
+  }
+  .brand-nav-grid::-webkit-scrollbar{display:auto}
+  .brand-card{
+    min-width:0;
+    scroll-snap-align:none;
+    flex-shrink:0;
+  }
+}
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+
+<!-- [1] 漂浮光斑 -->
+<div class="light-spot ls-1"></div>
+<div class="light-spot ls-2"></div>
+<div class="light-spot ls-3"></div>
+
+<!-- [10] 暗角 -->
+<div class="vignette"></div>
+
+<!-- [2] 阅读进度条 -->
+<div class="reading-bar" id="readingBar"></div>
+
+<!-- [18] 屏幕边缘闪光 -->
+<div class="edge-flash left" id="edgeLeft"></div>
+<div class="edge-flash right" id="edgeRight"></div>
+
+<!-- [9] 回到顶部 -->
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<nav class="site-nav">
+<div class="inner">
+  <span class="brand">⚡ 性能科普</span>
+  <div class="links">
+    <a href="snapdragon.html">骁龙</a>
+    <a href="dimensity.html">天玑</a>
+    <a href="apple.html">苹果</a>
+    <a href="samsung.html">三星</a>
+    <a href="xuanjie.html">玄戒</a>
+    <a href="kirin.html">麒麟</a>
+  </div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-badge">手机性能 · 从入门到精通</div>
+  <h1>什么决定<span class="gradient-text">手机性能</span>？</h1>
+  <p class="hero-intro">决定手机性能和体验最重要的硬件，是<strong>处理器</strong>，也叫 <em>SoC</em>（System on Chip，片上系统）。它是一颗集成了 CPU、GPU、基带、AI 引擎等功能的芯片，相当于手机的"大脑"。</p>
+  <p class="hero-note">此外，<strong>内存</strong>也是影响性能的关键因素。处理器和内存的搭配，决定了你手机的上限。</p>
+  <div class="hero-nav">
+    <div class="hero-nav-card" onclick="document.getElementById('soc-parts').scrollIntoView({behavior:'smooth'})">
+      <span class="hero-nav-title"><span style="color:#F5A623">SoC</span> 处理器</span>
+      <span class="hero-nav-hint">点击跳转 <span class="arrow">→</span></span>
+    </div>
+    <div class="hero-nav-card" onclick="document.getElementById('memory').scrollIntoView({behavior:'smooth'})">
+      <span class="hero-nav-title"><span style="color:#33aaff">内存</span></span>
+      <span class="hero-nav-hint">点击跳转 <span class="arrow">→</span></span>
+    </div>
+  </div>
+  <div class="scroll-hint">往下翻</div>
+</section>
+
+<!-- [7] 分隔 -->
+<div class="section-divider"><div class="sd-line"></div><div class="sd-diamond"></div><div class="sd-line"></div></div>
+
+<!-- SOC -->
+<section id="soc-parts">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">基础认知</div><h2>一颗芯片里装了什么？</h2><p>SoC 把多个核心部件集成在一颗芯片上，每个部件各司其职</p></div>
+    <div class="brand-nav-grid">
+      <a href="snapdragon.html" class="brand-card" style="--bc:#e74c3c"><div class="bc-pat pat-diag"></div><div class="bc-glow" style="background:radial-gradient(ellipse at 20% 80%,#e74c3c,transparent 70%)"></div><div class="bc-scan"></div><div class="bc-mlight"></div><div class="bc-streak"></div><div class="bc-wm">S</div><div class="bc-badge">⚡</div><div class="bc-spec" style="background:#e74c3c"></div><div class="bc-spec" style="background:#e74c3c"></div><div class="bc-spec" style="background:#e74c3c"></div><div class="bc-spec" style="background:#e74c3c"></div><div class="bc-ic" style="background:rgba(231,76,60,.1);color:#e74c3c">S</div><div class="bc-nm">骁龙</div><div class="bc-sb">Snapdragon</div></a>
+      <a href="dimensity.html" class="brand-card" style="--bc:#33aaff"><div class="bc-pat pat-dot"></div><div class="bc-glow" style="background:radial-gradient(ellipse at 20% 80%,#33aaff,transparent 70%)"></div><div class="bc-scan"></div><div class="bc-mlight"></div><div class="bc-streak"></div><div class="bc-wm">D</div><div class="bc-badge">✦</div><div class="bc-spec" style="background:#33aaff"></div><div class="bc-spec" style="background:#33aaff"></div><div class="bc-spec" style="background:#33aaff"></div><div class="bc-spec" style="background:#33aaff"></div><div class="bc-ic" style="background:rgba(51,170,255,.1);color:#33aaff">D</div><div class="bc-nm">天玑</div><div class="bc-sb">Dimensity</div></a>
+      <a href="apple.html" class="brand-card" style="--bc:#A2AAAD"><div class="bc-pat pat-cross"></div><div class="bc-glow" style="background:radial-gradient(ellipse at 20% 80%,#A2AAAD,transparent 70%)"></div><div class="bc-scan"></div><div class="bc-mlight"></div><div class="bc-streak"></div><div class="bc-wm">A</div><div class="bc-badge">◆</div><div class="bc-spec" style="background:#A2AAAD"></div><div class="bc-spec" style="background:#A2AAAD"></div><div class="bc-spec" style="background:#A2AAAD"></div><div class="bc-spec" style="background:#A2AAAD"></div><div class="bc-ic" style="background:rgba(162,170,173,.1);color:#A2AAAD">A</div><div class="bc-nm">苹果</div><div class="bc-sb">Apple</div></a>
+      <a href="samsung.html" class="brand-card" style="--bc:#5c6bc0"><div class="bc-pat pat-tri"></div><div class="bc-glow" style="background:radial-gradient(ellipse at 20% 80%,#5c6bc0,transparent 70%)"></div><div class="bc-scan"></div><div class="bc-mlight"></div><div class="bc-streak"></div><div class="bc-wm">E</div><div class="bc-badge">◇</div><div class="bc-spec" style="background:#5c6bc0"></div><div class="bc-spec" style="background:#5c6bc0"></div><div class="bc-spec" style="background:#5c6bc0"></div><div class="bc-spec" style="background:#5c6bc0"></div><div class="bc-ic" style="background:rgba(92,107,192,.1);color:#5c6bc0">E</div><div class="bc-nm">三星</div><div class="bc-sb">Exynos</div></a>
+      <a href="xuanjie.html" class="brand-card" style="--bc:#AB47BC"><div class="bc-pat pat-hex"></div><div class="bc-glow" style="background:radial-gradient(ellipse at 20% 80%,#AB47BC,transparent 70%)"></div><div class="bc-scan"></div><div class="bc-mlight"></div><div class="bc-streak"></div><div class="bc-wm">X</div><div class="bc-badge">◎</div><div class="bc-spec" style="background:#AB47BC"></div><div class="bc-spec" style="background:#AB47BC"></div><div class="bc-spec" style="background:#AB47BC"></div><div class="bc-spec" style="background:#AB47BC"></div><div class="bc-ic" style="background:rgba(171,71,188,.08);color:#AB47BC">X</div><div class="bc-nm">玄戒</div><div class="bc-sb">XuanJie</div></a>
+      <a href="kirin.html" class="brand-card" style="--bc:#9B7653"><div class="bc-pat pat-wave"></div><div class="bc-glow" style="background:radial-gradient(ellipse at 20% 80%,#9B7653,transparent 70%)"></div><div class="bc-scan"></div><div class="bc-mlight"></div><div class="bc-streak"></div><div class="bc-wm">K</div><div class="bc-badge">▲</div><div class="bc-spec" style="background:#9B7653"></div><div class="bc-spec" style="background:#9B7653"></div><div class="bc-spec" style="background:#9B7653"></div><div class="bc-spec" style="background:#9B7653"></div><div class="bc-ic" style="background:rgba(155,118,83,.08);color:#9B7653">K</div><div class="bc-nm">麒麟</div><div class="bc-sb">Kirin</div></a>
+    </div>
+    <div class="brand-rec fade-in">
+      <h3>选 SoC 的第一条铁律：能选骁龙就不选天玑</h3>
+      <p>现在主流手机 SoC 只有两个选择：<strong>骁龙</strong>和<strong>天玑</strong>。骁龙在实际游戏兼容性、系统优化、生态适配上全面领先。天玑只有在<strong>纸面参数</strong>上能胜过骁龙，但实际使用体验，骁龙永远是最好的选择。</p>
+      <p>甚至在一些情况下，<strong>骁龙上一代的 SoC 都可以比最新一代的天玑体验更好</strong>——因为游戏厂商普遍优先适配骁龙，优化更到位。</p>
+      <p>当然，骁龙也有一些坑型号——被砍缓存的"8s"后缀芯片要小心。</p>
+    </div>
+    <div class="parts-grid">
+      <div class="part-card featured fade-in" style="--card-color:#F5A623"><div class="part-num">01</div><div class="part-icon-wrap" style="background:rgba(245,166,35,.08);color:#F5A623">C</div><div class="part-name">CPU</div><div class="part-role">大脑中的大脑</div><div class="part-desc">负责日常操作的运算和调度。<strong>CPU 强，日常就流畅。</strong></div><div class="part-tag" style="background:rgba(245,166,35,.05);color:#F5A623">最影响日常流畅度</div></div>
+      <div class="part-card featured fade-in" style="--card-color:#33aaff"><div class="part-num">02</div><div class="part-icon-wrap" style="background:rgba(51,170,255,.08);color:#33aaff">G</div><div class="part-name">GPU</div><div class="part-role">画面发动机</div><div class="part-desc">相当于电脑的显卡，负责游戏画面渲染和视频解码。<strong>GPU 强，游戏帧率高。</strong></div><div class="part-tag" style="background:rgba(51,170,255,.05);color:#33aaff">最影响游戏体验</div></div>
+      <div class="part-card fade-in" style="--card-color:#b4ff39"><div class="part-num">03</div><div class="part-icon-wrap" style="background:rgba(180,255,57,.06);color:#b4ff39">N</div><div class="part-name">NPU</div><div class="part-role">AI 专用引擎</div><div class="part-desc">拍照 AI 优化、语音助手、实时翻译，都靠它加速。</div><div class="part-tag" style="background:rgba(180,255,57,.04);color:#b4ff39">最影响 AI 能力</div></div>
+      <div class="part-card fade-in" style="--card-color:#FF6900"><div class="part-num">04</div><div class="part-icon-wrap" style="background:rgba(255,105,0,.06);color:#FF6900">I</div><div class="part-name">ISP</div><div class="part-role">拍照幕后功臣</div><div class="part-desc">把摄像头画面处理成照片。ISP 强，夜景更亮、色彩更准。</div><div class="part-tag" style="background:rgba(255,105,0,.04);color:#FF6900">最影响拍照质量</div></div>
+      <div class="part-card fade-in" style="--card-color:#e74c3c"><div class="part-num">05</div><div class="part-icon-wrap" style="background:rgba(231,76,60,.06);color:#e74c3c">M</div><div class="part-name">基带</div><div class="part-role">信号生命线</div><div class="part-desc">负责 5G/WiFi 通信。基带好不好，决定信号稳不稳。</div><div class="part-tag" style="background:rgba(231,76,60,.04);color:#e74c3c">最影响信号与网络</div></div>
+      <div class="part-card fade-in" style="--card-color:#AB47BC"><div class="part-num">06</div><div class="part-icon-wrap" style="background:rgba(171,71,188,.06);color:#AB47BC">R</div><div class="part-name">内存控制器</div><div class="part-role">数据调度员</div><div class="part-desc">协调 CPU 和内存的数据读写，多开 App 不杀后台。</div><div class="part-tag" style="background:rgba(171,71,188,.04);color:#AB47BC">最影响多任务</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="sd-line"></div><div class="sd-diamond"></div><div class="sd-line"></div></div>
+
+<!-- CPU -->
+<section id="cpu">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">核心详解</div><h2>CPU：SoC 的主角</h2></div>
+    <div class="cpu-intro fade-in"><strong>CPU 是 SoC 最核心的部分</strong>，你日常打开 App、刷网页、聊天、多任务切换，全靠它。但 SoC 不全是 CPU——GPU 负责画面，NPU 负责 AI，基带负责信号。<strong>CPU 是主角，但不是唯一的演员。</strong></div>
+    <div class="core-types fade-in">
+      <div class="core-type" style="--c-color:#F5A623"><div class="core-icon" style="background:rgba(245,166,35,.1);color:#F5A623">P</div><div class="core-type-name">超大核</div><div class="core-type-role">Prime Core</div><div class="core-type-desc">最强最耗电，处理<strong>重负载</strong>任务：大型游戏、视频导出、应用启动瞬间。</div></div>
+      <div class="core-type" style="--c-color:#33aaff"><div class="core-icon" style="background:rgba(51,170,255,.1);color:#33aaff">P</div><div class="core-type-name">大核</div><div class="core-type-role">Performance Core</div><div class="core-type-desc">次强但更省电，日常<strong>主力核心</strong>：刷视频、聊天、浏览网页。</div></div>
+      <div class="core-type" style="--c-color:#8a8a9a"><div class="core-icon" style="background:rgba(138,138,154,.08);color:#8a8a9a">E</div><div class="core-type-name">效率核</div><div class="core-type-role">Efficiency Core</div><div class="core-type-desc">最弱但<strong>最省电</strong>，处理后台任务：待机、消息推送、音乐播放。</div></div>
+    </div>
+    <div class="section-header fade-in" style="margin-top:20px"><h2 style="font-size:clamp(18px,4vw,28px)">主流核心配置对比</h2><p>不同 SoC 的核心分配方式各有不同</p></div>
+    <div class="core-configs">
+      <div class="core-config fade-in"><div class="config-header"><div class="config-name">骁龙 8 Elite Gen 5</div><div class="config-label">2 + 6 · 最佳方案</div></div><div class="core-blocks"><div class="core-block-prime">4.6G</div><div class="core-block-prime">4.6G</div><div class="core-block-perf">3.6G</div><div class="core-block-perf">3.6G</div><div class="core-block-perf">3.6G</div><div class="core-block-perf">3.6G</div><div class="core-block-perf">3.6G</div><div class="core-block-perf">3.6G</div></div><div class="core-config-desc"><strong>2 颗超大核 + 6 颗大核</strong>，没有效率核。<strong>当前最合理的分配方案</strong>，重负载和日常都能兼顾。</div></div>
+      <div class="core-config fade-in"><div class="config-header"><div class="config-name">天玑 9500</div><div class="config-label">1 + 3 + 4 · 有短板</div></div><div class="core-blocks"><div class="core-block-prime">4.1G</div><div class="core-block-perf">3.5G</div><div class="core-block-perf">3.5G</div><div class="core-block-perf">3.5G</div><div class="core-block-perf-dim">2.8G</div><div class="core-block-perf-dim">2.8G</div><div class="core-block-perf-dim">2.8G</div><div class="core-block-perf-dim">2.8G</div></div><div class="core-config-desc"><strong>只有 1 颗超大核是硬伤</strong>——重度游戏中帧率表现明显不如骁龙双超大核方案。</div></div>
+      <div class="core-config fade-in"><div class="config-header"><div class="config-name">A18 Pro（苹果）</div><div class="config-label">2 + 4 · 经典方案</div></div><div class="core-blocks"><div class="core-block-prime">4.0G</div><div class="core-block-prime">4.0G</div><div class="core-block-eff">2.2G</div><div class="core-block-eff">2.2G</div><div class="core-block-eff">2.2G</div><div class="core-block-eff">2.2G</div></div><div class="core-config-desc"><strong>2 颗大核 + 4 颗效率核</strong>，不追求数量，单核极强。<strong>GB6 单核跑分全球第一</strong>。</div></div>
+    </div>
+    <div class="cpu-cache-note fade-in"><strong>L2 和 L3 缓存就藏在 CPU 内部。</strong>L2 是每个核心独享的"抽屉"，L3 是所有核心共享的"书架"。</div>
+    <!-- GPU -->
+    <div class="section-header fade-in" style="margin-top:60px"><div class="section-tag" style="background:rgba(51,170,255,.06);border-color:rgba(51,170,255,.12);color:#33aaff">图形处理</div><h2 style="color:#33aaff">GPU：手机里的显卡</h2></div>
+    <div class="gpu-card fade-in">
+      <div class="gpu-header"><div class="gpu-icon-wrap">G</div><div class="gpu-title">GPU 到底干什么？</div><div class="gpu-tag">Graphics Processing Unit</div></div>
+      <div class="gpu-body"><p><strong>CPU 负责思考，GPU 负责画画。</strong></p><p>游戏画面、视频解码、视频通话，所有动态图像都靠 GPU 渲染。</p></div>
+      <div class="gpu-compare"><div class="cmp-card"><div class="cmp-letter" style="background:rgba(245,166,35,.08);color:#F5A623">C</div><div class="cmp-label" style="color:#F5A623">CPU</div><div class="cmp-title">导演</div><div class="cmp-desc">决定「要画什么」</div></div><div class="cmp-card"><div class="cmp-letter" style="background:rgba(51,170,255,.08);color:#33aaff">G</div><div class="cmp-label" style="color:#33aaff">GPU</div><div class="cmp-title">画家</div><div class="cmp-desc">决定「画得快不快」</div></div></div>
+      <div class="gpu-specs"><div class="spec"><div class="spec-label">帧率</div><div class="spec-val">FPS</div><div class="spec-note">每秒画几张图</div></div><div class="spec"><div class="spec-label">渲染</div><div class="spec-val">画质</div><div class="spec-note">每张图画多精细</div></div><div class="spec"><div class="spec-label">功耗</div><div class="spec-val">发热</div><div class="spec-note">画得越猛越费电</div></div></div>
+      <div class="gpu-sum"><strong>GPU 强</strong> → 游戏丝滑。<strong>GPU 弱</strong> → 掉帧卡顿。</div>
+    </div>
+    <!-- 其他部件 -->
+    <div class="section-header fade-in" style="margin-top:60px"><div class="section-tag" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:var(--text-secondary)">其他部件</div><h2>SoC 里的配角们</h2></div>
+    <div class="others-grid">
+      <div class="oc fade-in" style="--oc:#b4ff39"><div class="oc-header"><div class="oc-icon" style="background:rgba(180,255,57,.06);color:#b4ff39">N</div><div><div class="oc-title">NPU</div><div class="oc-subtitle">AI 专用处理器</div></div></div><div class="oc-body"><p><strong>CPU 是通才，NPU 是 AI 领域的专家。</strong>拍照 AI 优化、语音助手、实时翻译都靠它。</p></div></div>
+      <div class="oc fade-in" style="--oc:#FF6900"><div class="oc-header"><div class="oc-icon" style="background:rgba(255,105,0,.06);color:#FF6900">I</div><div><div class="oc-title">ISP</div><div class="oc-subtitle">图像信号处理器</div></div></div><div class="oc-body"><p><strong>镜头负责拍，ISP 负责修。</strong>调白平衡、降噪、HDR 合成，拍照好不好看 ISP 占一半。</p></div></div>
+      <div class="oc fade-in" style="--oc:#e74c3c"><div class="oc-header"><div class="oc-icon" style="background:rgba(231,76,60,.06);color:#e74c3c">M</div><div><div class="oc-title">基带</div><div class="oc-subtitle">通信调制解调器</div></div></div><div class="oc-body"><p><strong>没有基带，手机就是一块不能联网的砖头。</strong>高通基带公认最强。</p></div></div>
+      <div class="oc fade-in" style="--oc:#AB47BC"><div class="oc-header"><div class="oc-icon" style="background:rgba(171,71,188,.06);color:#AB47BC">R</div><div><div class="oc-title">内存控制器</div><div class="oc-subtitle">数据交通指挥</div></div></div><div class="oc-body"><p><strong>控制器效率高</strong> → 多开不卡。<strong>效率低</strong> → 来回切换要重新加载。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="sd-line"></div><div class="sd-diamond"></div><div class="sd-line"></div></div>
+
+<!-- 工艺 -->
+<section id="nanometer">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">工艺制程</div><h2>几纳米，为什么重要？</h2></div>
+    <div class="nm-intro fade-in"><strong>纳米（nm）</strong>越小，晶体管越小，同样大小芯片能装下<span class="highlight-num">更多晶体管</span>，性能越强。</div>
+    <div class="nm-track-wrap fade-in"><div class="nm-labels"><div class="nm-label old"><div class="nm-value">7nm</div><div class="nm-status">上上代</div></div><div class="nm-label old"><div class="nm-value">5nm</div><div class="nm-status">上一代</div></div><div class="nm-label old"><div class="nm-value">4nm</div><div class="nm-status">上一代</div></div><div class="nm-label current"><div class="nm-value">3nm</div><div class="nm-status">当前主流</div></div><div class="nm-label next"><div class="nm-value">2nm</div><div class="nm-status">即将到来</div></div></div><div class="nm-bar-wrap"><div class="nm-bar-fill" style="width:80%"><div class="nm-bar-glow"></div></div><div class="nm-bar-dot" style="left:80%"></div></div></div>
+    <div class="nm-chips-grid fade-in"><div class="nm-chip"><div class="chip-nm">7nm</div><div class="chip-name">骁龙 865</div><div class="chip-example">麒麟 990</div></div><div class="nm-chip"><div class="chip-nm">5nm</div><div class="chip-name">骁龙 888</div><div class="chip-example">A14 仿生</div></div><div class="nm-chip"><div class="chip-nm">4nm</div><div class="chip-name">骁龙 8 Gen 2</div><div class="chip-example">天玑 9300</div></div><div class="nm-chip highlight"><div class="chip-nm">3nm · 当前主流</div><div class="chip-name">骁龙 8 Elite</div><div class="chip-example">天玑 9400 · A18 Pro</div></div><div class="nm-chip" style="opacity:.6"><div class="chip-nm">2nm · 即将</div><div class="chip-name">Exynos 2600</div><div class="chip-example">A20（预计）</div></div></div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="sd-line"></div><div class="sd-diamond"></div><div class="sd-line"></div></div>
+
+<!-- 缓存 -->
+<section id="cache">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">缓存</div><h2>缓存：芯片里的高速小金库</h2></div>
+    <div class="cache-intro fade-in">缓存越大，CPU 找数据越快，<strong>性能就越强。</strong></div>
+    <div class="cache-pyramid">
+      <div class="cache-tier fade-in" style="--tier-color:#F5A623"><div class="tier-icon" style="background:rgba(245,166,35,.08);color:#F5A623">⚡</div><div class="tier-body"><div class="tier-header"><div class="tier-name">L2 缓存</div><div class="tier-meta">最快 · 最小</div></div><div class="tier-desc"><strong>桌面抽屉</strong>，每核独享，通常几 MB。</div><div class="speed-bar"><div class="speed-label">速度</div><div class="speed-track"><div class="speed-fill" style="width:98%;background:linear-gradient(90deg,#F5A623,#FF6900)"></div></div></div></div></div>
+      <!-- [15] 能量流动 -->
+      <div class="energy-flow">▾ ▾ ▾</div>
+      <div class="cache-tier fade-in" style="--tier-color:#33aaff"><div class="tier-icon" style="background:rgba(51,170,255,.08);color:#33aaff">📦</div><div class="tier-body"><div class="tier-header"><div class="tier-name">L3 缓存</div><div class="tier-meta">较快 · 中等</div></div><div class="tier-desc"><strong>办公室书架</strong>，所有核心共享，通常 8–16MB。</div><div class="speed-bar"><div class="speed-label">速度</div><div class="speed-track"><div class="speed-fill" style="width:65%;background:linear-gradient(90deg,#33aaff,#06B6D4)"></div></div></div></div></div>
+      <div class="energy-flow">▾ ▾ ▾</div>
+      <div class="cache-tier fade-in" style="--tier-color:#AB47BC"><div class="tier-icon" style="background:rgba(171,71,188,.08);color:#AB47BC">🏗️</div><div class="tier-body"><div class="tier-header"><div class="tier-name">SLC</div><div class="tier-meta">较慢 · 最大</div></div><div class="tier-desc"><strong>整栋楼的图书馆</strong>，CPU/GPU/NPU 全局共享，4–24MB。</div><div class="speed-bar"><div class="speed-label">速度</div><div class="speed-track"><div class="speed-fill" style="width:35%;background:linear-gradient(90deg,#AB47BC,#7B1FA2)"></div></div></div></div></div>
+    </div>
+    <div class="cache-warn fade-in"><strong>缓存被砍 = 性能暴跌。</strong>买芯片一定要看缓存——<strong>L2 越大越好，SLC 越大越好。</strong></div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="sd-line"></div><div class="sd-diamond"></div><div class="sd-line"></div></div>
+
+<!-- 内存 + 存储 -->
+<section id="memory">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag" style="background:rgba(51,170,255,.06);border-color:rgba(51,170,255,.12);color:var(--ram)">内存与存储</div><h2 style="color:var(--ram)">内存和存储</h2><p>CPU 再强，没有足够大的工作台也白搭</p></div>
+
+    <div class="diff-card fade-in">
+      <div class="diff-header"><div class="diff-icon">!</div><div><div class="diff-title">先搞清楚：内存 ≠ 存储</div><div class="diff-sub">很多人说「我手机 256G 内存」——这是错的</div></div></div>
+      <div class="diff-body"><p>买手机时看到 <strong>12+256、16+512</strong>，前面是<strong>内存（RAM）</strong>，后面是<strong>存储（ROM）</strong>，完全不同的东西。</p></div>
+      <div class="diff-table">
+        <div class="dt-col"><div class="dt-label" style="color:#33aaff">内存</div><div class="dt-name" style="color:#33aaff">RAM</div><div class="dt-aka">运行内存</div><div class="dt-eg"><strong>12GB、16GB</strong><br>决定运行快不快</div></div>
+        <div class="dt-col"><div class="dt-label" style="color:var(--accent-light)">存储</div><div class="dt-name" style="color:var(--accent-light)">ROM</div><div class="dt-aka">存储空间</div><div class="dt-eg"><strong>256GB、512GB</strong><br>决定能装多少东西</div></div>
+      </div>
+      <!-- [5] 呼吸脉冲 -->
+      <div class="rec-bar breathe">
+        <div class="rec-text">2026 年最推荐的配置：</div>
+        <div class="rec-config"><span class="ram-num">16</span><span class="plus">+</span><span class="sto-num">512</span></div>
+        <div class="rec-note"><strong>16GB 内存 + 512GB 存储</strong> —— 买高端机，这个配置是底线。</div>
+      </div>
+    </div>
+
+    <div class="section-header fade-in" style="margin-top:20px"><h2 style="font-size:clamp(18px,4vw,28px);color:var(--ram)">内存：手机的「工作台」</h2></div>
+    <div class="ram-intro-card fade-in">
+      <div class="ram-intro-header"><div class="ram-intro-icon">R</div><div class="ram-intro-title">内存到底干什么？</div><div class="ram-intro-tag">RAM · 运行内存</div></div>
+      <div class="ram-intro-body">
+        <p>内存就是手机的<em>「工作台」</em>。打开 App 搬上桌，切到另一个又多一份。台面太小放不下就会被丢掉——这就是<em>杀后台</em>。</p>
+        <p>内存<strong>直接决定日常流畅度</strong>：App 秒开还是转圈、微信会不会被杀——全看内存够不够。</p>
+      </div>
+      <div class="ram-compare-grid">
+        <div class="ram-cmp"><div class="ram-cmp-letter" style="background:rgba(245,166,35,.08);color:var(--accent-light)">C</div><div class="ram-cmp-label" style="color:var(--accent-light)">CPU</div><div class="ram-cmp-title">厨师</div><div class="ram-cmp-desc">手速越快越好</div></div>
+        <div class="ram-cmp"><div class="ram-cmp-letter" style="background:rgba(51,170,255,.08);color:var(--ram)">R</div><div class="ram-cmp-label" style="color:var(--ram)">内存</div><div class="ram-cmp-title">工作台</div><div class="ram-cmp-desc">台面越大越好</div></div>
+      </div>
+    </div>
+
+    <div class="section-header fade-in" style="margin-top:20px"><h2 style="font-size:clamp(18px,4vw,28px)">12GB 和 16GB，差距在哪？</h2></div>
+    <div class="ram-bars">
+      <!-- [4] 带刻度 + [11] 计数器 -->
+      <div class="ram-bar-card fade-in" style="--rc:var(--warn)"><div class="rb-header"><div class="rb-name"><span class="counter-num" data-target="8">0</span>GB</div><div class="rb-tag" style="color:#e74c3c;border-color:rgba(231,76,60,.2);background:rgba(231,76,60,.05)">严重不够</div></div><div class="rb-bar-wrap"><div class="rb-bar-fill" data-width="45" style="background:linear-gradient(90deg,#e74c3c,#c0392b)"><div class="rb-glow" style="background:#e74c3c"></div></div><div class="rb-ticks"><div class="rb-tick" style="left:50%"><div class="rb-tick-label">50%</div></div><div class="rb-tick" style="left:100%"><div class="rb-tick-label">100%</div></div></div></div><div class="rb-body"><strong>2026 年已经完全不推荐。</strong>微信切出去回来看到地球是常态。</div></div>
+      <div class="ram-bar-card fade-in" style="--rc:var(--accent-light)"><div class="rb-header"><div class="rb-name"><span class="counter-num" data-target="12">0</span>GB</div><div class="rb-tag" style="color:var(--accent-light);border-color:rgba(245,166,35,.2);background:rgba(245,166,35,.05)">勉强够用</div></div><div class="rb-bar-wrap"><div class="rb-bar-fill" data-width="65" style="background:linear-gradient(90deg,#F5A623,var(--accent))"><div class="rb-glow" style="background:var(--accent-light)"></div></div><div class="rb-ticks"><div class="rb-tick" style="left:50%"><div class="rb-tick-label">50%</div></div><div class="rb-tick" style="left:100%"><div class="rb-tick-label">100%</div></div></div></div><div class="rb-body"><strong>12GB 在 2026 年已经非常不够用了。</strong>游戏党切回微信大概率重新加载。</div></div>
+      <div class="ram-bar-card fade-in" style="--rc:var(--ok)"><div class="rb-header"><div class="rb-name"><span class="counter-num" data-target="16">0</span>GB</div><div class="rb-tag" style="color:var(--ok);border-color:rgba(180,255,57,.15);background:rgba(180,255,57,.04)">推荐配置</div></div><div class="rb-bar-wrap"><div class="rb-bar-fill" data-width="88" style="background:linear-gradient(90deg,#b4ff39,#7cb342)"><div class="rb-glow" style="background:var(--ok)"></div></div><div class="rb-ticks"><div class="rb-tick" style="left:50%"><div class="rb-tick-label">50%</div></div><div class="rb-tick" style="left:100%"><div class="rb-tick-label">100%</div></div></div></div><div class="rb-body"><strong>16GB 是 2026 年的最优解。</strong>后台随便挂，游戏随便切。</div></div>
+      <div class="ram-bar-card fade-in" style="--rc:var(--ram)"><div class="rb-header"><div class="rb-name"><span class="counter-num" data-target="24">0</span>GB</div><div class="rb-tag" style="color:var(--ram);border-color:rgba(51,170,255,.2);background:rgba(51,170,255,.05)">锦上添花</div></div><div class="rb-bar-wrap"><div class="rb-bar-fill" data-width="100" style="background:linear-gradient(90deg,#33aaff,#06B6D4)"><div class="rb-glow" style="background:var(--ram)"></div></div><div class="rb-ticks"><div class="rb-tick" style="left:50%"><div class="rb-tick-label">50%</div></div><div class="rb-tick" style="left:100%"><div class="rb-tick-label">100%</div></div></div></div><div class="rb-body">日常几乎感知不到差距。<strong>价格差距不大当然上。</strong></div></div>
+    </div>
+
+    <div class="ram-reality fade-in">
+      <div class="ram-reality-header"><div class="ram-reality-icon">!</div><div class="ram-reality-title">现实：内存涨价了</div><div class="ram-reality-tag">2026 年现状</div></div>
+      <div class="ram-reality-body">
+        <p>2026 年内存芯片价格大幅上涨。<em>同样手机，16GB 比 12GB 贵两三百甚至更多</em>。</p>
+        <p>但如果你要买<em class="ok">高端旗舰机</em>，16GB 就是<strong>底线</strong>。花四五千买旗舰只有 12GB，那才是亏。</p>
+      </div>
+    </div>
+
+    <div class="ram-ext fade-in">
+      <div class="ram-ext-header"><div class="ram-ext-icon">E</div><div><div class="ram-ext-title">内存扩展：花存储补内存</div><div class="ram-ext-sub">Virtual RAM · 几乎所有厂商都在做</div></div></div>
+      <div class="ram-ext-body">
+        <p>几乎所有厂商都做了<em>内存扩展</em>：<strong>把存储拿出一部分当内存用</strong>。12GB 开 8GB 扩展后显示"12+8=20GB"。</p>
+      </div>
+      <div class="ram-ext-grid">
+        <div class="ram-ext-col"><div class="ram-ext-col-title" style="color:#b4ff39">好处</div><div class="ram-ext-item"><span class="ram-ext-dot" style="background:#b4ff39"></span>减少杀后台</div><div class="ram-ext-item"><span class="ram-ext-dot" style="background:#b4ff39"></span>12GB 体验提升明显</div><div class="ram-ext-item"><span class="ram-ext-dot" style="background:#b4ff39"></span>厂商持续优化，可放心用</div></div>
+        <div class="ram-ext-col"><div class="ram-ext-col-title" style="color:var(--accent-light)">代价</div><div class="ram-ext-item"><span class="ram-ext-dot" style="background:var(--accent-light)"></span>存储比真内存慢</div><div class="ram-ext-item"><span class="ram-ext-dot" style="background:var(--accent-light)"></span>理论上影响存储寿命</div><div class="ram-ext-item"><span class="ram-ext-dot" style="background:var(--accent-light)"></span>优化已大幅改善</div></div>
+      </div>
+      <div class="ram-ext-rec">
+        <div class="ram-ext-rec-title">建议</div>
+        <div class="ram-ext-rec-row"><span class="ram-ext-rec-chip" style="border-color:rgba(245,166,35,.2);color:var(--accent-light);background:rgba(245,166,35,.05)">12GB</span><span class="ram-ext-rec-desc"><strong>建议开启。</strong>体验提升很大。</span></div>
+        <div class="ram-ext-rec-row"><span class="ram-ext-rec-chip" style="border-color:rgba(180,255,57,.15);color:#b4ff39;background:rgba(180,255,57,.04)">16GB</span><span class="ram-ext-rec-desc"><strong>看情况。</strong>重度用户可以开着锦上添花。</span></div>
+      </div>
+    </div>
+
+    <div class="section-header fade-in" style="margin-top:20px"><h2 style="font-size:clamp(18px,4vw,28px);color:var(--accent-light)">存储：装东西的空间</h2></div>
+    <!-- [8] 选配样式：中间突出 -->
+    <div class="ram-storage fade-in">
+      <div class="ram-storage-header"><div class="ram-storage-icon">S</div><div class="ram-storage-title">存储选多大？</div></div>
+      <div class="ram-storage-body"><strong>2026 年推荐 512GB 起步。</strong></div>
+      <div class="ram-storage-row">
+        <div class="ram-sc dimmed"><div class="ram-sc-size" style="color:#e74c3c">256GB</div><div class="ram-sc-verdict" style="color:#e74c3c;border-color:rgba(231,76,60,.2);background:rgba(231,76,60,.05)">尽量别买</div><div class="ram-sc-note">装几个游戏就满了</div></div>
+        <div class="ram-sc recommended"><div class="ram-sc-size" style="color:#b4ff39">512GB</div><div class="ram-sc-verdict" style="color:#b4ff39;border-color:rgba(180,255,57,.2);background:rgba(180,255,57,.05)">推荐容量</div><div class="ram-sc-note">两三年不用操心空间</div></div>
+        <div class="ram-sc dimmed"><div class="ram-sc-size" style="color:#33aaff">1TB</div><div class="ram-sc-verdict" style="color:#33aaff;border-color:rgba(51,170,255,.2);background:rgba(51,170,255,.05)">按需选择</div><div class="ram-sc-note">拍 4K 视频的用户</div></div>
+      </div>
+    </div>
+
+    <div class="ram-verdict fade-in">
+      <div class="ram-verdict-header"><div class="ram-verdict-icon">✓</div><div class="ram-verdict-title">结论：怎么选？</div></div>
+      <div class="ram-verdict-body">
+        <p>预算够，<em>直接 16+512</em>。2026 年最优解。</p>
+        <p>预算紧，12GB 记得<strong>开内存扩展</strong>。存储 256GB 尽量别碰。</p>
+        <p>8GB？<strong>别买了。</strong>电子垃圾。</p>
+      </div>
+      <div class="ram-summary-bar">
+        <div class="ram-sum-item"><div class="ram-sum-label">8GB</div><div class="ram-sum-val" style="color:#e74c3c">别买</div><div class="ram-sum-note">2026 年已淘汰</div></div>
+        <div class="ram-sum-item"><div class="ram-sum-label">12GB</div><div class="ram-sum-val" style="color:var(--accent-light)">勉强</div><div class="ram-sum-note">记得开内存扩展</div></div>
+        <div class="ram-sum-item"><div class="ram-sum-label">16GB</div><div class="ram-sum-val" style="color:#b4ff39">推荐</div><div class="ram-sum-note">2026 年最优解</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ========== 品牌卡片 ========== */
+const brandCards=document.querySelectorAll('.brand-card');
+let gyroTilt=null,activeBrandCard=null,gyroRequested=false;
+brandCards.forEach(card=>{card.addEventListener('animationend',e=>{if(e.animationName.startsWith('from')){card.style.opacity='1';card.style.transform='perspective(800px) rotateX(0) translateY(0)';card.style.animation='none';card.dataset.ready='true';requestAnimationFrame(()=>card.classList.add('glow-ready'))}})});
+if(matchMedia('(hover:hover)').matches){brandCards.forEach(card=>{const light=card.querySelector('.bc-mlight');card.addEventListener('mousemove',e=>{if(!card.dataset.ready||gyroTilt)return;const r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,px=(x/r.width-.5)*2,py=(y/r.height-.5)*2;card.style.transition='transform .08s ease-out';card.style.transform=`perspective(800px) rotateX(${-py*8}deg) rotateY(${px*8}deg) translateY(-6px)`;light.style.left=x+'px';light.style.top=y+'px'});card.addEventListener('mouseleave',()=>{if(!card.dataset.ready||gyroTilt)return;card.style.transition='transform .4s ease';card.style.transform='perspective(800px) rotateX(0) translateY(0)'})})}
+brandCards.forEach(card=>{let longTimer=null;card.addEventListener('touchstart',e=>{if(!card.dataset.ready)return;activeBrandCard=card;card.classList.add('is-touched');card.style.transition='transform .12s ease';card.style.transform='perspective(800px) scale(.96) translateY(3px)';longTimer=setTimeout(()=>card.classList.add('long-press'),500);const t=e.touches[0],r=card.getBoundingClientRect();const ring=document.createElement('div');ring.className='ripple-ring';ring.style.left=(t.clientX-r.left)+'px';ring.style.top=(t.clientY-r.top)+'px';card.appendChild(ring);ring.addEventListener('animationend',()=>ring.remove())},{passive:true});const end=()=>{if(!card.dataset.ready)return;activeBrandCard=null;card.classList.remove('is-touched','long-press');clearTimeout(longTimer);card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1)';card.style.transform=gyroTilt?`perspective(800px) rotateX(${gyroTilt.y}deg) rotateY(${gyroTilt.x}deg)`:'perspective(800px) rotateX(0) translateY(0)'};card.addEventListener('touchend',end,{passive:true});card.addEventListener('touchcancel',end,{passive:true})});
+function startGyro(){let raf=null;window.addEventListener('deviceorientation',e=>{if(e.gamma===null)return;const x=Math.max(-8,Math.min(8,e.gamma*.4)),y=Math.max(-8,Math.min(8,(e.beta-40)*.4));gyroTilt={x,y};if(!raf)raf=requestAnimationFrame(()=>{raf=null;brandCards.forEach(c=>{if(c.dataset.ready&&c!==activeBrandCard&&!c.matches(':hover')){c.style.transition='transform .12s ease-out';c.style.transform=`perspective(800px) rotateX(${y}deg) rotateY(${x}deg)`}})})},{passive:true})}
+async function initGyro(){if(typeof DeviceOrientationEvent==='undefined')return;if(typeof DeviceOrientationEvent.requestPermission==='function'){document.addEventListener('touchstart',async()=>{if(gyroRequested)return;gyroRequested=true;try{const p=await DeviceOrientationEvent.requestPermission();if(p==='granted')startGyro()}catch(e){}},{once:true})}else startGyro()}
+initGyro();
+
+/* ========== [2] 阅读进度条 ========== */
+const readingBar=document.getElementById('readingBar');
+window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;readingBar.style.width=h>0?(window.scrollY/h*100)+'%':'0%';},{passive:true});
+
+/* ========== [9] 回到顶部 ========== */
+const backTop=document.getElementById('backTop');
+window.addEventListener('scroll',()=>{backTop.classList.toggle('show',window.scrollY>400)},{passive:true});
+
+/* ========== fade-in + [20] 标题打字下划线 ========== */
+const obs=new IntersectionObserver(entries=>{entries.forEach(i=>{if(i.isIntersecting){i.target.classList.add('visible');if(i.target.querySelector){const h2=i.target.querySelector('h2');if(h2)setTimeout(()=>h2.classList.add('typed'),300)}obs.unobserve(i.target)}})},{threshold:.08});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+/* ========== [4] 进度条填充动画 + [11] 数字计数器 ========== */
+const barObs=new IntersectionObserver(entries=>{entries.forEach(i=>{if(!i.isIntersecting)return;
+  // 进度条填充
+  const fill=i.target.querySelector('.rb-bar-fill');
+  if(fill&&!fill.dataset.animated){fill.dataset.animated='1';const w=fill.dataset.width;requestAnimationFrame(()=>{fill.classList.add('animate');fill.style.width=w+'%'})}
+  // 数字计数器
+  const counters=i.target.querySelectorAll('.counter-num');
+  counters.forEach(c=>{if(c.dataset.done)return;c.dataset.done='1';const target=+c.dataset.target;const dur=800;const start=performance.now();
+  (function tick(now){const p=Math.min((now-start)/dur,1);c.textContent=Math.round(p*target);if(p<1)requestAnimationFrame(tick)})(start)})})},{threshold:.2});
+document.querySelectorAll('.ram-bar-card').forEach(el=>barObs.observe(el));
+
+/* ========== [6] 卡片触摸涟漪 ========== */
+document.querySelectorAll('.part-card,.oc,.ram-bar-card,.ram-ext-col,.ram-sc,.dt-col,.cmp-card,.spec,.cache-tier,.core-type,.nm-chip,.ram-cmp').forEach(el=>{
+  el.style.position='relative';el.style.overflow='hidden';
+  el.addEventListener('touchstart',e=>{const t=e.touches[0],r=el.getBoundingClientRect();const rip=document.createElement('div');rip.className='card-ripple';const size=Math.max(r.width,r.height);rip.style.width=rip.style.height=size+'px';rip.style.left=(t.clientX-r.left-size/2)+'px';rip.style.top=(t.clientY-r.top-size/2)+'px';el.appendChild(rip);rip.addEventListener('animationend',()=>rip.remove())},{passive:true})});
+
+/* ========== [18] 屏幕边缘闪光 ========== */
+const edgeL=document.getElementById('edgeLeft'),edgeR=document.getElementById('edgeRight');
+let edgeTimer;
+document.addEventListener('touchstart',e=>{const x=e.touches[0].clientX;const w=window.innerWidth;clearTimeout(edgeTimer);if(x<w*.15){edgeL.style.background='linear-gradient(to bottom,transparent,rgba(245,166,35,.25),transparent)';edgeL.classList.add('active')}else if(x>w*.85){edgeR.style.background='linear-gradient(to bottom,transparent,rgba(51,170,255,.25),transparent)';edgeR.classList.add('active')}edgeTimer=setTimeout(()=>{edgeL.classList.remove('active');edgeR.classList.remove('active')},300)},{passive:true});
+
+/* ========== [19] 滚动微倾斜 ========== */
+if(matchMedia('(hover:none)').matches){let tiltRaf=null;window.addEventListener('scroll',()=>{if(tiltRaf)return;tiltRaf=requestAnimationFrame(()=>{tiltRaf=null;document.querySelectorAll('.ram-bar-card,.ram-ext,.ram-storage,.ram-verdict,.ram-reality,.diff-card,.ram-intro-card').forEach(el=>{const r=el.getBoundingClientRect();const center=(r.top+r.height/2)/window.innerHeight;const tilt=(.5-center)*1.5;el.style.transform=`perspective(1000px) rotateX(${tilt}deg)`})})},{passive:true})}
+
+/* ========== 品牌卡片滚动视差 ========== */
+let sRaf=null;window.addEventListener('scroll',()=>{if(sRaf)return;sRaf=requestAnimationFrame(()=>{sRaf=null;brandCards.forEach(c=>{const r=c.getBoundingClientRect(),o=(r.top+r.height/2-window.innerHeight/2)/window.innerHeight,w=c.querySelector('.bc-wm');if(w)w.style.transform=`translateY(${o*25}px)`})})},{passive:true});
+</script>
+</body>
+</html>
