@@ -516,6 +516,27 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
   .topnav-link{font-size:.6rem;padding:.35rem .45rem}
   .brand-cards{grid-template-columns:repeat(2,1fr);max-width:500px}
   .bs-dots{height:60px}
+
+  /* === 手机端抗闪烁修复 === */
+  @keyframes tIn{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:none}}
+  .tl2,.tl3,.tl4{text-shadow:none!important;animation:tIn .9s cubic-bezier(.2,.6,.3,1) 2.2s forwards!important}
+  .tl1{animation:tIn .9s cubic-bezier(.2,.6,.3,1) 2.2s forwards!important}
+  .ts{display:none!important}
+  .tsp{display:none!important}
+  .insight::before,.insight::after{animation:none!important;opacity:0}
+  .insight-shimmer,.insight-glow{display:none!important}
+  .insight-corner{animation:none!important;opacity:0}
+  .insight-line1{animation:lineIn .6s ease 1.8s forwards!important}
+  .insight-line2{animation:lineIn .6s ease 2s forwards!important}
+  .insight-line2 .cross{animation:none!important;transform:none!important;opacity:1!important;text-shadow:none!important}
+  .insight-line1::after{animation:none!important}
+  .pt{display:none!important}
+  .eye{animation:up .7s ease 1.5s forwards!important}
+  .sub{animation:up .8s ease 1.8s forwards!important}
+  .divider{animation:up .6s ease 1.7s forwards!important}
+  .hero-nav{animation:up .8s ease 2s forwards!important}
+  .scroll-hint{animation:up .7s ease 2.2s forwards!important}
+  .cn{animation:up .4s ease 1.6s forwards!important}
 }
 </style>
 </head>
