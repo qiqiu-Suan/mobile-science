@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解码手机影像</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#050810;font-family:'Noto Serif SC',serif;-webkit-font-smoothing:antialiased;color:rgba(255,255,255,.85);overflow-x:hidden}
+::selection{background:rgba(212,168,83,.25);color:#fff}
+
+.entrance-curtain{position:fixed;inset:0;z-index:100000;pointer-events:none}
+.curtain-panel{position:absolute;left:0;right:0;height:50vh;background:#050810}
+.curtain-panel-top{top:0;animation:curtainUp 1.6s cubic-bezier(.65,0,.35,1) .4s forwards}
+.curtain-panel-bottom{bottom:0;animation:curtainDown 1.6s cubic-bezier(.65,0,.35,1) .4s forwards}
+@keyframes curtainUp{to{transform:translateY(-105%)}}
+@keyframes curtainDown{to{transform:translateY(105%)}}
+.curtain-line{position:absolute;left:0;right:0;height:2px;top:50%;z-index:2;background:linear-gradient(90deg,transparent 0%,rgba(100,180,255,.15) 10%,rgba(100,180,255,.5) 30%,rgba(140,220,255,.85) 50%,rgba(100,180,255,.5) 70%,rgba(100,180,255,.15) 90%,transparent 100%);box-shadow:0 0 8px rgba(100,180,255,.5),0 0 20px rgba(100,180,255,.2),0 0 50px rgba(100,180,255,.08)}
+.curtain-line::before{content:'';position:absolute;inset:-4px 0;background:linear-gradient(90deg,transparent 15%,rgba(100,180,255,.08) 35%,rgba(100,180,255,.15) 50%,rgba(100,180,255,.08) 65%,transparent 85%);filter:blur(4px)}
+.curtain-line-up{animation:lineUpAnim 2.2s ease forwards}
+.curtain-line-down{animation:lineDownAnim 2.2s ease forwards}
+@keyframes lineUpAnim{0%{transform:translateY(-50%);opacity:0}10%{transform:translateY(-50%);opacity:1}18%{transform:translateY(-50%);opacity:1}88%{opacity:1}100%{transform:translateY(calc(-50vh - 2px));opacity:0}}
+@keyframes lineDownAnim{0%{transform:translateY(-50%);opacity:0}10%{transform:translateY(-50%);opacity:1}18%{transform:translateY(-50%);opacity:1}88%{opacity:1}100%{transform:translateY(calc(50vh - 2px));opacity:0}}
+
+#sky{position:fixed;inset:0;z-index:0}
+.go{position:fixed;border-radius:50%;pointer-events:none;z-index:1;will-change:transform}
+.go1{width:800px;height:500px;background:radial-gradient(circle,rgba(140,80,255,.12),transparent 70%);top:-8%;left:-5%;animation:g1 28s ease-in-out infinite alternate}
+.go2{width:700px;height:600px;background:radial-gradient(circle,rgba(60,120,255,.1),transparent 70%);bottom:-10%;right:-5%;animation:g2 34s ease-in-out infinite alternate}
+.go3{width:550px;height:350px;background:radial-gradient(circle,rgba(255,200,100,.08),transparent 65%);top:30%;left:30%;animation:g3 22s ease-in-out infinite alternate}
+@keyframes g1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(100px,50px) scale(1.15)}100%{transform:translate(-30px,70px) scale(1.05)}}
+@keyframes g2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-80px,-60px) scale(1.12)}100%{transform:translate(50px,40px) scale(1.06)}}
+@keyframes g3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(70px,-50px) scale(1.2)}100%{transform:translate(-40px,60px) scale(1)}}
+
+.lens-bg{position:fixed;border-radius:50%;pointer-events:none;z-index:1;will-change:transform}
+.lens-bg::before{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.06);box-shadow:inset 0 0 25px rgba(255,255,255,.02),0 0 20px rgba(255,255,255,.01)}
+.lens-bg::after{content:'';position:absolute;top:8%;left:12%;width:50%;height:30%;border-radius:50%;background:linear-gradient(165deg,rgba(255,255,255,.12),transparent 80%);transform:rotate(-15deg);filter:blur(2px)}
+.vig{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse at 50% 30%,transparent 40%,rgba(0,0,0,.4) 100%)}
+body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E")}
+
+.topnav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:.6rem 1.5rem;display:flex;align-items:center;gap:0;transform:translateY(-100%);transition:transform .4s cubic-bezier(.2,.6,.3,1);background:rgba(5,8,16,.75);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.04)}
+.topnav.show{transform:translateY(0)}
+.topnav-logo{font-size:.82rem;font-weight:700;color:rgba(212,168,83,.55);letter-spacing:.12em;white-space:nowrap;margin-right:1.5rem;cursor:pointer;flex-shrink:0}
+.topnav-links{display:flex;gap:.15rem;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;flex:1}
+.topnav-links::-webkit-scrollbar{display:none}
+.topnav-link{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.04em;color:rgba(255,255,255,.28);white-space:nowrap;padding:.4rem .65rem;border-radius:6px;transition:color .25s,background .25s;cursor:pointer;text-decoration:none;flex-shrink:0}
+.topnav-link:hover{color:rgba(255,255,255,.55);background:rgba(255,255,255,.04)}
+.topnav-link.active{color:rgba(212,168,83,.65);background:rgba(212,168,83,.06)}
+
+.hero-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;max-width:700px;width:100%;margin-top:2.5rem;opacity:0;animation:up .8s ease 3.8s forwards}
+.hero-nav-card{padding:.6rem .4rem;border:1px solid rgba(255,255,255,.05);border-radius:10px;background:rgba(255,255,255,.015);cursor:pointer;text-align:center;text-decoration:none;transition:border-color .3s,background .3s}
+.hero-nav-card:hover{border-color:rgba(212,168,83,.15);background:rgba(212,168,83,.02)}
+.hero-nav-card .hnc-num{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(212,168,83,.3);margin-bottom:.15rem}
+.hero-nav-card .hnc-title{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.02em;line-height:1.3}
+
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.module{position:relative;z-index:10;padding:5rem 2rem;display:flex;flex-direction:column;align-items:center}
+.section-div{width:30px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);margin:0 auto}
+.mod-title{font-size:clamp(1.8rem,3.8vw,2.6rem);font-weight:700;letter-spacing:.18em;color:rgba(212,168,83,.65);text-align:center;margin-bottom:.4rem;text-shadow:0 0 30px rgba(212,168,83,.08)}
+.mod-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(.8rem,1.2vw,.95rem);letter-spacing:.3em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:1rem}
+.mod-sub-line{width:clamp(20px,5vw,50px);height:1px;background:rgba(255,255,255,.05)}
+
+.hero{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 2rem}
+.eye{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.55em;color:rgba(212,168,83,.45);text-transform:uppercase;display:flex;align-items:center;gap:1.2rem;margin-bottom:3rem;opacity:0;animation:up .7s ease 1.9s forwards}
+.eye-l,.eye-r{width:clamp(30px,8vw,80px);height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,83,.2))}
+.eye-r{background:linear-gradient(90deg,rgba(212,168,83,.2),transparent)}
+.tw{position:relative;line-height:0}
+.tl{font-size:clamp(3rem,9.5vw,8rem);font-weight:900;letter-spacing:.12em;line-height:1.1}
+.tl4{position:absolute;inset:-12px;z-index:0;color:transparent;text-shadow:0 0 80px rgba(212,168,83,.07),0 0 140px rgba(212,168,83,.04),0 0 200px rgba(160,140,255,.035);animation:tIn 1.1s cubic-bezier(.2,.6,.3,1) 2.0s forwards,bF 10s ease-in-out 4.1s infinite;opacity:0}
+.tl3{position:absolute;inset:-5px;z-index:1;color:transparent;text-shadow:0 0 40px rgba(200,215,255,.18),0 0 70px rgba(200,215,255,.08);animation:tIn 1s cubic-bezier(.2,.6,.3,1) 2.1s forwards,bM 7s ease-in-out 4.4s infinite;opacity:0}
+.tl2{position:absolute;inset:0;z-index:2;color:transparent;text-shadow:0 0 15px rgba(255,255,255,.2),0 0 30px rgba(220,230,255,.1);animation:tIn .95s cubic-bezier(.2,.6,.3,1) 2.15s forwards,bI 6s ease-in-out 4.6s infinite;opacity:0}
+.tl1{position:relative;z-index:3;color:rgba(255,255,255,.92);text-shadow:0 2px 6px rgba(0,0,0,.4);animation:tIn .9s cubic-bezier(.2,.6,.3,1) 2.2s forwards;opacity:0}
+.ts{position:absolute;top:-20%;height:140%;width:18%;z-index:5;pointer-events:none;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.02) 40%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.02) 60%,transparent 80%);transform:skewX(-18deg);animation:shim 8s ease-in-out 5.1s infinite}
+@keyframes shim{0%,5%{left:-40%}45%,100%{left:145%}}
+.tsp{position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(170deg,rgba(255,255,255,.08) 0%,transparent 35%);animation:tIn .9s cubic-bezier(.2,.6,.3,1) 2.2s forwards;opacity:0}
+@keyframes tIn{0%{opacity:0;transform:translateY(35px);filter:blur(12px)}55%{filter:blur(0)}100%{opacity:1;transform:none;filter:blur(0)}}
+@keyframes bF{0%,100%{opacity:1}50%{opacity:.65}}@keyframes bM{0%,100%{opacity:1}50%{opacity:.75}}@keyframes bI{0%,100%{opacity:1}50%{opacity:.85}}
+.divider{width:50px;height:1px;margin-top:2.2rem;background:linear-gradient(90deg,transparent,rgba(212,168,83,.2),transparent);opacity:0;animation:up .6s ease 2.8s forwards}
+.sub{font-size:clamp(1rem,1.7vw,1.25rem);font-weight:300;color:rgba(255,255,255,.32);margin-top:1.5rem;line-height:1.95;max-width:500px;opacity:0;animation:up .8s ease 3.1s forwards}
+.sub strong{color:rgba(212,168,83,.6);font-weight:400}
+.sep{display:inline-block;width:3px;height:3px;background:rgba(255,255,255,.15);border-radius:50%;vertical-align:middle;margin:0 .7rem}
+
+.insight{margin-top:3rem;max-width:640px;width:100%;position:relative;padding:2.2rem 3rem 2rem;opacity:0;animation:insightIn 1s cubic-bezier(.2,.6,.3,1) 3.6s forwards;background:radial-gradient(ellipse at 50% 0%,rgba(255,80,80,.06),transparent 60%),linear-gradient(170deg,rgba(255,255,255,.04),rgba(255,255,255,.01) 40%,rgba(255,60,60,.02));border:1px solid rgba(255,70,70,.1);border-radius:18px;-webkit-backdrop-filter:blur(20px) saturate(1.3);backdrop-filter:blur(20px) saturate(1.3);box-shadow:0 0 80px rgba(255,50,50,.04),0 25px 60px -15px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,120,120,.07),inset 0 -1px 0 rgba(0,0,0,.1)}
+.insight::before{content:'';position:absolute;inset:-2px;border-radius:20px;border:1px solid rgba(255,70,70,.05);animation:insightPulse 3.5s ease-in-out 4.4s infinite;pointer-events:none}
+.insight::after{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:50px;height:2px;background:linear-gradient(90deg,transparent,rgba(255,80,80,.6),transparent);border-radius:2px;pointer-events:none;animation:barGlow 3s ease-in-out 4.1s infinite}
+@keyframes insightPulse{0%,100%{box-shadow:0 0 0 rgba(255,50,50,0);border-color:rgba(255,70,70,.05)}50%{box-shadow:0 0 35px rgba(255,50,50,.08);border-color:rgba(255,70,70,.16)}}
+@keyframes barGlow{0%,100%{width:50px;opacity:.6}50%{width:80px;opacity:1}}
+@keyframes insightIn{0%{opacity:0;transform:translateY(20px) scale(.96)}100%{opacity:1;transform:none}}
+.insight-corner{position:absolute;width:16px;height:16px;pointer-events:none;opacity:0;animation:up .5s ease 3.9s forwards}
+.insight-corner::before,.insight-corner::after{content:'';position:absolute;background:rgba(255,80,80,.15)}
+.ic-tl{top:-1px;left:-1px}.ic-tl::before{top:0;left:0;width:16px;height:1px}.ic-tl::after{top:0;left:0;width:1px;height:16px}
+.ic-tr{top:-1px;right:-1px}.ic-tr::before{top:0;right:0;width:16px;height:1px}.ic-tr::after{top:0;right:0;width:1px;height:16px}
+.ic-bl{bottom:-1px;left:-1px}.ic-bl::before{bottom:0;left:0;width:16px;height:1px}.ic-bl::after{bottom:0;left:0;width:1px;height:16px}
+.ic-br{bottom:-1px;right:-1px}.ic-br::before{bottom:0;right:0;width:16px;height:1px}.ic-br::after{bottom:0;right:0;width:1px;height:16px}
+.insight-shimmer{position:absolute;top:-50%;left:-60%;width:30%;height:200%;background:linear-gradient(100deg,transparent 30%,rgba(255,100,100,.04) 50%,transparent 70%);transform:rotate(20deg);animation:insShim 7s ease-in-out 4.6s infinite;pointer-events:none}
+@keyframes insShim{0%,4%{left:-60%}40%,100%{left:160%}}
+.insight-glow{position:absolute;top:50%;left:50%;width:300px;height:120px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(255,60,60,.06),transparent 70%);filter:blur(30px);pointer-events:none;animation:glowBreathe 5s ease-in-out 4.1s infinite}
+@keyframes glowBreathe{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
+.insight-line1{text-align:center;font-size:clamp(1.15rem,2.4vw,1.5rem);font-weight:600;letter-spacing:.2em;color:rgba(255,80,80,.9);margin-bottom:.8rem;position:relative;padding-bottom:1rem;text-shadow:0 0 15px rgba(255,50,50,.2),0 0 40px rgba(255,50,50,.08);opacity:0;animation:lineIn .7s ease 3.9s forwards}
+.insight-line1::after{content:'';position:absolute;bottom:0;left:50%;width:6px;height:6px;background:rgba(255,80,80,.3);transform:translateX(-50%) rotate(45deg);animation:diamondPulse 3s ease-in-out 4.4s infinite}
+@keyframes diamondPulse{0%,100%{background:rgba(255,80,80,.2);transform:translateX(-50%) rotate(45deg) scale(1)}50%{background:rgba(255,80,80,.45);transform:translateX(-50%) rotate(45deg) scale(1.3)}}
+.insight-line2{text-align:center;font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:800;letter-spacing:.12em;color:rgba(255,80,80,.92);text-shadow:0 0 20px rgba(255,50,50,.25),0 0 50px rgba(255,50,50,.1),0 2px 4px rgba(0,0,0,.3);opacity:0;animation:lineIn .8s ease 4.2s forwards}
+@keyframes lineIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+.insight-line2 .cross{color:rgba(255,35,35,.95);font-weight:900;font-size:1.15em;margin:0 .2em;display:inline-block;animation:crossBang 3s ease-in-out 4.6s infinite;text-shadow:0 0 25px rgba(255,35,35,.35),0 0 50px rgba(255,35,35,.12)}
+@keyframes crossBang{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.2);opacity:1;text-shadow:0 0 35px rgba(255,35,35,.5),0 0 60px rgba(255,35,35,.15)}}
+
+.scroll-hint{position:absolute;bottom:2.5rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;opacity:0;animation:up .7s ease 4.6s forwards}
+.scroll-hint span{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.4em;color:rgba(255,255,255,.18)}
+.sc-c{width:18px;height:18px;border:1px solid rgba(255,255,255,.1);border-radius:50%;display:flex;justify-content:center;overflow:hidden;position:relative}
+.sc-dot{width:2px;height:2px;background:rgba(212,168,83,.5);border-radius:50%;position:absolute;top:3px;animation:scDot 2.2s ease-in-out infinite}
+@keyframes scDot{0%{top:3px;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:12px;opacity:0}}
+.sc-ln{width:1px;height:20px;position:relative;overflow:hidden}
+.sc-ln::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(180deg,transparent,rgba(212,168,83,.25));animation:sd 2.2s ease-in-out infinite}
+@keyframes sd{0%{top:-100%}60%,100%{top:100%}}
+
+.pt{position:absolute;border-radius:50%;pointer-events:none;animation:pF linear 1 forwards}
+@keyframes pF{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:var(--o)}50%{opacity:var(--o)}85%{opacity:var(--o)}100%{transform:translate(var(--tx),var(--ty)) scale(.4);opacity:0}}
+
+/* ===== BRAND ===== */
+.brand-spectrum{max-width:620px;width:100%;margin-bottom:2.5rem;opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
+.brand-spectrum.on{opacity:1;transform:none}
+.bs-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.bs-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+.bs-label.warm{color:rgba(255,140,60,.4)}.bs-label.cool{color:rgba(100,170,255,.4)}
+.bs-track{position:relative;height:4px;border-radius:2px;background:linear-gradient(90deg,rgba(255,140,60,.15),rgba(255,200,100,.08),rgba(142,142,147,.06),rgba(100,170,255,.15))}
+.bs-dots{position:relative;height:44px;margin-top:.3rem}
+.bs-dot{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.3rem;opacity:0;transition:opacity .5s ease,transform .5s ease}
+.brand-spectrum.on .bs-dot{opacity:1;transform:translateX(-50%) translateY(0)}
+.brand-spectrum.on .bs-dot:nth-child(1){transition-delay:.3s}
+.brand-spectrum.on .bs-dot:nth-child(2){transition-delay:.45s}
+.brand-spectrum.on .bs-dot:nth-child(3){transition-delay:.6s}
+.brand-spectrum.on .bs-dot:nth-child(4){transition-delay:.75s}
+.bs-dot-circle{width:12px;height:12px;border-radius:50%;position:relative}
+.bs-dot-circle::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid;opacity:.25}
+.bs-dot-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;white-space:nowrap}
+.bs-dot.xm{left:16%}.bs-dot.xm .bs-dot-circle{background:rgba(255,120,40,.6);box-shadow:0 0 10px rgba(255,120,40,.15)}.bs-dot.xm .bs-dot-circle::after{border-color:rgba(255,120,40,.25)}.bs-dot.xm .bs-dot-label{color:rgba(255,140,60,.5)}
+.bs-dot.op{left:26%}.bs-dot.op .bs-dot-circle{background:rgba(212,168,83,.6);box-shadow:0 0 10px rgba(212,168,83,.15)}.bs-dot.op .bs-dot-circle::after{border-color:rgba(212,168,83,.25)}.bs-dot.op .bs-dot-label{color:rgba(212,168,83,.5)}
+.bs-dot.vi{left:76%}.bs-dot.vi .bs-dot-circle{background:rgba(100,170,255,.6);box-shadow:0 0 10px rgba(100,170,255,.15)}.bs-dot.vi .bs-dot-circle::after{border-color:rgba(100,170,255,.25)}.bs-dot.vi .bs-dot-label{color:rgba(100,170,255,.5)}
+.bs-dot.ap{left:50%}.bs-dot.ap .bs-dot-circle{background:rgba(160,160,165,.35);box-shadow:0 0 8px rgba(160,160,165,.08)}.bs-dot.ap .bs-dot-circle::after{border-color:rgba(160,160,165,.15)}.bs-dot.ap .bs-dot-label{color:rgba(160,160,165,.35)}
+.bs-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.18);margin-top:.3rem;letter-spacing:.04em}
+.bs-note .gold{color:rgba(212,168,83,.5);font-weight:600}
+
+.brand-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(.6rem,1.2vw,1.1rem);max-width:950px;width:100%}
+.brand-card{padding:clamp(1.1rem,1.6vw,1.4rem) clamp(.9rem,1.3vw,1.2rem);border-radius:16px;position:relative;overflow:hidden;opacity:0;transform:translateY(14px);transition:all .7s ease;background:linear-gradient(165deg,rgba(255,255,255,.03),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.06)}
+.brand-card.on{opacity:1;transform:none}
+.brand-card:nth-child(1).on{transition-delay:.1s}.brand-card:nth-child(2).on{transition-delay:.22s}.brand-card:nth-child(3).on{transition-delay:.34s}.brand-card:nth-child(4).on{transition-delay:.46s}
+.brand-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.brand-card::after{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .4s;pointer-events:none}
+.brand-card:hover::after{opacity:1}
+
+.brand-card.xm{border-color:rgba(255,120,40,.08)}.brand-card.xm::before{background:linear-gradient(90deg,#FF6B00,#FF9A3C)}.brand-card.xm:hover{border-color:rgba(255,120,40,.18)}.brand-card.xm::after{background:radial-gradient(ellipse at 50% 0%,rgba(255,107,0,.05),transparent 70%)}
+.brand-card.op{border-color:rgba(212,168,83,.08)}.brand-card.op::before{background:linear-gradient(90deg,#C4993D,#E8C97A)}.brand-card.op:hover{border-color:rgba(212,168,83,.18)}.brand-card.op::after{background:radial-gradient(ellipse at 50% 0%,rgba(212,168,83,.05),transparent 70%)}
+.brand-card.vi{border-color:rgba(74,144,217,.08)}.brand-card.vi::before{background:linear-gradient(90deg,#3A80C9,#6DB3F0)}.brand-card.vi:hover{border-color:rgba(74,144,217,.18)}.brand-card.vi::after{background:radial-gradient(ellipse at 50% 0%,rgba(74,144,217,.05),transparent 70%)}
+.brand-card.ap{border-color:rgba(142,142,147,.06)}.brand-card.ap::before{background:linear-gradient(90deg,#6E6E73,#A0A0A5)}.brand-card.ap:hover{border-color:rgba(142,142,147,.12)}.brand-card.ap::after{background:radial-gradient(ellipse at 50% 0%,rgba(142,142,147,.03),transparent 70%)}
+
+.bc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.55rem;gap:.4rem}
+.bc-brand{display:flex;flex-direction:column;gap:.1rem}
+.bc-name{font-size:clamp(1rem,1.2vw,1.12rem);font-weight:700;letter-spacing:.06em}
+.brand-card.xm .bc-name{color:rgba(255,140,60,.75)}.brand-card.op .bc-name{color:rgba(212,168,83,.75)}.brand-card.vi .bc-name{color:rgba(100,170,255,.75)}.brand-card.ap .bc-name{color:rgba(180,180,185,.5)}
+.bc-partner{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.06em;color:rgba(255,255,255,.18)}
+.bc-school{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.08em;padding:.18rem .45rem;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.brand-card.xm .bc-school{color:rgba(255,140,60,.5);border:1px solid rgba(255,140,60,.12);background:rgba(255,140,60,.03)}
+.brand-card.op .bc-school{color:rgba(212,168,83,.5);border:1px solid rgba(212,168,83,.12);background:rgba(212,168,83,.03)}
+.brand-card.vi .bc-school{color:rgba(100,170,255,.5);border:1px solid rgba(100,170,255,.12);background:rgba(100,170,255,.03)}
+.brand-card.ap .bc-school{color:rgba(160,160,165,.38);border:1px solid rgba(160,160,165,.08);background:rgba(160,160,165,.02)}
+
+.bc-body{font-size:clamp(.84rem,.98vw,.92rem);color:rgba(255,255,255,.38);line-height:1.85;margin-bottom:.3rem}
+.bc-body b{color:rgba(255,255,255,.52);font-weight:600}
+.bc-body .orange{color:rgba(255,140,60,.6);font-weight:600}
+.bc-body .gold{color:rgba(212,168,83,.6);font-weight:600}
+.bc-body .blue{color:rgba(100,170,255,.6);font-weight:600}
+.bc-body .red{color:rgba(255,80,80,.58);font-weight:600}
+
+.bc-ratings{display:flex;flex-direction:column;gap:.35rem;margin:.55rem 0;padding:.5rem 0;border-top:1px solid rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.03)}
+.bc-rating{display:flex;align-items:center;gap:.4rem}
+.bc-rating-label{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.06em;color:rgba(255,255,255,.18);min-width:28px;flex-shrink:0}
+.bc-rating-track{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.03);overflow:hidden}
+.bc-rating-fill{height:100%;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:none}
+.brand-card.on .bc-rating-fill{transform:scaleX(1);transition:transform 1.2s cubic-bezier(.2,.6,.3,1) .4s}
+.brand-card.xm .bc-rating-fill{background:rgba(255,140,60,.32)}
+.brand-card.op .bc-rating-fill{background:rgba(212,168,83,.32)}
+.brand-card.vi .bc-rating-fill{background:rgba(100,170,255,.32)}
+.brand-card.ap .bc-rating-fill{background:rgba(160,160,165,.22)}
+.bc-rating-val{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:rgba(255,255,255,.18);min-width:20px;text-align:right}
+
+.bc-tags{display:flex;flex-wrap:wrap;gap:.2rem}
+.bc-tag{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.04em;padding:.12rem .35rem;border-radius:3px}
+.bc-tag.pro{color:rgba(100,200,150,.42);border:1px solid rgba(100,200,150,.1);background:rgba(100,200,150,.02)}
+.bc-tag.con{color:rgba(255,100,100,.38);border:1px solid rgba(255,100,100,.08);background:rgba(255,100,100,.02)}
+.bc-tag.sp{color:rgba(212,168,83,.48);border:1px solid rgba(212,168,83,.12);background:rgba(212,168,83,.02)}
+
+.brand-note{margin-top:1.5rem;font-size:clamp(.92rem,1.1vw,1rem);color:rgba(255,255,255,.2);text-align:center;letter-spacing:.03em;max-width:600px;opacity:0;transform:translateY(8px);transition:all .7s ease .5s}
+.brand-note.on{opacity:1;transform:none}
+.brand-note b{color:rgba(212,168,83,.52);font-weight:600}
+
+/* ===== CARDS ===== */
+.cards{display:flex;gap:clamp(.8rem,1.5vw,1.5rem);max-width:950px;width:100%}
+.card{flex:1;padding:clamp(1.3rem,2vw,1.8rem) clamp(1rem,1.6vw,1.4rem);background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.06);border-radius:14px;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);transition:border-color .4s,transform .4s;opacity:0;transform:translateY(20px)}
+.card.on{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.6,.3,1),transform .7s cubic-bezier(.2,.6,.3,1)}
+.card:nth-child(1).on{transition-delay:.1s}.card:nth-child(2).on{transition-delay:.25s}.card:nth-child(3).on{transition-delay:.4s}
+.card:hover{border-color:rgba(212,168,83,.12);transform:translateY(-2px)!important}
+.card-tag{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.15em;color:rgba(212,168,83,.45);margin-bottom:.7rem}
+.card-name{font-size:clamp(1.05rem,1.4vw,1.2rem);font-weight:700;color:rgba(255,255,255,.85);margin-bottom:.6rem;letter-spacing:.04em}
+.card-text{font-size:clamp(.9rem,1.1vw,1rem);font-weight:300;color:rgba(255,255,255,.38);line-height:1.9}
+.card-key{margin-top:.8rem;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.04);font-size:clamp(.9rem,1.1vw,1rem);font-weight:500;line-height:1.8}
+.card-key .gold{color:rgba(212,168,83,.7)}.card-key .red{color:rgba(255,80,80,.7)}
+.cam-list{display:flex;flex-wrap:wrap;gap:.4rem .6rem;margin:.7rem 0}
+.cam-item{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;padding:.3rem .6rem;border-radius:4px;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+.vs-row{display:flex;align-items:center;gap:1rem;margin:.8rem 0;justify-content:center}
+.vs-big{font-size:clamp(1.5rem,2.5vw,1.8rem);font-weight:900;color:rgba(255,255,255,.75)}
+.vs-sym{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:rgba(255,80,80,.55);letter-spacing:.1em}
+.vs-small{font-size:clamp(1.5rem,2.5vw,1.8rem);font-weight:900;color:rgba(255,255,255,.75)}
+.sensor-bars{margin:.8rem 0;display:flex;flex-direction:column;gap:.4rem}
+.sensor-row{display:flex;align-items:center;gap:.5rem}
+.sensor-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.05em;color:rgba(255,255,255,.28);min-width:50px;text-align:right}
+.sensor-bar{height:6px;border-radius:3px}
+.sensor-name{font-size:.68rem;color:rgba(255,255,255,.22)}
+.mod-summary{margin-top:1.8rem;font-size:clamp(.92rem,1.3vw,1.08rem);font-weight:400;color:rgba(255,255,255,.28);letter-spacing:.1em;text-align:center;opacity:0;transform:translateY(10px);transition:opacity .7s ease .4s,transform .7s ease .4s}
+.mod-summary.on{opacity:1;transform:none}
+.ms-gold{color:rgba(212,168,83,.65);font-weight:600}
+.ms-sep{margin:0 .4em;color:rgba(255,255,255,.1)}
+
+.lens-layout{display:flex;align-items:center;gap:clamp(2rem,5vw,5rem)}
+.lens-scene{perspective:900px}
+.lens-wrap{transform-style:preserve-3d;transform:rotateY(8deg) rotateX(6deg);transition:transform .2s ease-out}
+.lens-row{display:flex;align-items:center;gap:0;position:relative}
+.lens-beam{position:absolute;top:50%;left:0;right:0;height:2px;transform:translateY(-50%);z-index:0;background:linear-gradient(90deg,rgba(255,240,180,.15) 0%,rgba(255,230,160,.08) 20%,rgba(200,210,255,.05) 60%,rgba(212,168,83,.12) 100%);animation:beamGlow 4s ease-in-out infinite}
+@keyframes beamGlow{0%,100%{opacity:.6}50%{opacity:1}}
+.lpart{position:relative;z-index:1;flex-shrink:0}
+.model-lbl{position:absolute;top:-48px;left:50%;transform:translateX(-50%);white-space:nowrap;text-align:center;pointer-events:none;z-index:10}
+.model-lbl .ml-name{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em}
+.model-lbl .ml-en{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:2px}
+.model-lbl::after{content:'';position:absolute;bottom:-6px;left:50%;width:1px;height:14px;background:rgba(255,255,255,.05);transform:translateX(-50%)}
+.lp-glass{width:16px;height:160px}.lp-glass .slab{width:16px;height:160px;border-radius:8px;background:linear-gradient(90deg,rgba(200,220,255,.08),rgba(180,200,240,.03));border:1px solid rgba(200,220,255,.06)}
+.lp-lens{width:44px;height:160px}.lp-lens .slab{position:absolute;border-radius:50%;border:1px solid rgba(100,140,255,.06)}
+.lp-lens .s1{width:44px;height:160px;background:linear-gradient(90deg,rgba(100,140,255,.06),rgba(60,80,180,.02))}
+.lp-lens .s2{width:36px;height:136px;top:12px;left:4px;background:linear-gradient(90deg,rgba(120,150,255,.05),rgba(70,90,200,.02))}
+.lp-lens .s3{width:28px;height:110px;top:25px;left:8px;background:linear-gradient(90deg,rgba(140,170,255,.06),rgba(80,100,200,.02))}
+.lp-aper{width:18px;height:100px}.lp-aper .slab{width:18px;height:100px;border-radius:9px;background:linear-gradient(90deg,#181c28,#10141e,#181c28);border:1px solid rgba(255,255,255,.03);position:relative;overflow:hidden}
+.lp-aper .slab::before{content:'';position:absolute;inset:2px;border-radius:7px;background:radial-gradient(ellipse at center,rgba(60,90,160,.06),rgba(8,12,20,.95))}
+.lp-ir{width:8px;height:130px}.lp-ir .slab{width:8px;height:130px;border-radius:4px;background:linear-gradient(90deg,rgba(180,60,50,.07),rgba(150,40,40,.03));border:1px solid rgba(180,60,50,.06)}
+.lp-cmos{width:16px;height:110px}.lp-cmos .slab{width:16px;height:110px;border-radius:2px;background:linear-gradient(90deg,#222836,#1a1e2a);border:1px solid rgba(212,168,83,.1);box-shadow:2px 0 12px rgba(0,0,0,.3),0 0 15px rgba(212,168,83,.03);position:relative}
+.lp-cmos .slab::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(212,168,83,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,83,.03) 1px,transparent 1px);background-size:4px 8px}
+.larrow{width:22px;height:2px;flex-shrink:0;position:relative;z-index:1}
+.larrow::after{content:'';position:absolute;top:50%;left:0;width:100%;height:1px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.07))}
+.light-tag,.image-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;position:absolute;z-index:2}
+.light-tag{color:rgba(255,230,150,.2);left:-55px;top:50%;transform:translateY(-50%) rotate(-90deg)}
+.image-tag{color:rgba(212,168,83,.2);right:-50px;top:50%;transform:translateY(-50%) rotate(90deg)}
+.lens-info{display:flex;flex-direction:column;gap:0;width:clamp(200px,26vw,300px)}
+.info-item{display:flex;align-items:flex-start;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(255,255,255,.03);opacity:0;transform:translateX(12px);transition:opacity .5s ease,transform .5s ease}
+.info-item.on{opacity:1;transform:none}
+.info-item:nth-child(1).on{transition-delay:.2s}.info-item:nth-child(2).on{transition-delay:.35s}.info-item:nth-child(3).on{transition-delay:.5s}.info-item:nth-child(4).on{transition-delay:.65s}.info-item:nth-child(5).on{transition-delay:.8s}
+.info-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:.4rem}
+.info-dot.glass{background:rgba(200,220,255,.2)}.info-dot.lens{background:rgba(100,150,255,.2)}.info-dot.aper{background:rgba(255,255,255,.13)}.info-dot.ir{background:rgba(180,60,50,.25)}.info-dot.cmos{background:rgba(212,168,83,.3)}
+.info-text .info-name{font-size:1.02rem;font-weight:700;color:rgba(255,255,255,.58);margin-bottom:.25rem;letter-spacing:.03em}
+.info-text .info-desc{font-size:clamp(.9rem,1.1vw,1rem);font-weight:300;color:rgba(255,255,255,.38);line-height:1.8}
+.info-text .info-key{color:rgba(212,168,83,.6);font-weight:500}
+
+.sensor-grid,.px-grid,.zm-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.2rem,2.5vw,2rem);max-width:900px;width:100%}
+.sensor-col,.px-col,.zm-col{display:flex;flex-direction:column;gap:1.5rem}
+.s-block,.px-block,.zm-block{opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
+.s-block.on,.px-block.on,.zm-block.on{opacity:1;transform:none}
+.s-block:nth-child(1).on,.px-block:nth-child(1).on,.zm-block:nth-child(1).on{transition-delay:.1s}
+.s-block:nth-child(2).on,.px-block:nth-child(2).on,.zm-block:nth-child(2).on{transition-delay:.2s}
+.s-label,.px-label,.zm-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.18em;color:rgba(212,168,83,.5);text-transform:uppercase;margin-bottom:.5rem}
+.s-body,.px-body,.zm-body{font-size:clamp(1rem,1.25vw,1.12rem);font-weight:400;color:rgba(255,255,255,.58);line-height:1.95}
+.s-body+.s-body,.px-body+.px-body,.zm-body+.zm-body{margin-top:.4rem}
+.s-bold,.px-bold,.zm-bold{color:rgba(255,255,255,.68);font-weight:600}
+.s-list,.px-list{margin:.3rem 0 0;padding-left:0;list-style:none}
+.s-list li,.px-list li{font-size:clamp(.95rem,1.15vw,1.05rem);font-weight:400;color:rgba(255,255,255,.52);line-height:1.95;padding-left:1.2rem;position:relative}
+.s-list li::before,.px-list li::before{content:'';position:absolute;left:0;top:.82em;width:4px;height:4px;border-radius:50%;background:rgba(212,168,83,.3)}
+.s-full,.px-full,.zm-full{grid-column:1/-1;opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
+.s-full.on,.px-full.on,.zm-full.on{opacity:1;transform:none}
+.s-highlight,.px-highlight{padding:1.1rem 1.3rem;border-left:2px solid rgba(212,168,83,.22);background:linear-gradient(90deg,rgba(212,168,83,.025),transparent);border-radius:0 10px 10px 0;font-size:clamp(1rem,1.25vw,1.1rem);font-weight:500;color:rgba(255,255,255,.55);line-height:1.95}
+.s-highlight .red,.px-highlight .red{color:rgba(255,80,80,.7);font-weight:700}
+.s-end,.px-end,.zm-end{padding:1.2rem 1.5rem;background:linear-gradient(165deg,rgba(212,168,83,.04),rgba(212,168,83,.012));border:1px solid rgba(212,168,83,.1);border-radius:12px}
+.s-end p,.px-end p,.zm-end p{font-size:clamp(1.05rem,1.35vw,1.18rem);font-weight:500;color:rgba(255,255,255,.55);line-height:1.9;text-align:center}
+.s-end .gold,.px-end .gold,.zm-end .gold{color:rgba(212,168,83,.78);font-weight:800}
+.px-analogy{margin:.8rem 0;padding:1.1rem 1.3rem;background:linear-gradient(90deg,rgba(100,150,255,.025),transparent);border-left:2px solid rgba(100,150,255,.12);border-radius:0 10px 10px 0;font-size:clamp(1rem,1.25vw,1.08rem);font-weight:400;color:rgba(255,255,255,.48);line-height:1.95}
+.px-highlight-alt,.zm-highlight{padding:1.1rem 1.3rem;border-left:2px solid rgba(255,80,80,.18);background:linear-gradient(90deg,rgba(255,80,80,.025),transparent);border-radius:0 10px 10px 0;font-size:clamp(1rem,1.25vw,1.1rem);font-weight:500;color:rgba(255,255,255,.55);line-height:1.95}
+
+.zm-real{padding:1.2rem 1.5rem;background:linear-gradient(165deg,rgba(100,200,255,.025),rgba(100,200,255,.008));border:1px solid rgba(100,200,255,.08);border-radius:12px}
+.zm-real-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.12em;color:rgba(100,200,255,.48);text-transform:uppercase;margin-bottom:.5rem}
+.zm-real p{font-size:clamp(1rem,1.25vw,1.1rem);font-weight:400;color:rgba(255,255,255,.48);line-height:1.95}
+.zm-real .zm-bold{color:rgba(255,255,255,.62);font-weight:600}
+.zm-real .blue{color:rgba(100,180,255,.65);font-weight:600}
+.zm-real-list{margin:.5rem 0 0;padding-left:0;list-style:none}
+.zm-real-list li{font-size:clamp(.95rem,1.15vw,1.05rem);font-weight:400;color:rgba(255,255,255,.48);line-height:1.95;padding-left:1.2rem;position:relative}
+.zm-real-list li::before{content:'';position:absolute;left:0;top:.82em;width:4px;height:4px;border-radius:50%;background:rgba(100,180,255,.28)}
+
+.crop-diagram{display:flex;align-items:center;gap:clamp(1.5rem,3vw,3rem);margin:1.5rem 0;justify-content:center}
+.crop-step{text-align:center}
+.crop-chip{position:relative;width:clamp(160px,22vw,220px);height:clamp(115px,16vw,155px);border-radius:8px;border:1.5px solid rgba(212,168,83,.1);overflow:hidden;background:#121620}
+.crop-chip .grid{position:absolute;inset:0;background:linear-gradient(90deg,rgba(212,168,83,.025) 1px,transparent 1px),linear-gradient(0deg,rgba(212,168,83,.025) 1px,transparent 1px);background-size:18px 13px}
+.crop-chip .dim{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.crop-chip .crop-area{position:absolute;background:rgba(212,168,83,.06);border:2px solid rgba(212,168,83,.32);z-index:2;display:flex;align-items:center;justify-content:center}
+.crop-chip .crop-area span{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:rgba(212,168,83,.6);letter-spacing:.05em}
+.crop-arrow{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:rgba(255,255,255,.15)}
+.crop-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.06em;color:rgba(255,255,255,.22);margin-top:.5rem}
+.crop-note{font-size:clamp(.95rem,1.1vw,1.05rem);font-weight:400;color:rgba(255,255,255,.38);text-align:center;margin-top:.5rem;line-height:1.85}
+
+.fl-wrap{max-width:640px;width:100%}
+.fl-stage{position:relative;width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;margin-bottom:1.5rem;background:#080e18}
+.fl-scene{position:absolute;inset:0;background:linear-gradient(180deg,#08101e 0%,#0e1830 25%,#1a1535 55%,#100c1a 100%)}
+.fl-moon{position:absolute;top:8%;right:18%;width:6px;height:6px;border-radius:50%;background:rgba(255,240,200,.15);box-shadow:0 0 12px rgba(255,240,200,.08),0 0 30px rgba(255,200,120,.04)}
+.fl-mt{position:absolute;bottom:0;width:100%}
+.fl-mt-1{height:50%;background:rgba(12,18,28,.75);clip-path:polygon(0% 100%,0% 55%,6% 35%,15% 52%,25% 20%,38% 45%,50% 10%,65% 38%,78% 22%,90% 48%,100% 30%,100% 100%)}
+.fl-mt-2{height:38%;background:rgba(8,12,20,.85);clip-path:polygon(0% 100%,0% 50%,10% 30%,22% 55%,35% 20%,50% 50%,62% 25%,78% 48%,88% 30%,100% 42%,100% 100%)}
+.fl-mt-3{height:24%;background:rgba(5,8,14,.92);clip-path:polygon(0% 100%,0% 45%,12% 60%,25% 35%,40% 55%,55% 25%,68% 50%,82% 35%,95% 50%,100% 40%,100% 100%)}
+.fl-tree{position:absolute;bottom:24%;left:48%;z-index:2}
+.fl-tree::before{content:'';display:block;width:2px;height:18px;background:rgba(0,0,0,.25);margin:0 auto}
+.fl-tree::after{content:'';display:block;width:14px;height:18px;border-radius:50% 50% 35% 35%;background:rgba(10,25,12,.35);margin-top:-18px;margin-left:-6px}
+.fl-frm{position:absolute;border-radius:3px;pointer-events:none;opacity:0}
+.fl-frm::before,.fl-frm::after{content:'';position:absolute;width:12px;height:12px}
+.fl-frm::before{top:-1px;left:-1px;border-top:1.5px solid;border-left:1.5px solid}
+.fl-frm::after{bottom:-1px;right:-1px;border-bottom:1.5px solid;border-right:1.5px solid}
+.fl-f06{inset:0}.fl-f06::before,.fl-f06::after{border-color:rgba(100,200,255,.3)}
+.fl-f1x{inset:10%}.fl-f1x::before,.fl-f1x::after{border-color:rgba(212,168,83,.4)}
+.fl-f3x{inset:28%}.fl-f3x::before,.fl-f3x::after{border-color:rgba(255,100,100,.35)}
+.fl-f5x{inset:44%}.fl-f5x::before,.fl-f5x::after{border-color:rgba(255,255,255,.25)}
+.fl-f06{border:1px solid rgba(100,200,255,.06)}.fl-f1x{border:1px solid rgba(212,168,83,.08)}.fl-f3x{border:1px solid rgba(255,100,100,.06)}.fl-f5x{border:1px solid rgba(255,255,255,.05)}
+.fl-tag{position:absolute;top:-2px;left:16px;transform:translateY(-100%);font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;pointer-events:none;white-space:nowrap;opacity:0}
+.fl-f06 .fl-tag{color:rgba(100,200,255,.5)}.fl-f1x .fl-tag{color:rgba(212,168,83,.5)}.fl-f3x .fl-tag{color:rgba(255,100,100,.45)}.fl-f5x .fl-tag{color:rgba(255,255,255,.3)}
+.fl-info{display:flex;flex-wrap:wrap;gap:.5rem 1.8rem;justify-content:center;margin-bottom:.8rem}
+.fl-row{display:flex;align-items:center;gap:.5rem;opacity:0;transform:translateY(6px)}
+.fl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fl-lbl{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.5)}
+.fl-dsc{font-size:.88rem;color:rgba(255,255,255,.32)}
+.fl-foot{font-size:.92rem;color:rgba(255,255,255,.22);text-align:center;letter-spacing:.04em;opacity:0}
+.fl-wrap.on .fl-f06{opacity:1;transition:opacity .5s ease .1s}.fl-wrap.on .fl-f1x{opacity:1;transition:opacity .5s ease .25s}.fl-wrap.on .fl-f3x{opacity:1;transition:opacity .5s ease .4s}.fl-wrap.on .fl-f5x{opacity:1;transition:opacity .5s ease .55s}
+.fl-wrap.on .fl-f06 .fl-tag{opacity:1;transition:opacity .4s ease .3s}.fl-wrap.on .fl-f1x .fl-tag{opacity:1;transition:opacity .4s ease .45s}.fl-wrap.on .fl-f3x .fl-tag{opacity:1;transition:opacity .4s ease .6s}.fl-wrap.on .fl-f5x .fl-tag{opacity:1;transition:opacity .4s ease .75s}
+.fl-wrap.on .fl-row{opacity:1;transform:none;transition:all .45s ease}
+.fl-wrap.on .fl-row:nth-child(1){transition-delay:.85s}.fl-wrap.on .fl-row:nth-child(2){transition-delay:.92s}.fl-wrap.on .fl-row:nth-child(3){transition-delay:.99s}.fl-wrap.on .fl-row:nth-child(4){transition-delay:1.06s}
+.fl-wrap.on .fl-foot{opacity:1;transition:opacity .5s ease 1.15s}
+
+.cam-cards{display:flex;gap:clamp(.7rem,1.3vw,1.3rem);max-width:900px;width:100%}
+.cam-card{flex:1;padding:clamp(1.2rem,1.8vw,1.6rem) clamp(1rem,1.5vw,1.3rem);border:1px solid rgba(255,255,255,.05);border-radius:14px;background:linear-gradient(165deg,rgba(255,255,255,.03),rgba(255,255,255,.006));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease,border-color .4s}
+.cam-card.on{opacity:1;transform:none}
+.cam-card:nth-child(1).on{transition-delay:.1s}.cam-card:nth-child(2).on{transition-delay:.22s}.cam-card:nth-child(3).on{transition-delay:.34s}
+.cam-card:hover{border-color:rgba(212,168,83,.1)}
+.cc-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.cc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cc-dot.main{background:rgba(212,168,83,.45)}.cc-dot.uw{background:rgba(100,200,255,.35)}.cc-dot.tele{background:rgba(255,100,100,.35)}
+.cc-name{font-size:clamp(1.02rem,1.25vw,1.12rem);font-weight:700;color:rgba(255,255,255,.68);letter-spacing:.03em}
+.cc-zoom{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.16);letter-spacing:.08em;margin-left:auto}
+.cc-body{font-size:clamp(.92rem,1.1vw,1rem);font-weight:400;color:rgba(255,255,255,.45);line-height:1.9}
+.cc-body+.cc-body{margin-top:.25rem}
+.cc-body b{color:rgba(255,255,255,.6);font-weight:600}
+.cc-body .gold{color:rgba(212,168,83,.62);font-weight:600}
+.cc-body .red{color:rgba(255,80,80,.58);font-weight:600}
+.cc-body .blue{color:rgba(100,180,255,.58);font-weight:600}
+.cc-bottom{margin-top:.6rem;padding-top:.5rem;border-top:1px solid rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.06em;color:rgba(255,255,255,.16)}
+.cam-note-s{margin-top:1.1rem;font-size:clamp(.92rem,1.1vw,1rem);color:rgba(255,255,255,.2);text-align:center;letter-spacing:.03em;opacity:0;transform:translateY(6px);transition:all .6s ease .42s}
+.cam-note-s.on{opacity:1;transform:none}
+.cam-note-s b{color:rgba(212,168,83,.52);font-weight:600}
+
+.tele-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(.6rem,1.1vw,1.1rem);max-width:900px;width:100%}
+.tele-box{padding:clamp(1.1rem,1.6vw,1.4rem);border:1px solid rgba(255,255,255,.05);border-radius:14px;background:linear-gradient(165deg,rgba(255,255,255,.025),rgba(255,255,255,.005));opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+.tele-box.on{opacity:1;transform:none}
+.tele-box:nth-child(1).on{transition-delay:.1s}.tele-box:nth-child(2).on{transition-delay:.22s}.tele-box:nth-child(3).on{transition-delay:.34s}
+.tele-box.best{border-color:rgba(212,168,83,.14);background:linear-gradient(165deg,rgba(212,168,83,.035),rgba(212,168,83,.006))}
+.tele-rank{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:rgba(255,255,255,.14);margin-bottom:.35rem;text-transform:uppercase}
+.tele-rank.gold{color:rgba(212,168,83,.48)}
+.tele-name{font-size:clamp(1.02rem,1.25vw,1.12rem);font-weight:700;color:rgba(255,255,255,.68);margin-bottom:.35rem;letter-spacing:.05em}
+.tele-name .badge{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.06em;padding:.12rem .4rem;border-radius:3px;margin-left:.35rem;vertical-align:middle}
+.tele-name .badge.gold{color:rgba(212,168,83,.68);border:1px solid rgba(212,168,83,.18);background:rgba(212,168,83,.04)}
+.tele-body{font-size:clamp(.88rem,1.05vw,.98rem);color:rgba(255,255,255,.42);line-height:1.88;font-weight:300}
+.tele-body b{color:rgba(255,255,255,.58);font-weight:600}
+.tele-body .gold{color:rgba(212,168,83,.58);font-weight:600}
+.tele-body .red{color:rgba(255,80,80,.52);font-weight:600}
+.tele-body+.tele-body{margin-top:.2rem}
+.tele-tags{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.6rem}
+.tele-tag{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.05em;padding:.15rem .42rem;border-radius:3px;color:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.012)}
+.tele-tag.pro{color:rgba(100,200,150,.42);border-color:rgba(100,200,150,.1)}
+.tele-tag.con{color:rgba(255,100,100,.38);border-color:rgba(255,100,100,.08)}
+
+.dia-wrap{display:flex;gap:clamp(1.2rem,2.5vw,2.5rem);max-width:800px;width:100%;justify-content:center;align-items:flex-start}
+.dia-col{flex:1;max-width:370px;display:flex;flex-direction:column;align-items:center}
+.dia-title{font-size:clamp(1.02rem,1.3vw,1.15rem);font-weight:700;color:rgba(255,255,255,.58);letter-spacing:.06em;margin-bottom:.25rem}
+.dia-sub{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:rgba(255,255,255,.14);margin-bottom:.8rem}
+.dia-box{width:100%;height:clamp(190px,26vw,250px);border-radius:10px;border:1px solid rgba(255,255,255,.04);background:#0a0f18;position:relative;overflow:hidden;opacity:0;transform:translateY(10px);transition:all .7s ease}
+.dia-box.on{opacity:1;transform:none}
+.dia-col:nth-child(1) .dia-box.on{transition-delay:.1s}.dia-col:nth-child(2) .dia-box.on{transition-delay:.28s}
+.d-phone{position:absolute;inset:4%;border:1px solid rgba(255,255,255,.04);border-radius:5px;pointer-events:none}
+.d-phone::before{content:'';position:absolute;top:3%;left:50%;transform:translateX(-50%);width:16%;height:2px;border-radius:2px;background:rgba(255,255,255,.035)}
+.d-varr{position:absolute;width:2px;background:linear-gradient(180deg,rgba(255,230,140,.3),rgba(255,230,140,.12));pointer-events:none}
+.d-varr::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top:6px solid rgba(255,230,140,.2)}
+.d-harr{position:absolute;height:2px;background:linear-gradient(90deg,rgba(255,230,140,.28),rgba(255,230,140,.06));pointer-events:none}
+.d-harr::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-left:6px solid rgba(255,230,140,.2)}
+.d-lens-flat{position:absolute;border:1.5px solid rgba(100,150,255,.14);border-radius:50%;background:radial-gradient(ellipse,rgba(100,150,255,.03),transparent 70%)}
+.d-lens-flat2{position:absolute;border:1px solid rgba(100,150,255,.08);border-radius:50%;background:transparent}
+.d-cmos{position:absolute;border:1.5px solid rgba(212,168,83,.22);border-radius:2px;background:linear-gradient(90deg,#1e2432,#242a38)}
+.d-cmos::before{content:'';position:absolute;inset:1px;background:linear-gradient(0deg,rgba(212,168,83,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,83,.04) 1px,transparent 1px);background-size:3px 5px}
+.d-lbl{position:absolute;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.06em;pointer-events:none;white-space:nowrap}
+.d-lbl-amber{color:rgba(255,230,140,.32)}.d-lbl-blue{color:rgba(100,150,255,.28)}.d-lbl-gold{color:rgba(212,168,83,.28)}.d-lbl-white{color:rgba(255,255,255,.2)}.d-lbl-dim{color:rgba(255,255,255,.13);font-size:.6rem}
+.dia-foot{margin-top:.7rem;font-size:clamp(.9rem,1.05vw,.98rem);color:rgba(255,255,255,.24);line-height:1.85;text-align:center;opacity:0;transition:opacity .6s ease .35s}
+.dia-foot.on{opacity:1}.dia-foot b{color:rgba(255,255,255,.42);font-weight:600}.dia-foot .gold{color:rgba(212,168,83,.52)}
+
+.lofic-body{max-width:600px;width:100%;margin-bottom:2.5rem;opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
+.lofic-body.on{opacity:1;transform:none}
+.lofic-q{font-size:clamp(1.2rem,1.8vw,1.5rem);font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.08em;margin-bottom:1rem}
+.lofic-p{font-size:clamp(1.05rem,1.3vw,1.15rem);font-weight:400;color:rgba(255,255,255,.52);line-height:2}
+.lofic-p+.lofic-p{margin-top:.5rem}.lofic-p b{color:rgba(255,255,255,.65);font-weight:600}.lofic-p .red{color:rgba(255,80,80,.7);font-weight:600}.lofic-p .gold{color:rgba(212,168,83,.72);font-weight:600}
+.lofic-demo{display:flex;align-items:center;gap:clamp(2.5rem,5vw,5rem);margin:1rem 0 2.5rem;opacity:0;transform:translateY(12px);transition:all .7s ease .15s}
+.lofic-demo.on{opacity:1;transform:none}
+.lofic-side{display:flex;flex-direction:column;align-items:center;gap:.6rem}
+.lofic-side-title{font-size:clamp(1.05rem,1.25vw,1.15rem);font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.04em}
+.lofic-side-sub{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;color:rgba(255,255,255,.18);margin-bottom:.2rem}
+.lofic-bkzone{height:120px;display:flex;align-items:flex-end;justify-content:center;position:relative}
+.lofic-bk{width:48px;border:1.5px solid;border-top:none;border-radius:0 0 6px 6px;position:relative;overflow:hidden}
+.lofic-bk::before{content:'';position:absolute;top:-1px;left:-7px;right:-7px;height:4px;background:rgba(100,180,255,.07);border-radius:2px}
+.lofic-bk.nor{border-color:rgba(100,180,255,.15);height:54px}.lofic-bk.main{border-color:rgba(100,180,255,.15);height:54px}.lofic-bk.bak{border-color:rgba(100,200,150,.12);height:36px}
+.lofic-fill{position:absolute;bottom:0;left:2px;right:2px;border-radius:0 0 4px 4px}
+.lofic-fill.full{height:100%;background:linear-gradient(180deg,rgba(100,180,255,.3),rgba(60,120,200,.08))}.lofic-fill.part{height:58%;background:linear-gradient(180deg,rgba(100,200,150,.24),rgba(60,150,120,.06))}
+.lofic-drops{position:absolute;top:-28px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.lofic-dp{width:3px;height:7px;border-radius:50% 50% 50% 50%/30% 30% 70% 70%;opacity:0}
+.lofic-dp:nth-child(1){animation:lD 1.3s ease-in infinite}.lofic-dp:nth-child(2){animation:lD 1.3s ease-in .26s infinite}.lofic-dp:nth-child(3){animation:lD 1.3s ease-in .52s infinite}
+@keyframes lD{0%{transform:translateY(0);opacity:.5}80%{opacity:.2}100%{transform:translateY(20px);opacity:0}}
+.lofic-ov{position:absolute;left:3px;right:3px;bottom:-3px;height:5px;border-radius:0 0 4px 4px;background:rgba(100,180,255,.1);filter:blur(3px)}
+.lofic-res{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.04em;text-align:center;margin-top:.3rem}
+.lofic-res.bad{color:rgba(255,80,80,.38)}.lofic-res.good{color:rgba(100,200,150,.38)}
+.lofic-pair{display:flex;align-items:flex-end;gap:0}
+.lofic-bridge{width:14px;height:54px;position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:3px}
+.lofic-bridge::before{content:'';position:absolute;top:4px;left:2px;right:2px;height:1.5px;background:rgba(100,180,255,.1)}
+.lofic-bridge::after{content:'';position:absolute;top:1.5px;right:0;border:3px solid transparent;border-left:4px solid rgba(100,180,255,.1)}
+.lofic-benefits{display:flex;gap:clamp(.5rem,1vw,1rem);max-width:700px;width:100%;margin-bottom:1.8rem;opacity:0;transform:translateY(12px);transition:all .7s ease .3s}
+.lofic-benefits.on{opacity:1;transform:none}
+.lofic-bf{flex:1;padding:1rem .8rem;border:1px solid rgba(255,255,255,.04);border-radius:11px;background:linear-gradient(165deg,rgba(255,255,255,.02),rgba(255,255,255,.004))}
+.lofic-bf-h{display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem}
+.lofic-bf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.lofic-bf-dot.a{background:rgba(255,200,80,.35)}.lofic-bf-dot.b{background:rgba(255,120,80,.3)}.lofic-bf-dot.c{background:rgba(100,200,150,.3)}
+.lofic-bf-t{font-size:clamp(.92rem,1.1vw,1.02rem);font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.02em}
+.lofic-bf-d{font-size:clamp(.88rem,1vw,.95rem);color:rgba(255,255,255,.35);line-height:1.75}
+.lofic-xm{padding:1.2rem 2rem;border:1px solid rgba(212,168,83,.1);border-radius:14px;background:linear-gradient(165deg,rgba(212,168,83,.03),rgba(212,168,83,.006));max-width:520px;width:100%;opacity:0;transform:translateY(10px);transition:all .7s ease .45s}
+.lofic-xm.on{opacity:1;transform:none}
+.lofic-xm-tag{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.15em;color:rgba(212,168,83,.42);text-transform:uppercase;margin-bottom:.3rem}
+.lofic-xm-t{font-size:clamp(1.1rem,1.35vw,1.2rem);font-weight:700;color:rgba(255,255,255,.62);letter-spacing:.04em;margin-bottom:.35rem}
+.lofic-xm-rows{display:flex;flex-direction:column;gap:.3rem}
+.lofic-xm-row{font-size:clamp(.95rem,1.12vw,1.05rem);color:rgba(255,255,255,.45);line-height:1.85}
+.lofic-xm-row .gold{color:rgba(212,168,83,.68);font-weight:600}.lofic-xm-row .blue{color:rgba(100,180,255,.6);font-weight:600}
+
+.coat-intro{max-width:600px;width:100%;text-align:center;margin-bottom:2rem;opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
+.coat-intro.on{opacity:1;transform:none}
+.coat-intro p{font-size:clamp(1.1rem,1.4vw,1.2rem);font-weight:400;color:rgba(255,255,255,.52);line-height:2}.coat-intro b{color:rgba(255,255,255,.68);font-weight:600}
+.coat-1g6p{max-width:600px;width:100%;text-align:center;margin-bottom:1.5rem;opacity:0;transform:translateY(10px);transition:all .7s ease .1s}
+.coat-1g6p.on{opacity:1;transform:none}
+.coat-1g6p p{font-size:clamp(1.05rem,1.3vw,1.15rem);font-weight:400;color:rgba(255,255,255,.52);line-height:2}
+.coat-1g6p b{color:rgba(255,255,255,.65);font-weight:600}.coat-1g6p .gold{color:rgba(212,168,83,.72);font-weight:600}
+.coat-elems{display:flex;align-items:center;gap:clamp(.5rem,1vw,1rem);justify-content:center;margin-bottom:2rem;opacity:0;transform:translateY(10px);transition:all .7s ease .18s}
+.coat-elems.on{opacity:1;transform:none}
+.coat-el{display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.coat-el-s{width:clamp(30px,4.5vw,44px);height:clamp(56px,8vw,78px);border-radius:50%;border:1.5px solid;display:flex;align-items:center;justify-content:center}
+.coat-el-s.g{border-color:rgba(100,180,255,.2);background:linear-gradient(90deg,rgba(100,180,255,.05),rgba(100,180,255,.015))}
+.coat-el-s.p{border-color:rgba(212,168,83,.15);background:linear-gradient(90deg,rgba(212,168,83,.04),rgba(212,168,83,.01))}
+.coat-el-s span{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.05em;color:rgba(255,255,255,.3)}
+.coat-el-l{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.06em;color:rgba(255,255,255,.15)}
+.coat-table{width:100%;max-width:580px;border-collapse:separate;border-spacing:0;margin-bottom:.8rem;opacity:0;transform:translateY(10px);transition:all .7s ease .25s;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.coat-table.on{opacity:1;transform:none}
+.coat-table th{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.1em;color:rgba(212,168,83,.55);text-transform:uppercase;padding:.8rem 1.2rem;text-align:left;background:rgba(255,255,255,.025);border-bottom:1px solid rgba(255,255,255,.06);font-weight:500}
+.coat-table td{font-size:clamp(.95rem,1.1vw,1.02rem);color:rgba(255,255,255,.48);padding:.7rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.03);line-height:1.7}
+.coat-table tr:last-child td{border-bottom:none}.coat-table td:first-child{color:rgba(255,255,255,.58);font-weight:600}
+.coat-note{max-width:580px;width:100%;text-align:center;margin-bottom:2rem;opacity:0;transform:translateY(10px);transition:all .7s ease .3s}
+.coat-note.on{opacity:1;transform:none}
+.coat-note p{font-size:clamp(.88rem,1.02vw,.95rem);color:rgba(255,255,255,.25);line-height:1.8}
+.coat-note-t{color:rgba(255,255,255,.38);font-weight:600}.coat-note-sep{margin:0 .6em;color:rgba(255,255,255,.1)}
+.coat-why{max-width:600px;width:100%;text-align:center;margin-bottom:1.5rem;opacity:0;transform:translateY(10px);transition:all .7s ease .35s}
+.coat-why.on{opacity:1;transform:none}
+.coat-why p{font-size:clamp(1.05rem,1.3vw,1.15rem);font-weight:400;color:rgba(255,255,255,.52);line-height:2}.coat-why .red{color:rgba(255,80,80,.7);font-weight:600}
+.coat-loss{max-width:480px;width:100%;margin-bottom:2rem;display:flex;flex-direction:column;gap:.65rem;opacity:0;transform:translateY(10px);transition:all .7s ease .42s}
+.coat-loss.on{opacity:1;transform:none}
+.coat-loss-row{display:flex;align-items:center;gap:.8rem}
+.coat-loss-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.04em;color:rgba(255,255,255,.3);min-width:70px;text-align:right}
+.coat-loss-bar{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.03);overflow:hidden}
+.coat-loss-fill{height:100%;border-radius:4px;background:rgba(100,200,255,.25)}.coat-loss-fill.bad{background:rgba(255,80,80,.22)}.coat-loss-fill.good{background:rgba(100,200,150,.28)}
+.coat-loss-pct{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.35);min-width:42px}
+.coat-loss-pct.bad{color:rgba(255,80,80,.42)}.coat-loss-pct.good{color:rgba(100,200,150,.45)}
+.coat-how{max-width:600px;width:100%;text-align:center;padding:1.2rem 2rem;border:1px solid rgba(212,168,83,.1);border-radius:14px;background:linear-gradient(165deg,rgba(212,168,83,.03),rgba(212,168,83,.006));opacity:0;transform:translateY(10px);transition:all .7s ease .5s}
+.coat-how.on{opacity:1;transform:none}
+.coat-how p{font-size:clamp(1.05rem,1.3vw,1.15rem);font-weight:400;color:rgba(255,255,255,.52);line-height:2}.coat-how .gold{color:rgba(212,168,83,.72);font-weight:600}
+
+.cn{position:absolute;width:14px;height:14px;opacity:0;animation:up .4s ease 3.6s forwards}
+.cn::before,.cn::after{content:'';position:absolute;background:rgba(255,255,255,.05)}
+.cn-tl{top:1.3rem;left:1.3rem}.cn-tl::before{top:0;left:0;width:14px;height:1px}.cn-tl::after{top:0;left:0;width:1px;height:14px}
+.cn-tr{top:1.3rem;right:1.3rem}.cn-tr::before{top:0;right:0;width:14px;height:1px}.cn-tr::after{top:0;right:0;width:1px;height:14px}
+.cn-bl{bottom:1.3rem;left:1.3rem}.cn-bl::before{bottom:0;left:0;width:14px;height:1px}.cn-bl::after{bottom:0;left:0;width:1px;height:14px}
+.cn-br{bottom:1.3rem;right:1.3rem}.cn-br::before{bottom:0;right:0;width:14px;height:1px}.cn-br::after{bottom:0;right:0;width:1px;height:14px}
+.bottom-pad{height:5rem;position:relative;z-index:10}
+
+@media(max-width:800px){
+  .module{padding:3.5rem 1.5rem}
+  .cards,.cam-cards{flex-direction:column;max-width:400px}
+  .card,.cam-card{padding:1.3rem 1.2rem}
+  .tele-grid{grid-template-columns:1fr;max-width:400px}
+  .sensor-grid,.px-grid,.zm-grid{grid-template-columns:1fr;max-width:500px}
+  .lens-layout{flex-direction:column;gap:2rem}
+  .lens-wrap{transform:rotateY(5deg) rotateX(4deg) scale(.6)!important}
+  .lens-info{width:auto;max-width:400px}
+  .dia-wrap{flex-direction:column;align-items:center}
+  .dia-col{max-width:400px;width:100%}
+  .crop-diagram{flex-direction:column;gap:1.2rem}
+  .crop-chip{width:220px;height:155px}
+  .fl-stage{aspect-ratio:4/3}
+  .fl-f1x{inset:8%}.fl-f3x{inset:24%}.fl-f5x{inset:38%}
+  .fl-info{gap:.35rem 1rem}
+  .mod-title{font-size:clamp(1.4rem,5vw,2rem)}
+  .hero{padding:0 1.5rem}
+  .lofic-demo{flex-direction:column;gap:1.2rem}
+  .lofic-benefits{flex-direction:column;max-width:400px}
+  .hero-nav{grid-template-columns:repeat(2,1fr);gap:.4rem;max-width:340px}
+  .topnav{padding:.5rem .8rem}
+  .topnav-logo{margin-right:.8rem;font-size:.72rem}
+  .topnav-link{font-size:.6rem;padding:.35rem .45rem}
+  .brand-cards{grid-template-columns:repeat(2,1fr);max-width:500px}
+  .bs-dots{height:60px}
+}
+</style>
+</head>
+<body>
+<div class="entrance-curtain" id="entranceCurtain">
+  <div class="curtain-panel curtain-panel-top"></div>
+  <div class="curtain-panel curtain-panel-bottom"></div>
+  <div class="curtain-line curtain-line-up"></div>
+  <div class="curtain-line curtain-line-down"></div>
+</div>
+
+<canvas id="sky"></canvas>
+<div class="go go1"></div><div class="go go2"></div><div class="go go3"></div>
+<div id="lensBox"></div>
+<div class="vig"></div>
+<div class="cn cn-tl"></div><div class="cn cn-tr"></div>
+<div class="cn cn-bl"></div><div class="cn cn-br"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-logo" onclick="document.getElementById('hero').scrollIntoView()">解码影像</div>
+  <div class="topnav-links">
+    <a class="topnav-link" href="#sec-brand">品牌风格</a>
+    <a class="topnav-link" href="#sec-basics">速通</a>
+    <a class="topnav-link" href="#sec-lens">镜头结构</a>
+    <a class="topnav-link" href="#sec-sensor">传感器</a>
+    <a class="topnav-link" href="#sec-mp">像素≠画质</a>
+    <a class="topnav-link" href="#sec-zoom">变焦真相</a>
+    <a class="topnav-link" href="#sec-fl">焦段</a>
+    <a class="topnav-link" href="#sec-cam3">三镜头</a>
+    <a class="topnav-link" href="#sec-tele">长焦结构</a>
+    <a class="topnav-link" href="#sec-path">光路对比</a>
+    <a class="topnav-link" href="#sec-aper">光圈</a>
+    <a class="topnav-link" href="#sec-lofic">LOFIC</a>
+    <a class="topnav-link" href="#sec-coat">镀膜</a>
+  </div>
+</nav>
+
+<div class="hero" id="hero">
+  <div class="eye"><div class="eye-l"></div><span>FROM LENS TO PIXEL</span><div class="eye-r"></div></div>
+  <div class="tw">
+    <div class="tl tl4" aria-hidden="true">解码手机影像</div>
+    <div class="tl tl3" aria-hidden="true">解码手机影像</div>
+    <div class="tl tl2" aria-hidden="true">解码手机影像</div>
+    <h1 class="tl tl1">解码手机影像</h1>
+    <div class="tsp" aria-hidden="true"></div>
+    <div class="ts" aria-hidden="true"></div>
+  </div>
+  <div class="divider"></div>
+  <p class="sub">你手机里的相机比你想象的复杂一百倍<span class="sep"></span>看完这篇去手机店能当<strong>半个导购</strong></p>
+  <div class="insight">
+    <div class="insight-glow"></div><div class="insight-shimmer"></div>
+    <div class="insight-corner ic-tl"></div><div class="insight-corner ic-tr"></div>
+    <div class="insight-corner ic-bl"></div><div class="insight-corner ic-br"></div>
+    <p class="insight-line1">拍照好不是像素好</p>
+    <p class="insight-line2">像素高 <span class="cross">≠</span> 拍照好</p>
+  </div>
+  <div class="hero-nav">
+    <a class="hero-nav-card" href="#sec-brand"><div class="hnc-num">01</div><div class="hnc-title">品牌风格</div></a>
+    <a class="hero-nav-card" href="#sec-basics"><div class="hnc-num">02</div><div class="hnc-title">60秒速通</div></a>
+    <a class="hero-nav-card" href="#sec-lens"><div class="hnc-num">03</div><div class="hnc-title">镜头结构</div></a>
+    <a class="hero-nav-card" href="#sec-sensor"><div class="hnc-num">04</div><div class="hnc-title">传感器</div></a>
+    <a class="hero-nav-card" href="#sec-mp"><div class="hnc-num">05</div><div class="hnc-title">像素≠画质</div></a>
+    <a class="hero-nav-card" href="#sec-zoom"><div class="hnc-num">06</div><div class="hnc-title">变焦真相</div></a>
+    <a class="hero-nav-card" href="#sec-fl"><div class="hnc-num">07</div><div class="hnc-title">焦段</div></a>
+    <a class="hero-nav-card" href="#sec-tele"><div class="hnc-num">08</div><div class="hnc-title">长焦结构</div></a>
+    <a class="hero-nav-card" href="#sec-aper"><div class="hnc-num">09</div><div class="hnc-title">光圈</div></a>
+    <a class="hero-nav-card" href="#sec-lofic"><div class="hnc-num">10</div><div class="hnc-title">LOFIC</div></a>
+    <a class="hero-nav-card" href="#sec-coat"><div class="hnc-num">11</div><div class="hnc-title">镜片与镀膜</div></a>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><div class="sc-c"><div class="sc-dot"></div></div><div class="sc-ln"></div></div>
+</div>
+
+<!-- BRAND -->
+<div class="module" id="sec-brand">
+  <div class="mod-title">四大品牌 · 影像性格</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>BRAND IMAGING DNA</span><div class="mod-sub-line"></div></div>
+  <div class="brand-spectrum" data-reveal>
+    <div class="bs-header">
+      <span class="bs-label warm">← 色彩出片派</span>
+      <span class="bs-label cool">解析清晰派 →</span>
+    </div>
+    <div class="bs-track"></div>
+    <div class="bs-dots">
+      <div class="bs-dot xm"><div class="bs-dot-circle"></div><div class="bs-dot-label">小米</div></div>
+      <div class="bs-dot op"><div class="bs-dot-circle"></div><div class="bs-dot-label">OPPO</div></div>
+      <div class="bs-dot vi"><div class="bs-dot-circle"></div><div class="bs-dot-label">vivo</div></div>
+      <div class="bs-dot ap"><div class="bs-dot-circle"></div><div class="bs-dot-label">苹果</div></div>
+    </div>
+    <p class="bs-note">苹果：<span class="gold">录像断层第一，拍照断层垫底</span>，独占一极</p>
+  </div>
+  <div class="brand-cards">
+    <div class="brand-card xm" data-reveal>
+      <div class="bc-header">
+        <div class="bc-brand">
+          <div class="bc-name">小米</div>
+          <div class="bc-partner">× 徕卡 LEICA · 相机界的奔驰</div>
+        </div>
+        <div class="bc-school">色彩派</div>
+      </div>
+      <p class="bc-body">和<span class="orange">徕卡</span>深度合作，对色彩出片极度重视，拍照<span class="orange">色彩讨喜、出片率极高</span>。最超标的滤镜「<span class="orange">繁花如梦</span>」让每张照片都自带电影感。</p>
+      <p class="bc-body"><b>主摄基本是各家最强</b>，但超广角是三颗里最拉胯的。</p>
+      <div class="bc-ratings">
+        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:80%"></div></div><span class="bc-rating-val">8.0</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:52%"></div></div><span class="bc-rating-val">5.2</span></div>
+      </div>
+      <div class="bc-tags">
+        <span class="bc-tag pro">最强主摄</span>
+        <span class="bc-tag sp">繁花如梦</span>
+        <span class="bc-tag con">超广角拉胯</span>
+      </div>
+    </div>
+    <div class="brand-card op" data-reveal>
+      <div class="bc-header">
+        <div class="bc-brand">
+          <div class="bc-name">OPPO</div>
+          <div class="bc-partner">× 哈苏 HASSELBLAD</div>
+        </div>
+        <div class="bc-school">色彩派</div>
+      </div>
+      <p class="bc-body">和<span class="gold">哈苏</span>合作，色彩一样非常讨喜。如果小米不用繁花如梦，<span class="gold">OPPO 的色彩甚至比小米还好很多</span>，也是非常出片。</p>
+      <p class="bc-body">整体均衡，各镜头素质差距没小米那么极端。</p>
+      <div class="bc-ratings">
+        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:80%"></div></div><span class="bc-rating-val">8.0</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:50%"></div></div><span class="bc-rating-val">5.0</span></div>
+      </div>
+      <div class="bc-tags">
+        <span class="bc-tag sp">色彩最佳</span>
+        <span class="bc-tag pro">整体均衡</span>
+      </div>
+    </div>
+    <div class="brand-card vi" data-reveal>
+      <div class="bc-header">
+        <div class="bc-brand">
+          <div class="bc-name">vivo</div>
+          <div class="bc-partner">× 蔡司 ZEISS</div>
+        </div>
+        <div class="bc-school">解析派</div>
+      </div>
+      <p class="bc-body">和<span class="blue">蔡司</span>（全世界断层顶级的光学玻璃厂商）合作，得到蔡司镀膜加持，加上 vivo 自身对解析力的重视和 AI 大力算法，<span class="blue">基本是现在解析力最强的</span>。</p>
+      <p class="bc-body">通俗讲就是<b>拍照最清晰</b>，但色彩差，只能做到拍清楚，跟别家比<b>非常不出片</b>。</p>
+      <div class="bc-ratings">
+        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:60%"></div></div><span class="bc-rating-val">6.0</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:60%"></div></div><span class="bc-rating-val">6.0</span></div>
+      </div>
+      <div class="bc-tags">
+        <span class="bc-tag pro">解析最强</span>
+        <span class="bc-tag pro">蔡司镀膜</span>
+        <span class="bc-tag con">色彩差不出片</span>
+      </div>
+    </div>
+    <div class="brand-card ap" data-reveal>
+      <div class="bc-header">
+        <div class="bc-brand">
+          <div class="bc-name">苹果</div>
+          <div class="bc-partner">Apple · 无相机品牌合作</div>
+        </div>
+        <div class="bc-school">录像王</div>
+      </div>
+      <p class="bc-body">纠正大多数人的误区：苹果拍照已经算是<b class="red">最垃圾的</b>，断层级别差。说苹果拍照好，<span class="red">也只是自吹自擂嘴硬罢了</span>。不过苹果拍照有一个优点：<b>色彩真实</b>，拍出来什么样就是什么样，不做过多美化。</p>
+      <p class="bc-body">但苹果的<b>录像断层领先所有</b>，稳定性和色彩一致性在视频领域无人能及。</p>
+      <div class="bc-ratings">
+        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:30%"></div></div><span class="bc-rating-val">3.0</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:35%"></div></div><span class="bc-rating-val">3.5</span></div>
+        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:100%"></div></div><span class="bc-rating-val">10</span></div>
+      </div>
+      <div class="bc-tags">
+        <span class="bc-tag pro">录像断层第一</span>
+        <span class="bc-tag pro">色彩真实</span>
+        <span class="bc-tag con">拍照断层垫底</span>
+      </div>
+    </div>
+  </div>
+  <p class="brand-note" data-reveal>选手机拍照，<b>先确定你要色彩出片还是解析清晰</b>，再看品牌。要录像就选苹果，没得选。</p>
+</div>
+<div class="section-div"></div>
+
+<!-- 1 -->
+<div class="module" id="sec-basics">
+  <div class="mod-title">60秒速通 · 手机摄像头</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>THE BASICS</span><div class="mod-sub-line"></div></div>
+  <div class="cards">
+    <div class="card" data-reveal>
+      <div class="card-tag">三种摄像头</div>
+      <div class="card-name">你手机背面那几个摄像头，每个都不一样</div>
+      <div class="card-text">大部分手机背后有三颗摄像头，分别负责不同的事。核心就这三个，其他大多是凑数。</div>
+      <div class="cam-list"><span class="cam-item">主摄 · 日常拍照</span><span class="cam-item">长焦 · 拍远处</span><span class="cam-item">超广角 · 大视野</span></div>
+      <div class="card-key"><span class="gold">选手机先问自己：拍远处多不多？</span>多的话，长焦才是关键。</div>
+    </div>
+    <div class="card" data-reveal>
+      <div class="card-tag">最大误区</div>
+      <div class="card-name">像素高 ≠ 拍照好</div>
+      <div class="card-text">像素只决定照片能放多大，不决定好不好看。就像拼图块数多不代表画面美。</div>
+      <div class="vs-row"><span class="vs-big">2亿</span><span class="vs-sym">VS</span><span class="vs-small">5000万</span></div>
+      <div class="card-key"><span class="red">2亿像素的手机，真不一定打得过5000万像素的。</span>块数再多，每块都模糊也没用。</div>
+    </div>
+    <div class="card" data-reveal>
+      <div class="card-tag">真正决定画质的</div>
+      <div class="card-name">传感器大小，也就是"底"</div>
+      <div class="card-text">CMOS 是相机的感光芯片，相当于胶片相机的底片。底越大，进光越多，拍照越清楚。</div>
+      <div class="sensor-bars">
+        <div class="sensor-row"><span class="sensor-label">1/3.6"</span><div class="sensor-bar" style="width:25%;background:rgba(255,80,80,.2)"></div><span class="sensor-name">入门</span></div>
+        <div class="sensor-row"><span class="sensor-label">1/1.56"</span><div class="sensor-bar" style="width:50%;background:rgba(212,168,83,.2)"></div><span class="sensor-name">中端</span></div>
+        <div class="sensor-row"><span class="sensor-label">1/1.3"</span><div class="sensor-bar" style="width:72%;background:rgba(100,200,255,.2)"></div><span class="sensor-name">旗舰</span></div>
+        <div class="sensor-row"><span class="sensor-label">1"</span><div class="sensor-bar" style="width:95%;background:rgba(255,255,255,.15)"></div><span class="sensor-name">顶级</span></div>
+      </div>
+      <div class="card-key"><span class="gold">CMOS 尺寸 > 像素数量。</span>选手机先看底大不大，再看像素高不高。</div>
+    </div>
+  </div>
+  <p class="mod-summary" data-reveal><span class="ms-gold">CMOS底大才是王道</span><span class="ms-sep">·</span>镜头各司其职<span class="ms-sep">·</span>像素只是配角</p>
+</div>
+<div class="section-div"></div>
+
+<!-- 2 -->
+<div class="module" id="sec-lens">
+  <div class="mod-title">镜头结构 · 光路拆解</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>FROM LENS TO SENSOR</span><div class="mod-sub-line"></div></div>
+  <div class="lens-layout">
+    <div class="lens-scene">
+      <div class="lens-wrap" id="lensWrap">
+        <div class="lens-row">
+          <div class="lens-beam"></div>
+          <div class="light-tag">LIGHT</div>
+          <div class="lpart lp-glass"><div class="model-lbl"><div class="ml-name">保护玻璃</div><div class="ml-en">COVER GLASS</div></div><div class="slab"></div></div>
+          <div class="larrow"></div>
+          <div class="lpart lp-lens"><div class="model-lbl"><div class="ml-name">透镜组</div><div class="ml-en">LENS</div></div><div class="slab s1"></div><div class="slab s2"></div><div class="slab s3"></div></div>
+          <div class="larrow"></div>
+          <div class="lpart lp-aper"><div class="model-lbl"><div class="ml-name">光圈</div><div class="ml-en">APERTURE</div></div><div class="slab"></div></div>
+          <div class="larrow"></div>
+          <div class="lpart lp-ir"><div class="model-lbl"><div class="ml-name">滤光片</div><div class="ml-en">IR FILTER</div></div><div class="slab"></div></div>
+          <div class="larrow"></div>
+          <div class="lpart lp-cmos"><div class="model-lbl"><div class="ml-name">CMOS</div><div class="ml-en">SENSOR</div></div><div class="slab"></div></div>
+          <div class="image-tag">IMAGE</div>
+        </div>
+      </div>
+    </div>
+    <div class="lens-info">
+      <div class="info-item" data-reveal><div class="info-dot glass"></div><div class="info-text"><div class="info-name">保护玻璃</div><div class="info-desc">挡灰尘防水滴，<span class="info-key">保护里面精密的镜片</span>不被刮花。</div></div></div>
+      <div class="info-item" data-reveal><div class="info-dot lens"></div><div class="info-text"><div class="info-name">透镜组</div><div class="info-desc">几片曲面玻璃把光线<span class="info-key">弯曲聚焦</span>到一个点上。片数越多，成像越锐利。</div></div></div>
+      <div class="info-item" data-reveal><div class="info-dot aper"></div><div class="info-text"><div class="info-name">光圈</div><div class="info-desc">控制<span class="info-key">进光量的大小</span>。开大→暗处更亮；收小→远处更清晰。</div></div></div>
+      <div class="info-item" data-reveal><div class="info-dot ir"></div><div class="info-text"><div class="info-name">红外滤光片</div><div class="info-desc">滤掉人眼看不见的红外光，<span class="info-key">让颜色更准确</span>，不会偏红偏紫。</div></div></div>
+      <div class="info-item" data-reveal><div class="info-dot cmos"></div><div class="info-text"><div class="info-name">CMOS 传感器</div><div class="info-desc">把光信号变成数字照片。<span class="info-key">底越大，画质越好</span>——这才是核心。</div></div></div>
+    </div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 3 -->
+<div class="module" id="sec-sensor">
+  <div class="mod-title">传感器 · 画质的根源</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>IMAGE SENSOR</span><div class="mod-sub-line"></div></div>
+  <div class="sensor-grid">
+    <div class="sensor-col">
+      <div class="s-block" data-reveal><div class="s-label">它是啥</div><div class="s-body">传感器就是一块感光芯片。光线传导到它上面，它接收到后把光信号转变成电流信息传到处理器，变成照片。</div></div>
+      <div class="s-block" data-reveal><div class="s-label">像素的真相</div><div class="s-body">手机写着2亿像素，但你按快门时，它会把好多个小格子合并成一个来用。合并后进光更多，夜景更干净。所以拍出来的照片也就<span class="s-bold">1200万像素左右</span>。5000万像素也一样，合并完还是1200万左右。</div></div>
+    </div>
+    <div class="sensor-col">
+      <div class="s-block" data-reveal><div class="s-label">手动全开呢？</div><div class="s-body">可以，手机里手动设置一下就行。但全开之后变焦不能用了，暗光也变差了，照片体积巨大，<span class="s-bold">一般没人这么用。</span></div></div>
+      <div class="s-block" data-reveal><div class="s-label">像素高有什么用</div><ul class="s-list"><li>变焦裁切时，像素高的能裁得更远，画面依然清楚</li><li>其他方面，底大不大才是关键</li></ul></div>
+    </div>
+    <div class="s-full" data-reveal><div class="s-highlight"><span class="red">像素高这个数字，很大程度上是营销话术。</span>大家拍出来的照片"块数"其实差不多。</div></div>
+    <div class="s-full" data-reveal><div class="s-end"><p>就记一个数：<span class="gold">传感器尺寸</span>。1/1.3" 比 1/3.6" 大得多。<span class="gold">底大 → 进光多 → 画质好。</span></p></div></div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 4 -->
+<div class="module" id="sec-mp">
+  <div class="mod-title">像素高 ≠ 拍照好</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>MEGAPIXEL MYTH</span><div class="mod-sub-line"></div></div>
+  <div class="px-grid">
+    <div class="px-col">
+      <div class="px-block" data-reveal>
+        <div class="px-label">合并之后都一样</div>
+        <div class="px-body">不管手机标5000万还是2亿像素，拍照时都会合并。5000万4合1输出1250万，2亿16合1也输出1250万左右。<span class="px-bold">数字差了4倍，最终拍出来的照片分辨率几乎一样。</span></div>
+        <div class="px-analogy">就像两家奶茶店，一家宣传"800种口味可选"，一家说"200种"，但你点单时两家给你的都是同一个12杯套餐。菜单上的数字跟你喝到嘴里的没关系，<span class="px-bold">好不好喝看的是奶茶本身。</span></div>
+      </div>
+    </div>
+    <div class="px-col">
+      <div class="px-block" data-reveal>
+        <div class="px-label">那为什么厂商还在堆像素？</div>
+        <div class="px-body">因为"2亿像素"比"1/1.3英寸大底"好听。<span class="px-bold">消费者看不懂传感器参数，但看得懂数字大小。</span>像素高就成了最好用的营销话术。</div>
+        <div class="px-body">拍照好不好看，取决于传感器大小、镜头质量和算法——<span class="px-bold">跟像素数字关系不大。</span></div>
+      </div>
+    </div>
+    <div class="px-full" data-reveal><div class="px-highlight-alt"><span class="red">选手机别看像素数字。</span>看传感器大小、看镜头、看算法。像素只是锦上添花，不是雪中送炭。</div></div>
+    <div class="px-full" data-reveal><div class="px-end"><p><span class="gold">2亿像素 ≠ 拍2亿像素的照片。</span><br>别被数字唬住。</p></div></div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 5 -->
+<div class="module" id="sec-zoom">
+  <div class="mod-title">你被"100倍变焦"骗了多少年？</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>ZOOM TRUTH</span><div class="mod-sub-line"></div></div>
+  <div class="zm-grid">
+    <div class="zm-col">
+      <div class="zm-block" data-reveal>
+        <div class="zm-label">变焦的真相</div>
+        <div class="zm-body">手机镜头的焦距出厂就焊死了，改不了。你看到的"100倍变焦"，本质就两招：</div>
+        <div class="zm-body"><span class="zm-bold">第一招：切镜头。</span>手机里有主摄、长焦、超广角三颗镜头，系统帮你切换。比如你按3倍变焦，它切到长焦镜头拍，这是真的光学放大，画质无损。</div>
+        <div class="zm-body"><span class="zm-bold">第二招：裁照片。</span>在两个固定焦段之间，或者超过了长焦镜头的范围，手机就直接把照片裁一块放大。你随便拍一张照片在相册里放大到100倍，效果跟它差不多。</div>
+      </div>
+    </div>
+    <div class="zm-col">
+      <div class="zm-block" data-reveal>
+        <div class="zm-label">哪些倍率才靠谱？</div>
+        <div class="zm-body">只有在固定焦段下才是真正的光学镜头在拍，光线无损：</div>
+        <ul class="px-list"><li><span class="zm-bold">0.6倍</span> → 超广角镜头</li><li><span class="zm-bold">1倍</span> → 主摄镜头</li><li><span class="zm-bold">3倍/5倍</span> → 长焦镜头（看机型）</li></ul>
+        <div class="zm-body" style="margin-top:.6rem">超出这些焦段的，全靠裁照片撑着，画质一定打折扣。</div>
+      </div>
+    </div>
+    <div class="zm-full" data-reveal>
+      <div class="zm-label" style="text-align:center;margin-bottom:1rem">数码裁切原理</div>
+      <div class="crop-diagram">
+        <div class="crop-step"><div class="crop-chip"><div class="grid"></div><div class="crop-area" style="top:25%;left:25%;width:50%;height:50%"><span>5000万像素</span></div></div><div class="crop-label">全像素拍摄</div></div>
+        <div class="crop-arrow">→</div>
+        <div class="crop-step"><div class="crop-chip"><div class="grid"></div><div class="dim"></div><div class="crop-area" style="top:25%;left:25%;width:50%;height:50%"><span>1250万像素</span></div></div><div class="crop-label">裁切中心 1/4</div></div>
+        <div class="crop-arrow">→</div>
+        <div class="crop-step"><div class="crop-chip" style="border-color:rgba(212,168,83,.16)"><div class="grid"></div><div class="crop-area" style="top:0;left:0;width:100%;height:100%"><span>1250万 · 放大2倍</span></div></div><div class="crop-label" style="color:rgba(212,168,83,.28)">画面依然清晰</div></div>
+      </div>
+      <div class="crop-note">5000万像素裁放大2倍 → 裁切到1250万像素，画面依然清晰。这就是高像素真正的用途。</div>
+    </div>
+    <div class="zm-full" data-reveal><div class="zm-highlight"><span class="red">"100倍放大变焦"？</span>你随便拍一张去相册用两根手指放大到100倍，效果差不多。</div></div>
+    <div class="zm-full" data-reveal>
+      <div class="zm-real">
+        <div class="zm-real-title">但也有例外：真正的光学变焦</div>
+        <p>极少数手机做到了<span class="zm-bold">真正的光学连续变焦</span>——通过镜片物理移动来改变焦距，整个变焦范围内都是光学无损的。</p>
+        <ul class="zm-real-list">
+          <li><span class="blue">Samsung Galaxy S4 Zoom</span>（2013）—— 最早的尝试，10倍光学变焦</li>
+          <li><span class="blue">小米17 Ultra</span>（2025）—— 长焦镜头支持 <span class="zm-bold">3.2x ~ 4.3x</span> 连续光学变焦</li>
+        </ul>
+        <p style="margin-top:.5rem">这是未来的方向，但目前只有极少数机型搭载。<span class="zm-bold">绝大多数手机的"变焦"，还是切换镜头 + 裁照片。</span></p>
+      </div>
+    </div>
+    <div class="zm-full" data-reveal>
+      <div class="zm-end">
+        <p>买手机看变焦，看它<span class="gold">长焦镜头是多少倍</span>（3倍还是5倍），而不是看它吹多少倍变焦。<br>长焦倍数越高，你真正能<span class="gold">无损放大的范围</span>就越大。但归根到底，<span class="gold">光学镜头拍出来的，永远比裁出来的强。</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 6 -->
+<div class="module" id="sec-fl">
+  <div class="mod-title">焦段 · 一只眼看三种世界</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>FOCAL LENGTH</span><div class="mod-sub-line"></div></div>
+  <div class="fl-wrap" data-reveal>
+    <div class="fl-stage">
+      <div class="fl-scene">
+        <div class="fl-moon"></div>
+        <div class="fl-mt fl-mt-1"></div>
+        <div class="fl-mt fl-mt-2"></div>
+        <div class="fl-tree"></div>
+        <div class="fl-mt fl-mt-3"></div>
+      </div>
+      <div class="fl-frm fl-f06"><span class="fl-tag">0.6x 超广角</span></div>
+      <div class="fl-frm fl-f1x"><span class="fl-tag">1x 主摄</span></div>
+      <div class="fl-frm fl-f3x"><span class="fl-tag">3x 长焦</span></div>
+      <div class="fl-frm fl-f5x"><span class="fl-tag">5x 长焦</span></div>
+    </div>
+    <div class="fl-info">
+      <div class="fl-row"><span class="fl-dot" style="background:rgba(100,200,255,.5)"></span><span class="fl-lbl">0.6x</span><span class="fl-dsc">超广角 · ~13mm · 120° · 拍建筑风景</span></div>
+      <div class="fl-row"><span class="fl-dot" style="background:rgba(212,168,83,.5)"></span><span class="fl-lbl">1x</span><span class="fl-dsc">主摄 · ~24mm · 82° · 日常万能镜头</span></div>
+      <div class="fl-row"><span class="fl-dot" style="background:rgba(255,100,100,.5)"></span><span class="fl-lbl">3x</span><span class="fl-dsc">长焦 · ~70mm · ~30° · 人像特写</span></div>
+      <div class="fl-row"><span class="fl-dot" style="background:rgba(255,255,255,.25)"></span><span class="fl-lbl">5x</span><span class="fl-dsc">长焦 · ~120mm · ~12° · 拍远处细节</span></div>
+    </div>
+    <p class="fl-foot">焦距越长，视野越窄，远处的东西被放得越大</p>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 7 -->
+<div class="module" id="sec-cam3">
+  <div class="mod-title">三颗镜头速览</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>THREE CAMERAS</span><div class="mod-sub-line"></div></div>
+  <div class="cam-cards">
+    <div class="cam-card" data-reveal>
+      <div class="cc-head"><div class="cc-dot main"></div><span class="cc-name">主摄</span><span class="cc-zoom">1x</span></div>
+      <p class="cc-body">你手机上<span class="gold">底最大、画质最好的那颗</span>。日常拍照全靠它，90%的照片都是主摄拍的。</p>
+      <p class="cc-body">焦距约24mm，视角约82°，不广也不窄，<b>万能镜头</b>。</p>
+      <div class="cc-bottom">~24mm · 82° · 日常万能</div>
+    </div>
+    <div class="cam-card" data-reveal>
+      <div class="cc-head"><div class="cc-dot uw"></div><span class="cc-name">超广角</span><span class="cc-zoom">0.6x</span></div>
+      <p class="cc-body">拍到的范围比主摄<span class="blue">宽得多</span>，适合拍建筑、风景、大合照。</p>
+      <p class="cc-body">但<span class="red">用得少</span>，而且大部分手机上它是三颗里<b>成像素质最差的</b>——底最小，边缘画质拉胯，夜景噪点多。</p>
+      <div class="cc-bottom">~13mm · 120° · 风景建筑</div>
+    </div>
+    <div class="cam-card" data-reveal>
+      <div class="cc-head"><div class="cc-dot tele"></div><span class="cc-name">长焦</span><span class="cc-zoom">3x / 5x</span></div>
+      <p class="cc-body">专门<b>拍远处</b>的镜头。3倍、5倍甚至更高，把远处的东西拉近，<span class="gold">画质无损</span>。</p>
+      <p class="cc-body">长焦内部的光学结构比主摄复杂得多——<b>三种完全不同的方案</b>，直接决定了能拍多远、画质好不好。</p>
+      <div class="cc-bottom">~70-120mm · 3x~10x · 拍远处</div>
+    </div>
+  </div>
+  <p class="cam-note-s" data-reveal>三颗镜头<b>各管各的焦段</b>，在它们之间切换时，手机靠裁照片撑场面。</p>
+</div>
+<div class="section-div"></div>
+
+<!-- 8 -->
+<div class="module" id="sec-tele">
+  <div class="mod-title">长焦的三种结构</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>TELEPHOTO TYPES</span><div class="mod-sub-line"></div></div>
+  <div class="tele-grid">
+    <div class="tele-box" data-reveal>
+      <div class="tele-rank">方案一</div>
+      <div class="tele-name">直立长焦</div>
+      <p class="tele-body">光线<b>直着穿过镜片</b>，结构最简单。跟主摄光路方向一样，垂直于屏幕进入。</p>
+      <p class="tele-body">但<b>焦距做不长</b>——手机太薄，光路不够长，一般只能做到<b>2~3倍</b>。</p>
+      <div class="tele-tags"><span class="tele-tag pro">结构简单</span><span class="tele-tag pro">成本低</span><span class="tele-tag con">焦距做不长</span><span class="tele-tag con">一般2~3倍</span></div>
+    </div>
+    <div class="tele-box best" data-reveal>
+      <div class="tele-rank gold">方案二 · 目前最优</div>
+      <div class="tele-name">潜望长焦 <span class="badge gold">BEST</span></div>
+      <p class="tele-body">光线先被<b>棱镜折射90°</b>，然后<b>横向穿过镜片组</b>。利用手机的宽度塞进更长的光路。</p>
+      <p class="tele-body"><span class="gold">光路长 = 焦距长</span>，可以做到<b>5倍甚至更高</b>，而且只经过一次折射，<b>光线损失最小</b>，画质最好。</p>
+      <div class="tele-tags"><span class="tele-tag pro">焦距长 5x+</span><span class="tele-tag pro">光线损失小</span><span class="tele-tag pro">画质最好</span><span class="tele-tag con">结构复杂 成本高</span></div>
+    </div>
+    <div class="tele-box" data-reveal>
+      <div class="tele-rank">方案三</div>
+      <div class="tele-name">倒置潜望长焦</div>
+      <p class="tele-body">也是潜望结构，但光线需要经过<b>3次甚至更多次折射/反射</b>才能到达传感器。</p>
+      <p class="tele-body">每次折射都会<span class="red">损失一部分光线</span>，还引入色散和杂光，<b>成像效果不如标准潜望</b>。但结构可以做得<b>更紧凑</b>。</p>
+      <div class="tele-tags"><span class="tele-tag pro">最紧凑</span><span class="tele-tag con">3次+折射</span><span class="tele-tag con">光线损失大</span><span class="tele-tag con">画质下降</span></div>
+    </div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 9 -->
+<div class="module" id="sec-path">
+  <div class="mod-title">光路结构对比</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>LIGHT PATH</span><div class="mod-sub-line"></div></div>
+  <div class="dia-wrap">
+    <div class="dia-col">
+      <div class="dia-title">直立长焦</div>
+      <div class="dia-sub">UPRIGHT TELEPHOTO</div>
+      <div class="dia-box" data-reveal>
+        <div class="d-phone"></div>
+        <div class="d-varr" style="left:40%;top:10%;height:24%"></div>
+        <span class="d-lbl d-lbl-amber" style="left:44%;top:10%">LIGHT</span>
+        <div class="d-lens-flat" style="left:26%;top:36%;width:28%;height:12%"></div>
+        <div class="d-lens-flat2" style="left:30%;top:40%;width:20%;height:8%"></div>
+        <span class="d-lbl d-lbl-blue" style="left:22%;top:30%">LENS GROUP</span>
+        <div class="d-varr" style="left:40%;top:52%;height:14%"></div>
+        <div class="d-cmos" style="left:28%;top:70%;width:24%;height:7%"></div>
+        <span class="d-lbl d-lbl-gold" style="left:54%;top:70%">CMOS</span>
+        <span class="d-lbl d-lbl-dim" style="left:50%;bottom:5%;transform:translateX(-50%)">光路直进 · 焦距受限于机身厚度</span>
+      </div>
+    </div>
+    <div class="dia-col">
+      <div class="dia-title">潜望长焦</div>
+      <div class="dia-sub">PERISCOPE TELEPHOTO</div>
+      <div class="dia-box" data-reveal>
+        <div class="d-phone"></div>
+        <div class="d-varr" style="left:30%;top:10%;height:32%"></div>
+        <span class="d-lbl d-lbl-amber" style="left:33%;top:10%">LIGHT</span>
+        <div style="position:absolute;left:16%;top:30%;width:28%;height:34%">
+          <div style="position:absolute;inset:-2px;clip-path:polygon(0 0, 0 100%, 100% 100%);background:rgba(255,255,255,.08)"></div>
+          <div style="position:absolute;inset:0;clip-path:polygon(0 0, 0 100%, 100% 100%);background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.02))"></div>
+        </div>
+        <span class="d-lbl d-lbl-white" style="left:14%;top:24%">PRISM</span>
+        <div style="position:absolute;left:28%;top:44%;width:10px;height:10px;border:1.5px solid rgba(255,230,140,.25);border-radius:50%;pointer-events:none"></div>
+        <div class="d-harr" style="left:34%;top:48%;width:42%"></div>
+        <div class="d-cmos" style="left:74%;top:34%;width:7%;height:26%"></div>
+        <span class="d-lbl d-lbl-gold" style="left:73%;top:28%">CMOS</span>
+        <span class="d-lbl d-lbl-dim" style="left:50%;bottom:5%;transform:translateX(-50%)">棱镜折射90° · 利用手机宽度</span>
+      </div>
+    </div>
+  </div>
+  <p class="dia-foot" data-reveal>直立长焦受限于<b>机身厚度</b>，光路做不长。潜望长焦利用<b>手机宽度</b>放光路，<span class="gold">同样机身下焦距可以做到3倍以上</span>。</p>
+</div>
+<div class="section-div"></div>
+
+<!-- 10 -->
+<div class="module" id="sec-aper">
+  <div class="mod-title">光圈 · 控制进光量的阀门</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>APERTURE</span><div class="mod-sub-line"></div></div>
+  <div class="sensor-grid">
+    <div class="sensor-col">
+      <div class="s-block" data-reveal><div class="s-label">光圈是啥</div><div class="s-body">光圈就是镜头里的一个孔，<span class="s-bold">控制光线进来的多少</span>。孔开得大，进光就多，暗处也能拍清楚；孔开得小，进光就少，远处细节更锐利。</div></div>
+      <div class="s-block" data-reveal><div class="s-label">怎么表示</div><div class="s-body">光圈用 <span class="s-bold">f/数字</span> 表示。<span class="s-bold">f 后面的数字越小，光圈越大，进光越多。</span>比如 f/1.4 是大光圈，f/16 是小光圈。记住一个口诀：<span class="s-bold">数字小 = 孔大 = 进光多。</span></div></div>
+    </div>
+    <div class="sensor-col">
+      <div class="s-block" data-reveal><div class="s-label">光圈大小对照</div><ul class="s-list"><li><span class="s-bold">f/1.4 ~ f/2.0</span> → 大光圈，暗处拍摄好，背景虚化强</li><li><span class="s-bold">f/2.8 ~ f/4.0</span> → 中等光圈，日常拍照够用</li><li><span class="s-bold">f/8.0 ~ f/16</span> → 小光圈，风景拍摄，前后都清晰</li></ul></div>
+      <div class="s-block" data-reveal><div class="s-label">可变光圈</div><div class="s-body">大部分手机的光圈是固定的，拍啥都一个样。少数旗舰配了<span class="s-bold">可变光圈</span>，可以在大光圈和小光圈之间切换。<span class="s-bold">暗处开大光圈多进光，强光下缩小光圈避免过曝。</span>就像给水管加了个阀门，想开多大就开多大。</div></div>
+    </div>
+    <div class="s-full" data-reveal><div class="s-highlight">简单记：<span class="red">f 数字越小 → 光圈越大 → 进光越多 → 暗处越亮、虚化越强。</span>可变光圈就是让手机在不同场景自动调这个"阀门"。</div></div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 11 -->
+<div class="module" id="sec-lofic">
+  <div class="mod-title">LOFIC · 不过曝的秘密</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>LATERAL OVERFLOW INTEGRATION CAPACITOR</span><div class="mod-sub-line"></div></div>
+  <div class="lofic-body" data-reveal>
+    <p class="lofic-q">什么是 LOFIC？</p>
+    <p class="lofic-p">像素就是<span class="gold">水桶</span>。传统像素只有一个桶，晴天一拍就满了——<span class="red">高光一片白，啥细节都没了。</span></p>
+    <p class="lofic-p">LOFIC 的做法很简单：<b>给每个像素旁边加了个"备用水桶"。</b>主桶满了？水自动流进备桶继续装。</p>
+  </div>
+  <div class="lofic-demo" data-reveal>
+    <div class="lofic-side">
+      <div class="lofic-side-title">传统像素</div>
+      <div class="lofic-side-sub">ONE BUCKET</div>
+      <div class="lofic-bkzone">
+        <div class="lofic-drops"><div class="lofic-dp" style="background:rgba(100,180,255,.18)"></div><div class="lofic-dp" style="background:rgba(100,180,255,.14)"></div><div class="lofic-dp" style="background:rgba(100,180,255,.1)"></div></div>
+        <div style="position:relative">
+          <div class="lofic-bk nor"><div class="lofic-fill full"></div></div>
+          <div class="lofic-ov"></div>
+        </div>
+      </div>
+      <div class="lofic-res bad">满了溢出来 · 过曝</div>
+    </div>
+    <div style="font-size:1.1rem;color:rgba(255,255,255,.06)">→</div>
+    <div class="lofic-side">
+      <div class="lofic-side-title">LOFIC 像素</div>
+      <div class="lofic-side-sub">BUCKET + BACKUP</div>
+      <div class="lofic-bkzone">
+        <div class="lofic-pair">
+          <div class="lofic-bk main"><div class="lofic-fill full"></div></div>
+          <div class="lofic-bridge"></div>
+          <div class="lofic-bk bak"><div class="lofic-fill part"></div></div>
+        </div>
+      </div>
+      <div class="lofic-res good">溢出到备桶 · 不过曝</div>
+    </div>
+  </div>
+  <div class="lofic-benefits" data-reveal>
+    <div class="lofic-bf">
+      <div class="lofic-bf-h"><div class="lofic-bf-dot a"></div><div class="lofic-bf-t">逆光不黑脸</div></div>
+      <div class="lofic-bf-d">人脸和背景同时清晰，不用再纠结对焦谁</div>
+    </div>
+    <div class="lofic-bf">
+      <div class="lofic-bf-h"><div class="lofic-bf-dot b"></div><div class="lofic-bf-t">大光比场景</div></div>
+      <div class="lofic-bf-d">窗边、日落、舞台灯光，高光和暗部都有细节</div>
+    </div>
+    <div class="lofic-bf">
+      <div class="lofic-bf-h"><div class="lofic-bf-dot c"></div><div class="lofic-bf-t">暗部也清晰</div></div>
+      <div class="lofic-bf-d">亮的地方不过曝，暗的地方也能看清细节</div>
+    </div>
+  </div>
+  <div class="lofic-xm" data-reveal>
+    <div class="lofic-xm-tag">小米17 Pro 系列</div>
+    <div class="lofic-xm-t">首发搭载 LOFIC 技术</div>
+    <div class="lofic-xm-rows">
+      <div class="lofic-xm-row">一次曝光能记录约 <span class="gold">16.5 EV</span> 的动态范围——已经接近人眼了。</div>
+      <div class="lofic-xm-row">普通手机约 <span class="blue">12 EV</span>，多 4.5EV = 能接住 <span class="gold">22倍</span> 更强的光。</div>
+    </div>
+  </div>
+</div>
+<div class="section-div"></div>
+
+<!-- 12 -->
+<div class="module" id="sec-coat">
+  <div class="mod-title">镜片与镀膜</div>
+  <div class="mod-sub"><div class="mod-sub-line"></div><span>LENS COATING</span><div class="mod-sub-line"></div></div>
+  <div class="coat-intro" data-reveal><p><b>比芝麻还小的镜片，比你眼镜还讲究</b></p></div>
+  <div class="coat-1g6p" data-reveal><p>旗舰镜头一般叫"1G+6P"：第一片用光学玻璃（G=Glass），后面6片用光学树脂（P=Plastic）。别听到塑料就觉得low，<b>这是高精度光学材料。</b></p></div>
+  <div class="coat-elems" data-reveal>
+    <div class="coat-el"><div class="coat-el-s g"><span>G</span></div><div class="coat-el-l">玻璃</div></div>
+    <div class="coat-el"><div class="coat-el-s p"><span>P</span></div><div class="coat-el-l">树脂</div></div>
+    <div class="coat-el"><div class="coat-el-s p"><span>P</span></div><div class="coat-el-l">树脂</div></div>
+    <div class="coat-el"><div class="coat-el-s p"><span>P</span></div><div class="coat-el-l">树脂</div></div>
+    <div class="coat-el"><div class="coat-el-s p"><span>P</span></div><div class="coat-el-l">树脂</div></div>
+    <div class="coat-el"><div class="coat-el-s p"><span>P</span></div><div class="coat-el-l">树脂</div></div>
+    <div class="coat-el"><div class="coat-el-s p"><span>P</span></div><div class="coat-el-l">树脂</div></div>
+  </div>
+  <table class="coat-table" data-reveal>
+    <thead><tr><th>特性</th><th>树脂镜片</th><th>玻璃镜片</th></tr></thead>
+    <tbody>
+      <tr><td>折射率</td><td>1.49~1.65</td><td>1.52~1.92</td></tr>
+      <tr><td>阿贝数</td><td>30~58</td><td>20~85</td></tr>
+      <tr><td>重量</td><td>轻，像塑料</td><td>重，像…玻璃</td></tr>
+      <tr><td>成本</td><td>白菜价</td><td>贵5~20倍</td></tr>
+    </tbody>
+  </table>
+  <div class="coat-note" data-reveal><p><span class="coat-note-t">折射率</span>：弯曲光线能力，越高镜片越薄 <span class="coat-note-sep">·</span> <span class="coat-note-t">阿贝数</span>：色散控制，越高色彩越准</p></div>
+  <div class="coat-why" data-reveal><p>一个7片镜组有14个空气-玻璃交界面，每个面都会反射约4%的光。不镀膜的话，最后<span class="red">只有不到60%的光能到达传感器</span>——将近一半的光被浪费了。</p></div>
+  <div class="coat-loss" data-reveal>
+    <div class="coat-loss-row"><span class="coat-loss-label">入射光</span><div class="coat-loss-bar"><div class="coat-loss-fill" style="width:100%"></div></div><span class="coat-loss-pct">100%</span></div>
+    <div class="coat-loss-row"><span class="coat-loss-label">无镀膜</span><div class="coat-loss-bar"><div class="coat-loss-fill bad" style="width:56%"></div></div><span class="coat-loss-pct bad">56%</span></div>
+    <div class="coat-loss-row"><span class="coat-loss-label">多层镀膜</span><div class="coat-loss-bar"><div class="coat-loss-fill good" style="width:93%"></div></div><span class="coat-loss-pct good">93%</span></div>
+  </div>
+  <div class="coat-how" data-reveal><p>镀膜的原理很巧妙：<b>让反射光和入射光相位相反，互相抵消。</b>好的多层镀膜可以把反射率降到<span class="gold">0.5%以下</span>。</p></div>
+</div>
+
+<div class="bottom-pad"></div>
+
+<script>
+setTimeout(function(){var el=document.getElementById('entranceCurtain');if(el)el.remove();},2800);
+
+(function(){
+  var c=document.getElementById('sky'),ctx=c.getContext('2d'),W,H,bg=document.createElement('canvas'),bgCtx=bg.getContext('2d'),shoot=[];
+  function drawSky(){W=c.width=bg.width=innerWidth*devicePixelRatio;H=c.height=bg.height=innerHeight*devicePixelRatio;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';var g=bgCtx.createRadialGradient(W*.5,H*.4,0,W*.5,H*.55,W*.6);g.addColorStop(0,'#1a2555');g.addColorStop(.15,'#141c42');g.addColorStop(.35,'#0c1228');g.addColorStop(.6,'#070b16');g.addColorStop(.85,'#040710');g.addColorStop(1,'#020306');bgCtx.fillStyle=g;bgCtx.fillRect(0,0,W,H);var nd=[{x:.2,y:.15,r:.3,c:'rgba(140,80,255,.06)'},{x:.78,y:.55,r:.24,c:'rgba(70,110,255,.05)'},{x:.48,y:.35,r:.2,c:'rgba(255,200,100,.025)'}];for(var j=0;j<nd.length;j++){var n=nd[j],d=bgCtx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r*W);d.addColorStop(0,n.c);d.addColorStop(1,'transparent');bgCtx.fillStyle=d;bgCtx.fillRect(0,0,W,H);}var ct=Math.floor(W*H/12000);for(var i=0;i<ct;i++){var x=Math.random()*W,y=Math.random()*H,r=Math.random()*1.2+.2,b=120+Math.random()*135;bgCtx.fillStyle='rgba('+Math.floor(b)+','+Math.floor(b)+','+Math.min(255,Math.floor(b+15))+','+(0.3+Math.random()*0.4)+')';bgCtx.beginPath();bgCtx.arc(x,y,r,0,6.283);bgCtx.fill();}}
+  function drawShoot(){for(var i=shoot.length-1;i>=0;i--){var s=shoot[i];s.progress+=s.speed;if(s.progress>1){shoot.splice(i,1);continue;}var p=s.progress,x=s.sx+(s.ex-s.sx)*p,y=s.sy+(s.ey-s.sy)*p,a=Math.sin(p*Math.PI)*s.bright;var tl=ctx.createLinearGradient(x,y,x-s.dx*40,y-s.dy*40);tl.addColorStop(0,'rgba(255,255,255,'+a+')');tl.addColorStop(0.3,'rgba(200,220,255,'+(a*0.25)+')');tl.addColorStop(1,'transparent');ctx.strokeStyle=tl;ctx.lineWidth=1.5*devicePixelRatio;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-s.dx*40,y-s.dy*40);ctx.stroke();}}
+  function spawnS(){var a=0.3+Math.random()*0.4,sp=1+Math.random()*1.5,sx=Math.random()*W*0.3,sy=Math.random()*H*0.2;shoot.push({sx:sx,sy:sy,dx:Math.cos(a)*sp*3,dy:Math.sin(a)*sp*3,ex:sx+Math.cos(a)*W*0.8,ey:sy+Math.sin(a)*H*0.8,progress:0,speed:(0.003+Math.random()*0.004)*sp,bright:0.3+Math.random()*0.4});}
+  function loop(){ctx.drawImage(bg,0,0);drawShoot();requestAnimationFrame(loop);}
+  drawSky();loop();addEventListener('resize',drawSky);setTimeout(spawnS,3000);setInterval(function(){if(Math.random()>0.4)spawnS();},5000);
+})();
+
+(function(){var box=document.getElementById('lensBox');if(!box)return;var s=document.createElement('style');s.textContent='@keyframes lnsF{0%{transform:translate(0,0) rotate(0deg);opacity:0}5%{opacity:var(--op)}92%{opacity:var(--op)}100%{transform:translate(var(--tx),var(--ty)) rotate(var(--rt));opacity:0}}';document.head.appendChild(s);function spawn(){var el=document.createElement('div');el.className='lens-bg';var roll=Math.random(),size=roll>.85?280+Math.random()*120:roll>.45?120+Math.random()*100:50+Math.random()*50,W=innerWidth,H=innerHeight,edge=Math.floor(Math.random()*4),x,y;if(edge===0){x=-size*.6;y=Math.random()*H;}else if(edge===1){x=W+size*.6;y=Math.random()*H;}else if(edge===2){x=Math.random()*W;y=-size*.6;}else{x=Math.random()*W;y=H+size*.6;}var tx=(W*.5-x)+(Math.random()-.5)*W*.6,ty=(H*.5-y)+(Math.random()-.5)*H*.6,dur=30+Math.random()*40,rot=100+Math.random()*200,op=size>250?0.025+Math.random()*0.02:size>120?0.035+Math.random()*0.025:0.05+Math.random()*0.04,hue=Math.random();el.style.cssText='width:'+size+'px;height:'+size+'px;left:'+x+'px;top:'+y+'px;'+'background:radial-gradient(circle at 35% 35%,'+(hue>.6?'rgba(255,200,100,.01)':hue>.3?'rgba(180,210,255,.01)':'rgba(255,255,255,.01)')+',transparent 70%);'+'opacity:0;animation:lnsF '+dur+'s linear forwards;'+'--tx:'+tx+'px;--ty:'+ty+'px;--rt:'+rot+'deg;--op:'+op;box.appendChild(el);setTimeout(function(){if(el.parentNode)el.remove();},(dur+2)*1000);}for(var i=0;i<5;i++)setTimeout(spawn,i*800);setInterval(spawn,3000);})();
+
+(function(){var hero=document.getElementById('hero');if(!hero)return;function spawn(){var p=document.createElement('div');p.className='pt';var sz=1+Math.random()*1.5,x=15+Math.random()*70,y=55+Math.random()*35,tx=Math.random()*80-40,ty=-30-Math.random()*70,dur=40+Math.random()*30,op=0.03+Math.random()*0.03,warm=Math.random()>.4,col=warm?'rgba(255,200,100,'+op+')':'rgba(190,220,255,'+op+')';p.style.cssText='left:'+x+'%;top:'+y+'%;width:'+sz+'px;height:'+sz+'px;background:'+col+';'+'--tx:'+tx+'px;--ty:'+ty+'px;--o:'+op+';animation-duration:'+dur+'s';hero.appendChild(p);setTimeout(function(){if(p.parentNode)p.remove();},(dur+2)*1000);}for(var i=0;i<6;i++)setTimeout(spawn,1600+i*1500);setInterval(spawn,3000);})();
+
+(function(){var wrap=document.getElementById('lensWrap');if(!wrap)return;var rx=6,ry=8,tx=8,ty=6;document.addEventListener('mousemove',function(e){tx=(e.clientX/innerWidth-0.5)*30;ty=(e.clientY/innerHeight-0.5)*-20;});(function loop(){rx+=(ty-rx)*0.06;ry+=(tx-ry)*0.06;wrap.style.transform='rotateY('+ry+'deg) rotateX('+rx+'deg)';requestAnimationFrame(loop);})();})();
+
+(function(){var els=document.querySelectorAll('[data-reveal]');function check(){var h=innerHeight;for(var i=0;i<els.length;i++){var r=els[i].getBoundingClientRect();if(r.top<h*0.88)els[i].classList.add('on');}}check();addEventListener('scroll',check,{passive:true});})();
+
+(function(){
+  var nav=document.getElementById('topnav');
+  var links=document.querySelectorAll('.topnav-link');
+  var ids=['sec-brand','sec-basics','sec-lens','sec-sensor','sec-mp','sec-zoom','sec-fl','sec-cam3','sec-tele','sec-path','sec-aper','sec-lofic','sec-coat'];
+  addEventListener('scroll',function(){
+    var y=scrollY;
+    if(y>300){nav.classList.add('show');}else{nav.classList.remove('show');}
+    var cur='';
+    for(var i=ids.length-1;i>=0;i--){var el=document.getElementById(ids[i]);if(el&&el.getBoundingClientRect().top<200){cur=ids[i];break;}}
+    for(var j=0;j<links.length;j++){links[j].classList.toggle('active',links[j].getAttribute('href')==='#'+cur);}
+  },{passive:true});
+})();
+</script>
+</body>
+</html>
