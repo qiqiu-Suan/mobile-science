@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>屏幕的史诗 — 手机显示技术终极指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Sans+SC:wght@300;400;700;900&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0c0b;--surface:#1a1917;--surface2:#242320;--surface3:#2e2d29;
+  --accent:#e8a838;--accent2:#e86060;--accent3:#9080ff;--accent4:#50e8a0;--accent5:#50b8e8;
+  --text:#f0ece4;--text-muted:#7a7570;
+  --radius:18px;--radius-sm:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
+
+.progress{position:fixed;top:0;left:0;height:4px;z-index:200;display:flex;gap:2px;padding:0 2px;transition:width 0s}
+.progress .px-bar{width:4px;height:100%;border-radius:1px;opacity:.15;background:var(--accent5)}
+.progress .px-bar.on{opacity:1;animation:pxGlow 1.5s ease infinite}
+@keyframes pxGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)}}
+
+.mouse-glow{position:fixed;width:300px;height:300px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transition:opacity .4s;background:radial-gradient(circle,rgba(0,229,255,.06),transparent 70%);transform:translate(-50%,-50%);mix-blend-mode:screen}
+.mouse-glow.visible{opacity:1}
+
+.floating-particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.fp-dot{position:absolute;border-radius:1px;opacity:0;animation:fpFloat linear infinite}
+@keyframes fpFloat{
+  0%{opacity:0;transform:translateY(100vh) rotate(0deg)}
+  10%{opacity:.2}
+  90%{opacity:.2}
+  100%{opacity:0;transform:translateY(-20px) rotate(360deg)}
+}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2rem;transition:background .4s,box-shadow .4s}
+nav.scrolled{background:rgba(13,12,11,.94);backdrop-filter:blur(16px);box-shadow:0 1px 0 rgba(240,236,228,.04)}
+nav .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px}
+nav .logo{font-family:'Instrument Serif',serif;font-size:1.1rem;color:var(--accent)}
+nav .nav-links{display:flex;gap:1.2rem;list-style:none}
+nav .nav-links a{color:var(--text-muted);text-decoration:none;font-size:.74rem;letter-spacing:.06em;transition:color .3s,box-shadow .3s;position:relative;padding-bottom:4px}
+nav .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--accent5);transition:width .3s}
+nav .nav-links a:hover{color:var(--accent5)}
+nav .nav-links a:hover::after{width:100%}
+nav .nav-links a.active{color:var(--accent5)}
+nav .nav-links a.active::after{width:100%}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,12,11,.95);backdrop-filter:blur(16px);border-top:1px solid rgba(240,236,228,.06);padding:.5rem .8rem;overflow-x:auto;white-space:nowrap;gap:.6rem;transition:transform .3s ease}
+.mobile-nav a{display:inline-block;color:var(--text-muted);text-decoration:none;font-size:.65rem;padding:.4rem .6rem;border-radius:8px;transition:color .3s,background .3s}
+.mobile-nav a.active{color:var(--accent5);background:rgba(0,229,255,.08)}
+
+@keyframes gradFlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes gradFlowSlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes fadeUpTrue{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bIn{to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes pulseBorder{0%,100%{border-color:rgba(0,229,255,.15)}50%{border-color:rgba(0,229,255,.35)}}
+@keyframes breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}
+@keyframes signalBlink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes typewriter-cursor{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes barGlow{0%,100%{box-shadow:0 0 6px rgba(0,229,255,.4)}50%{box-shadow:0 0 14px rgba(0,229,255,.8)}}
+@keyframes crownFloat{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:.4}90%{opacity:.4}100%{transform:translateY(-100%) rotate(180deg);opacity:0}}
+@keyframes flowBar{0%{left:-100%}100%{left:200%}}
+@keyframes afterimage{0%{text-shadow:0 0 20px rgba(0,229,255,.5)}100%{text-shadow:0 0 0 transparent}}
+
+.ch-tt em,.hero h1 em,.sp-hero h3 em,.crown-card h3 em{
+  font-family:'Instrument Serif',serif;font-style:italic;
+  background:linear-gradient(90deg,#00e5ff,#0090b0,#00e5ff,#00c8e8,#0090b0,#00e5ff);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;
+  animation:gradFlowSlow 5s linear infinite;padding-right:.12em;
+}
+.ch-tt em,.crown-card h3 em{animation:gradFlowSlow 5s linear infinite,breatheGlow 4s ease infinite}
+@keyframes breatheGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(0,229,255,.15))}50%{filter:drop-shadow(0 0 20px rgba(0,229,255,.4))}}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hero-bg .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0;animation:bIn 2s ease forwards}
+.hero-bg .b1{width:500px;height:500px;top:-15%;left:10%;background:rgba(0,229,255,.08);animation-delay:.2s}
+.hero-bg .b2{width:400px;height:400px;bottom:-10%;right:5%;background:rgba(144,128,255,.08);animation-delay:.5s}
+.hero-bg .b3{width:300px;height:300px;top:30%;right:25%;background:rgba(232,168,56,.06);animation-delay:.8s}
+.hero-inner{position:relative;z-index:1;max-width:760px}
+.hero-chip{display:inline-flex;padding:.4rem 1.2rem;border:1px solid rgba(0,229,255,.25);border-radius:999px;font-size:.7rem;color:var(--accent5);letter-spacing:.12em;margin-bottom:2.5rem;opacity:0;animation:fadeUpTrue .7s ease .8s forwards}
+.hero h1{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(2rem,5.5vw,3.8rem);line-height:1.3;margin-bottom:1.8rem;opacity:0;animation:fadeUpTrue .8s ease 1s forwards}
+.tw-cursor{display:inline-block;width:3px;height:1em;background:var(--accent5);margin-left:2px;vertical-align:text-bottom;animation:typewriter-cursor .8s step-end infinite}
+.hero .lead{font-size:1rem;color:var(--text-muted);max-width:530px;margin:0 auto 3rem;opacity:0;animation:fadeUpTrue .8s ease 1.2s forwards}
+.hero .actions{opacity:0;animation:fadeUpTrue .7s ease 1.4s forwards}
+
+.btn-p{display:inline-block;padding:.8rem 2rem;border:none;border-radius:999px;background:linear-gradient(90deg,#00e5ff,#0090b0,#00e5ff,#0090b0,#00e5ff);background-size:200% 100%;animation:gradFlow 3s linear infinite;color:#0d0c0b;font-weight:700;font-size:.88rem;cursor:pointer;text-decoration:none;transition:transform .3s,box-shadow .3s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,229,255,.35)}
+
+.ch{position:relative;z-index:1;padding:6rem 2rem}
+.ch-in{max-width:1100px;margin:0 auto}
+.ch-lb{font-family:'Instrument Serif',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;opacity:.8}
+.ch-lb::before{content:'';width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.ch-lb.lb-blue::before{background:var(--accent5)}
+.ch-lb.lb-orange::before{background:var(--accent)}
+.ch-lb.lb-green::before{background:var(--accent4)}
+.ch-lb.lb-purple::before{background:var(--accent3)}
+.ch-lb.lb-red::before{background:var(--accent2)}
+.ch-lb.lb-cyan::before{background:#00e5ff}
+.ch-lb::after{content:'';width:20px;height:1px;background:var(--accent)}
+.ch-tt{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(1.5rem,3.8vw,2.4rem);line-height:1.4;margin-bottom:.8rem}
+.ch-ds{color:var(--text-muted);max-width:620px;margin-bottom:3rem;font-size:.92rem}
+
+.ch-hr{width:100%;height:16px;display:flex;align-items:center;justify-content:center;position:relative;margin:0}
+.ch-hr::before,.ch-hr::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,.2))}
+.ch-hr::after{background:linear-gradient(90deg,rgba(0,229,255,.2),transparent)}
+.ch-hr .px-block{width:8px;height:8px;background:var(--accent5);border-radius:2px;flex-shrink:0;margin:0 8px;box-shadow:0 0 10px rgba(0,229,255,.3);animation:pulse 3s ease infinite}
+
+.alert{padding:1.2rem 1.5rem;border-radius:var(--radius);margin-bottom:2.5rem;font-size:.92rem;line-height:1.9;position:relative;overflow:hidden}
+.alert-gold{background:rgba(232,168,56,.07);border:1px solid rgba(232,168,56,.18)}
+.alert-gold::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#ffd080)}
+.alert-red{background:rgba(232,96,96,.07);border:1px solid rgba(232,96,96,.18)}
+.alert-red::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent2),#ff8a80)}
+.alert-green{background:rgba(80,232,160,.06);border:1px solid rgba(80,232,160,.15)}
+.alert-green::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent4),#90f0c0)}
+.alert strong{color:var(--text)}
+.big-text{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(1.3rem,3vw,1.8rem);line-height:1.5;display:block;margin:.5rem 0}
+.rgb-indicator{display:inline-flex;gap:4px;margin-right:6px;vertical-align:middle}
+.rgb-indicator .ri-dot{width:8px;height:8px;border-radius:50%;animation:signalBlink 1.5s ease infinite}
+.rgb-indicator .ri-r{background:#ef5350;animation-delay:0s}
+.rgb-indicator .ri-g{background:#66bb6a;animation-delay:.5s}
+.rgb-indicator .ri-b{background:#42a5f5;animation-delay:1s}
+
+.card{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:2.2rem 1.8rem;position:relative;overflow:hidden;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s,border-color .4s}
+.card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.3);border-color:rgba(0,229,255,.15);animation:pulseBorder 2s ease infinite}
+.card-glow{position:absolute;top:-40%;right:-20%;width:300px;height:300px;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s}
+.card:hover .card-glow{opacity:1}
+
+.manu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.manu-card .mc-tier{position:absolute;top:14px;right:14px;font-size:.6rem;padding:.25rem .65rem;border-radius:999px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.tier-s{background:rgba(80,232,160,.1);color:var(--accent4);border:1px solid rgba(80,232,160,.2)}
+.tier-a{background:rgba(232,168,56,.1);color:var(--accent);border:1px solid rgba(232,168,56,.2)}
+.tier-c{background:rgba(232,96,96,.1);color:var(--accent2);border:1px solid rgba(232,96,96,.2)}
+.tier-f{background:rgba(232,96,96,.18);color:var(--accent2);border:1px solid rgba(232,96,96,.3)}
+.manu-card h4{font-family:'Noto Serif SC',serif;font-size:1.05rem;margin-bottom:.1rem}
+.manu-card .mc-en{font-size:.68rem;color:var(--text-muted);font-family:'Instrument Serif',serif;margin-bottom:.8rem}
+.manu-card p{font-size:.82rem;color:var(--text-muted);line-height:1.85}
+.manu-card .mc-users{margin-top:.9rem;display:flex;flex-wrap:wrap;gap:.4rem}
+.manu-card .mc-users span{font-size:.65rem;padding:.25rem .6rem;border-radius:999px;background:rgba(240,236,228,.04);color:var(--text-muted)}
+.manu-tier-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.manu-tier-bar.bar-green{background:linear-gradient(90deg,var(--accent4),#90f0c0)}
+.manu-tier-bar.bar-orange{background:linear-gradient(90deg,var(--accent),#ffd080)}
+.manu-tier-bar.bar-red{background:linear-gradient(90deg,var(--accent2),#ff8a80)}
+.manu-tier-bar.bar-dark-red{background:linear-gradient(90deg,#b83030,var(--accent2))}
+
+.duo-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+@media(max-width:768px){.duo-grid{grid-template-columns:1fr}}
+.duo-card .duo-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.2rem}
+.duo-card h3{font-family:'Noto Serif SC',serif;font-size:1.15rem;margin-bottom:.1rem}
+.duo-card .duo-sub{font-size:.74rem;color:var(--text-muted);margin-bottom:1rem;font-family:'Instrument Serif',serif}
+.duo-card .duo-quote{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin-bottom:1.3rem;font-size:.86rem;border-left:3px solid var(--accent5)}
+.duo-card.oled .duo-quote{border-left-color:var(--accent)}
+.duo-card .flow-bar{position:absolute;top:0;left:0;right:0;height:3px;overflow:hidden}
+.duo-card .flow-bar::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:flowBar 3s ease infinite}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.pc-col h4{font-size:.74rem;letter-spacing:.06em;margin-bottom:.4rem}
+.pc-col.good h4{color:var(--accent4)}
+.pc-col.bad h4{color:var(--accent2)}
+.pc-col li{font-size:.78rem;margin-bottom:.3rem;list-style:none;padding-left:.9rem;position:relative;color:var(--text-muted)}
+.pc-col.good li::before{content:'+';position:absolute;left:0;color:var(--accent4);font-weight:700}
+.pc-col.bad li::before{content:'-';position:absolute;left:0;color:var(--accent2);font-weight:700}
+
+.bar-g{margin:2.5rem 0;display:flex;flex-direction:column;gap:1.2rem}
+.bar-g h4{font-family:'Noto Serif SC',serif;font-size:1rem;margin-bottom:.3rem}
+.bar-i{display:flex;align-items:center;gap:.5rem}
+.bar-lb{font-size:.7rem;min-width:34px;text-align:right;color:var(--text-muted)}
+.bar-tk{flex:1;height:28px;background:var(--surface2);border-radius:6px;overflow:hidden;position:relative}
+.bar-fl{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:.7rem;font-size:.68rem;font-weight:700;color:var(--bg);width:0;transition:width 1.3s cubic-bezier(.22,1,.36,1);position:relative}
+.bar-fl.b-bl{background:linear-gradient(90deg,#3a9bd5,#50b8e8)}
+.bar-fl.b-gd{background:linear-gradient(90deg,#c88820,#e8a838)}
+.bar-fl .glow-dot{position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px var(--accent5),0 0 16px var(--accent5);animation:barGlow 1.5s ease infinite}
+
+.px-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem}
+.px-card{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.8rem 1.4rem;text-align:center;transition:transform .4s,border-color .3s}
+.px-card:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.1)}
+.px-card.best{border-color:rgba(0,229,255,.25);box-shadow:0 0 30px rgba(0,229,255,.06)}
+.px-diagram-wrap{display:inline-block;padding:8px;border:1px solid rgba(0,229,255,.12);border-radius:10px;margin-bottom:1rem;position:relative;background:rgba(0,229,255,.01)}
+.px-diagram-wrap::before{content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);width:16px;height:2px;background:rgba(0,229,255,.15);border-radius:2px}
+.px-diagram{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;max-width:140px}
+.px-diagram .dot{border-radius:3px;transition:transform .15s}
+.px-diagram .dot:hover{transform:scale(1.4);z-index:1}
+.px-diagram .dot{animation:breathe 3s ease infinite}
+.px-diagram .dot:nth-child(2n){animation-delay:-1s}
+.px-diagram .dot:nth-child(3n){animation-delay:-2s}
+.px-diagram .r{background:#e05555}.px-diagram .g{background:#55b855}.px-diagram .b{background:#5588dd}
+.px-card h4{font-family:'Noto Serif SC',serif;font-size:1rem;margin-bottom:.08rem}
+.px-card .px-nk{font-size:.7rem;color:var(--accent5);margin-bottom:.7rem;font-family:'Instrument Serif',serif}
+.px-card p{font-size:.78rem;color:var(--text-muted);line-height:1.7}
+
+.ref-duo{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2.5rem}
+@media(max-width:768px){.ref-duo{grid-template-columns:1fr}}
+.ref-box{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.8rem;text-align:center}
+.ref-box .track{height:90px;position:relative;overflow:hidden;border-radius:var(--radius-sm);background:var(--surface2);margin-bottom:1rem}
+.ref-box .runner{width:16px;height:16px;border-radius:50%;position:absolute;top:37px;left:12px}
+.ref-box .r60{background:var(--accent2);animation:run 1.5s linear infinite}
+.ref-box .r120{background:var(--accent4);animation:run .75s linear infinite}
+.ref-box .runner::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;background:inherit;opacity:.4;filter:blur(6px)}
+@keyframes run{0%{left:12px}50%{left:calc(100% - 28px)}100%{left:12px}}
+.ref-box .hz{font-family:'Instrument Serif',serif;font-size:2.4rem;line-height:1}
+.ref-box h5{font-size:.95rem;margin:.2rem 0}
+.ref-box .rd{font-size:.78rem;color:var(--text-muted)}
+
+.info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem}
+.info-b{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.6rem;transition:border-color .3s}
+.info-b:hover{border-color:rgba(0,229,255,.08)}
+.info-b .ib-ic{font-size:1.5rem;margin-bottom:.6rem}
+.info-b h5{font-size:.92rem;margin-bottom:.3rem}
+.info-b p{font-size:.78rem;color:var(--text-muted);line-height:1.7}
+
+.ltpo-card{background:var(--surface);border:1px solid rgba(0,229,255,.12);border-radius:var(--radius);padding:2.2rem;margin-top:2rem;position:relative;overflow:hidden}
+.ltpo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00e5ff,#0090b0)}
+.ltpo-card h4{font-family:'Noto Serif SC',serif;font-size:1.1rem;margin-bottom:.8rem}
+.ltpo-card p{font-size:.86rem;color:var(--text-muted);line-height:1.9}
+.ltpo-card .brands{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.ltpo-card .brand-tag{padding:.3rem .8rem;border-radius:999px;font-size:.72rem;font-weight:700;background:rgba(0,229,255,.08);color:var(--accent5)}
+.ltpo-demo{margin-top:1rem;padding:1rem;background:var(--surface2);border-radius:var(--radius-sm);text-align:center}
+.ltpo-demo .ltpo-hz{font-family:'Instrument Serif',serif;font-size:2.2rem;color:var(--accent5);transition:all .3s}
+.ltpo-demo .ltpo-label{font-size:.72rem;color:var(--text-muted);margin-top:.2rem}
+
+.res-rungs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem}
+.res-rung{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:2rem 1.5rem;position:relative;overflow:hidden;transition:transform .4s,border-color .3s}
+.res-rung:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.1)}
+.res-rung.best{border-color:rgba(0,229,255,.2);box-shadow:0 0 30px rgba(0,229,255,.05)}
+.res-rung .rr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.res-rung .rr-name{font-family:'Noto Serif SC',serif;font-weight:700;font-size:1.1rem}
+.rr-tag{font-size:.6rem;padding:.2rem .6rem;border-radius:999px;font-weight:700;letter-spacing:.03em}
+.tag-main{background:rgba(80,232,160,.1);color:var(--accent4)}
+.tag-best{background:rgba(0,229,255,.12);color:var(--accent5)}
+.tag-gim{background:rgba(232,96,96,.1);color:var(--accent2)}
+.res-rung .res-top-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.res-rung .res-top-bar.bar-green{background:linear-gradient(90deg,var(--accent4),#90f0c0)}
+.res-rung .res-top-bar.bar-blue-flow{background:linear-gradient(90deg,#00e5ff,#0090b0,#00e5ff);background-size:200% 100%;animation:gradFlow 3s linear infinite}
+.res-rung .res-top-bar.bar-red{background:linear-gradient(90deg,var(--accent2),#ff8a80)}
+.res-rung.best .rr-tag{animation:pulse 2s ease infinite}
+.res-rung .rr-px{font-size:.74rem;color:var(--accent5);margin-bottom:.5rem;font-family:'Instrument Serif',serif}
+.res-rung .rr-desc{font-size:.82rem;color:var(--text-muted);line-height:1.85}
+.res-rung .rr-foot{margin-top:1rem;padding-top:.8rem;border-top:1px solid rgba(240,236,228,.04);display:flex;flex-wrap:wrap;gap:.6rem}
+.res-rung .rr-foot span{font-size:.7rem}
+.rr-foot .y{color:var(--accent4)}.rr-foot .n{color:var(--accent2)}
+
+.dim-4col{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2.5rem}
+@media(max-width:900px){.dim-4col{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.dim-4col{grid-template-columns:1fr}}
+.dim-sm{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.5rem;transition:transform .4s,border-color .3s}
+.dim-sm:hover{transform:translateY(-3px);border-color:rgba(0,229,255,.08)}
+.dim-sm.best-dim{border-color:rgba(80,232,160,.2)}
+.dim-sm .ds-icon{font-size:1.3rem;margin-bottom:.6rem}
+.dim-sm h5{font-size:.95rem;margin-bottom:.15rem}
+.dim-sm .ds-sub{font-size:.68rem;color:var(--accent);margin-bottom:.6rem;font-family:'Instrument Serif',serif}
+.dim-sm p{font-size:.78rem;color:var(--text-muted);line-height:1.75}
+.dim-sm .ds-badge{margin-top:.8rem;padding:.4rem .7rem;border-radius:6px;font-size:.72rem;line-height:1.5}
+
+.wave-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2.5rem}
+@media(max-width:768px){.wave-row{grid-template-columns:1fr}}
+.wave-b{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.5rem;text-align:center;position:relative}
+.wave-b h5{font-size:.9rem;margin-bottom:.1rem}
+.wave-b .wb-sub{font-size:.68rem;color:var(--text-muted);margin-bottom:.6rem}
+.wave-b svg{width:100%;height:60px;margin-bottom:.6rem}
+.wave-b .wb-nt{font-size:.75rem;color:var(--text-muted);line-height:1.6}
+.signal-light{position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%;animation:signalBlink 1.5s ease infinite}
+.signal-light.sl-green{background:#50e8a0;box-shadow:0 0 8px rgba(80,232,160,.5)}
+.signal-light.sl-red{background:#e86060;box-shadow:0 0 8px rgba(232,96,96,.5)}
+.signal-light.sl-blue{background:#50b8e8;box-shadow:0 0 8px rgba(80,184,232,.5);animation-delay:.5s}
+
+.freq-m{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:2rem;margin-bottom:2rem}
+.freq-m h4{font-family:'Noto Serif SC',serif;font-size:1rem;text-align:center;margin-bottom:1.2rem}
+.freq-r{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.freq-r .fl{font-size:.7rem;min-width:100px;text-align:right;color:var(--text-muted);white-space:nowrap}
+.freq-r .ft{flex:1;height:26px;background:var(--surface2);border-radius:5px;overflow:hidden}
+.freq-r .ff{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:.6rem;font-size:.66rem;font-weight:700;color:var(--bg);width:0;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.freq-r .ff.good{background:linear-gradient(90deg,#30a060,#50e8a0)}
+.freq-r .ff.best{background:linear-gradient(90deg,#3080b8,#50b8e8)}
+.freq-r .ff.filled{animation:pulse 3s ease infinite}
+.freq-r .fv{font-size:.66rem;min-width:50px;color:var(--text-muted)}
+
+.eye-tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem}
+.eye-tip{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.5rem;transition:border-color .3s}
+.eye-tip:hover{border-color:rgba(80,232,160,.08)}
+.eye-tip .et-ic{font-size:1.4rem;margin-bottom:.6rem}
+.eye-tip h5{font-size:.88rem;margin-bottom:.3rem}
+.eye-tip p{font-size:.78rem;color:var(--text-muted);line-height:1.7}
+
+.xm-section{background:linear-gradient(180deg,transparent,rgba(0,229,255,.02),transparent)}
+.sp-hero{text-align:center;padding:3rem 2rem;background:var(--surface);border:1px solid rgba(0,229,255,.15);border-radius:var(--radius);margin-bottom:2.5rem;position:relative;overflow:hidden}
+.sp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,.06),transparent 70%);pointer-events:none}
+.sp-hero h3{font-family:'Noto Serif SC',serif;font-size:clamp(1.3rem,3.5vw,2rem);margin-bottom:.7rem;position:relative}
+.sp-hero p{color:var(--text-muted);max-width:560px;margin:0 auto;font-size:.9rem;position:relative}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.sp-card{background:var(--surface);border:1px solid rgba(240,236,228,.04);border-radius:var(--radius);padding:1.8rem;position:relative;overflow:hidden;transition:transform .4s,border-color .3s}
+.sp-card:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.1)}
+.sp-card .sp-n{font-family:'Instrument Serif',serif;font-size:2.8rem;opacity:.06;position:absolute;top:.6rem;right:1rem;color:var(--accent5)}
+.sp-card h4{font-size:.95rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.sp-card h4 span{font-size:1.1rem}
+.sp-card p{font-size:.8rem;color:var(--text-muted);line-height:1.85}
+.sp-card .hl{display:inline-block;background:rgba(0,229,255,.1);color:var(--accent5);padding:.1rem .45rem;border-radius:4px;font-weight:700;font-size:.78rem}
+
+.crown-card{background:linear-gradient(135deg,rgba(0,229,255,.06),rgba(0,229,255,.02));border:2px solid rgba(0,229,255,.2);border-radius:var(--radius);padding:2.5rem;text-align:center;position:relative;overflow:hidden;margin-top:2rem}
+.crown-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(0,229,255,.04),transparent 50%);pointer-events:none}
+.crown-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.crown-particles .cp{position:absolute;width:3px;height:3px;border-radius:1px;animation:crownFloat 6s linear infinite}
+.crown-particles .cp:nth-child(odd){animation-duration:8s}
+.crown-particles .cp:nth-child(3n){animation-duration:5s}
+.crown-card .crown-icon{font-size:2.5rem;margin-bottom:1rem;position:relative}
+.crown-card h3{font-family:'Noto Serif SC',serif;font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:1rem;position:relative}
+.crown-card p{color:var(--text-muted);font-size:.88rem;line-height:2;max-width:580px;margin:0 auto;position:relative}
+.crown-card .crown-list{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-top:1.5rem;position:relative}
+.crown-card .crown-list span{padding:.35rem .9rem;border-radius:999px;font-size:.74rem;font-weight:700;background:rgba(0,229,255,.08);color:var(--accent5)}
+
+.afterimage-active{animation:afterimage .4s ease-out}
+.ch-close-anim{transform-origin:top;transition:transform .8s cubic-bezier(.22,1,.36,1),opacity .8s}
+.ch-close-anim.closed{transform:scaleY(0);opacity:0}
+.counter-num{display:inline-block;min-width:1.5em;text-align:right}
+
+footer{text-align:center;padding:4rem 2rem;border-top:1px solid rgba(240,236,228,.04);position:relative;z-index:1}
+footer .ft-ic{font-size:2rem;margin-bottom:.8rem}
+footer p{font-size:.8rem;color:var(--text-muted);margin-bottom:.2rem}
+footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;background:rgba(0,229,255,.06);border-radius:999px;font-size:.74rem;color:var(--accent5)}
+
+.rv{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.rv.show{opacity:1;transform:translateY(0)}
+.rv-l{opacity:0;transform:translateX(-28px);transition:opacity .6s ease,transform .6s ease}
+.rv-l.show{opacity:1;transform:translateX(0)}
+.rv-r{opacity:0;transform:translateX(28px);transition:opacity .6s ease,transform .6s ease}
+.rv-r.show{opacity:1;transform:translateX(0)}
+
+@media(max-width:768px){
+  nav .nav-links{display:none}
+  .mobile-nav{display:flex;align-items:center}
+  body{padding-bottom:48px}
+}
+@media(max-width:600px){
+  .ch{padding:4rem 1.2rem}
+  .card{padding:1.6rem 1.3rem}
+  .pc-grid{grid-template-columns:1fr!important}
+  .dim-4col{grid-template-columns:1fr}
+  .wave-row{grid-template-columns:1fr}
+  .mouse-glow,.floating-particles,.crown-particles{display:none!important}
+  .ch-close-anim{transition:none}
+  .px-diagram .dot{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- MOUSE GLOW -->
+<div class="mouse-glow" id="mouseGlow"></div>
+
+<!-- FLOATING PARTICLES -->
+<div class="floating-particles" id="floatingParticles"></div>
+
+<!-- PIXEL PROGRESS -->
+<div class="progress" id="progress"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="inner">
+    <div class="logo">屏幕的史诗</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#ch-manu">屏幕厂商</a></li>
+      <li><a href="#ch1">LCD vs OLED</a></li>
+      <li><a href="#ch2">像素排列</a></li>
+      <li><a href="#ch3">刷新率</a></li>
+      <li><a href="#ch4">分辨率</a></li>
+      <li><a href="#ch5">护眼调光</a></li>
+      <li><a href="#ch6">超级像素</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#ch-manu">屏幕厂商</a>
+  <a href="#ch1">LCD/OLED</a>
+  <a href="#ch2">像素排列</a>
+  <a href="#ch3">刷新率</a>
+  <a href="#ch4">分辨率</a>
+  <a href="#ch5">护眼调光</a>
+  <a href="#ch6">超级像素</a>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="hero-inner">
+    <div class="hero-chip">📐 DISPLAY TECHNOLOGY · DEEP DIVE</div>
+    <h1>你每天看手机 8 小时<br>却从没搞懂过<span id="tw-target"><em>那块屏</em></span><span class="tw-cursor" id="tw-cursor"></span></h1>
+    <p class="lead">LCD 和 OLED 到底在争什么？"周冬雨排列"是怎么回事？120Hz 够不够？1.5K 和 2K 选哪个？这篇用人话一次讲透。</p>
+    <div class="actions"><a href="#ch-manu" class="btn-p">开始搞懂 ↓</a></div>
+  </div>
+</section>
+
+<!-- ========== CH-MANU · 屏幕厂商 ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim" id="ch-manu">
+  <div class="ch-in">
+    <div class="ch-lb lb-cyan rv">CHAPTER 00</div>
+    <h2 class="ch-tt rv">谁在造你的屏？<br><em>五大屏幕厂商真相</em></h2>
+    <p class="ch-ds rv">手机屏幕好不好，很大程度取决于谁造的。同样是 OLED，厂商之间的差距非常大——选错厂商，参数再好看也白搭。</p>
+
+    <div class="alert alert-gold rv">
+      <strong>📌 先记住结论：</strong><br>
+      <span style="color:var(--accent4)">✅ 优选：华星光电、京东方</span><br>
+      <span style="color:var(--accent)">⚠️ 可选：三星（但护眼很差）</span><br>
+      <span style="color:var(--accent2)">❌ 避开：天马、维信诺</span>
+    </div>
+
+    <div class="manu-grid">
+      <!-- 华星光电 -->
+      <div class="card manu-card rv">
+        <div class="manu-tier-bar bar-green"></div>
+        <span class="mc-tier tier-s">S 级 · 当前最佳</span>
+        <h4>华星光电</h4>
+        <p class="mc-en">CSOT · TCL华星光电</p>
+        <p>目前<strong style="color:var(--accent4)">最顶级的屏幕厂商之一</strong>。和小米深度绑定，共同研发"超级像素"等前沿技术。显示素质一流，护眼也做得出色。<strong>唯一缺点是产能有限</strong>，目前主要供给小米。</p>
+        <div class="mc-users"><span>🏠 小米深度合作</span><span>产能有限优先供应小米</span></div>
+      </div>
+
+      <!-- 京东方 -->
+      <div class="card manu-card rv">
+        <div class="manu-tier-bar bar-green"></div>
+        <span class="mc-tier tier-s">S 级 · 当前最佳</span>
+        <h4>京东方</h4>
+        <p class="mc-en">BOE · 京东方</p>
+        <p>和华星光电并列<strong style="color:var(--accent4)">当前最顶级的屏幕厂商</strong>。过去 OPPO 大量采用京东方，那时候 OPPO 的屏幕素质在国产中算最好的。显示效果和护眼<strong>都属于第一梯队</strong>。</p>
+        <div class="mc-users"><span>OPPO过去大量使用</span><span>技术实力雄厚</span></div>
+      </div>
+
+      <!-- 三星 -->
+      <div class="card manu-card rv">
+        <div class="manu-tier-bar bar-orange"></div>
+        <span class="mc-tier tier-a">A 级 · 曾经的王，正在掉队</span>
+        <h4>三星</h4>
+        <p class="mc-en">Samsung Display</p>
+        <p>曾经是<strong style="color:var(--accent)">无可争议的屏幕之王</strong>，但现在已被国产厂商追上甚至超越。更要命的是，<strong>三星屏的护眼表现非常差</strong>。比如最新的 iQOO 15 虽然用了三星"最好"的屏，但对部分人群来说<strong style="color:var(--accent2)">非常刺眼</strong>。别再迷信三星屏了。</p>
+        <div class="mc-users"><span>曾经最强</span><span style="color:var(--accent2)">护眼很差</span><span>已被国产超越</span></div>
+      </div>
+
+      <!-- 天马 -->
+      <div class="card manu-card rv">
+        <div class="manu-tier-bar bar-red"></div>
+        <span class="mc-tier tier-c">C 级 · 能用，但别指望</span>
+        <h4>天马</h4>
+        <p class="mc-en">Tianma · 天马微电子</p>
+        <p><strong style="color:var(--accent2)">显示效果差，护眼更差</strong>，圈内有"瞎眼屏"的称号。目前主要给<strong>低端机型和部分中端机型</strong>用。更离谱的是，OPPO 为了省成本，开始在高端机上也塞天马屏降配。<strong style="color:var(--accent2)">看到天马屏，谨慎考虑。</strong></p>
+        <div class="mc-users"><span style="color:var(--accent2)">"瞎眼屏"</span><span>低端为主</span><span>OPPO高端降配用</span></div>
+      </div>
+
+      <!-- 维信诺 -->
+      <div class="card manu-card rv" style="border-color:rgba(232,96,96,.12)">
+        <div class="manu-tier-bar bar-dark-red"></div>
+        <span class="mc-tier tier-f">F 级 · 直接避雷</span>
+        <h4>维信诺</h4>
+        <p class="mc-en">Visionox · 维信诺</p>
+        <p><strong style="color:var(--accent2)">比天马还差，主流厂商里屏幕素质最烂的。</strong>显示效果、色准、护眼全面拉胯，找不到任何一个选它的理由。<strong style="color:var(--accent2)">看到维信诺，直接绕道，不用犹豫。</strong></p>
+        <div class="mc-users"><span style="color:var(--accent2);font-weight:700">⚠️ 最差 · 直接避雷</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CH1 · LCD vs OLED ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim" id="ch1">
+  <div class="ch-in">
+    <div class="ch-lb lb-blue rv">CHAPTER 01</div>
+    <h2 class="ch-tt rv">LCD 与 OLED：<br><em>两个老冤家的恩怨情仇</em></h2>
+    <p class="ch-ds rv">屏幕江湖只有两大门派。一个稳重如老干部，一个灵活如街舞少年——选谁取决于你更在意什么。</p>
+    <div class="alert alert-gold rv">
+      <strong>📌 现在主流屏幕已经全面转向 OLED。</strong>2025年绝大多数中高端新机都采用 OLED 屏幕，LCD 基本只剩在入门机型上了。不过 LCD 并没有"死了"——它在护眼和耐用性上，依然有独到的优势。
+    </div>
+    <div class="duo-grid">
+      <div class="card duo-card rv-l" style="border-top:3px solid #50b8e8">
+        <div class="flow-bar" style="background:rgba(80,184,232,.15)"></div>
+        <div class="card-glow" style="background:radial-gradient(circle,rgba(80,184,232,.06),transparent 70%)"></div>
+        <div class="duo-icon" style="background:rgba(80,184,232,.1)">💡</div>
+        <h3>LCD — 统一照明的写字楼</h3>
+        <p class="duo-sub">Liquid Crystal Display</p>
+        <div class="duo-quote">🏢 整栋楼的灯统一打开，每个房间靠窗帘控制进光量。窗帘拉得越紧房间越暗。想让某个房间彻底黑？不好意思，灯是统一开的，再怎么拉窗帘都漏光。</div>
+        <div class="pc-grid">
+          <div class="pc-col good"><h4>✦ 值得夸</h4><ul><li>天生 DC 调光，无频闪</li><li>不烧屏，耐用</li><li>成本友好</li></ul></div>
+          <div class="pc-col bad"><h4>✦ 得忍忍</h4><ul><li>厚，弯不了</li><li>黑色是"深灰"</li><li>做不了息屏显示</li></ul></div>
+        </div>
+      </div>
+      <div class="card duo-card rv-r" style="border-top:3px solid var(--accent)">
+        <div class="flow-bar" style="background:rgba(232,168,56,.15)"></div>
+        <div class="card-glow" style="background:radial-gradient(circle,rgba(232,168,56,.06),transparent 70%)"></div>
+        <div class="duo-icon" style="background:rgba(232,168,56,.1)">✨</div>
+        <h3>OLED — 每家店自己开灯</h3>
+        <p class="duo-sub">Organic Light-Emitting Diode</p>
+        <div class="duo-quote">🌃 每家店铺自己控制自己的灯。想开就开，想关就关。所以黑的地方黑得彻底，亮的地方亮得耀眼——层次感直接拉满。</div>
+        <div class="pc-grid">
+          <div class="pc-col good"><h4>✦ 值得夸</h4><ul><li>对比度无上限</li><li>轻薄可折叠</li><li>省电 + 息屏显示</li></ul></div>
+          <div class="pc-col bad"><h4>✦ 得忍忍</h4><ul><li>低亮度有频闪</li><li>长期可能烧屏</li><li>价格更贵</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="bar-g rv">
+      <h4>📊 关键指标对比</h4>
+      <div class="bar-i"><div class="bar-lb">对比度</div><div class="bar-tk"><div class="bar-fl b-bl" data-w="22%">LCD ~1500:1</div></div></div>
+      <div class="bar-i"><div class="bar-lb"></div><div class="bar-tk"><div class="bar-fl b-gd" data-w="92%">OLED ∞:1</div></div></div>
+      <div class="bar-i"><div class="bar-lb">护眼</div><div class="bar-tk"><div class="bar-fl b-bl" data-w="80%">LCD · DC调光</div></div></div>
+      <div class="bar-i"><div class="bar-lb"></div><div class="bar-tk"><div class="bar-fl b-gd" data-w="50%">OLED · 高频PWM</div></div></div>
+      <div class="bar-i"><div class="bar-lb">轻薄</div><div class="bar-tk"><div class="bar-fl b-bl" data-w="15%">LCD · 厚</div></div></div>
+      <div class="bar-i"><div class="bar-lb"></div><div class="bar-tk"><div class="bar-fl b-gd" data-w="90%">OLED · 能折</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CH2 · 像素排列 ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim" id="ch2">
+  <div class="ch-in">
+    <div class="ch-lb lb-orange rv">CHAPTER 02</div>
+    <h2 class="ch-tt rv">像素的排列门道：<br><em>RGB、钻石、周冬雨和超级像素</em></h2>
+    <p class="ch-ds rv">每个像素由红绿蓝三个子像素"拼"出来。但怎么拼，直接决定了画面够不够细腻。</p>
+    <div class="alert alert-gold rv">
+      <span class="rgb-indicator"><span class="ri-dot ri-r"></span><span class="ri-dot ri-g"></span><span class="ri-dot ri-b"></span></span>
+      <strong>显示色彩的原理很简单：</strong>屏幕上每个像素点都是由<strong>红(R)、绿(G)、蓝(B)</strong>三种颜色的微型灯珠排列在一起组成的。通过控制每个灯珠的明暗程度，就能混合出千变万化的色彩。整个屏幕就是由<strong>几百万个这样的"三色灯珠组"</strong>拼成的。不同屏幕的区别，主要就在于这些灯珠怎么排列。
+    </div>
+    <div class="px-grid">
+      <div class="px-card rv"><div class="px-diagram-wrap"><div class="px-diagram" id="pxd-rgb"></div></div><h4>标准 RGB 排列</h4><div class="px-nk">LCD 的模范生</div><p>每个像素独享红绿蓝三子像素，一人一坑，绝不合租。<br><strong>结果：</strong>显示最精细，没有"公摊"。LCD 标配。</p></div>
+      <div class="px-card rv"><div class="px-diagram-wrap"><div class="px-diagram" id="pxd-dia"></div></div><h4>钻石排列</h4><div class="px-nk">Diamond Pentile · 三星专利</div><p>子像素排成菱形，两个像素"搭伙"共享红蓝。<br><strong>好处：</strong>OLED 里效果最好。<br><strong>代价：</strong>精细度打八折。</p></div>
+      <div class="px-card rv"><div class="px-diagram-wrap"><div class="px-diagram" id="pxd-zdy"></div></div><h4>周冬雨排列</h4><div class="px-nk">Delta · 国产屏的破局之作</div><p>长得像周冬雨的脸，外号就这么来了。<br>打破三星专利垄断的方案。近年迭代后差距已大幅缩小。</p></div>
+      <div class="px-card best rv"><div class="px-diagram-wrap"><div class="px-diagram" id="pxd-sp"></div></div><h4>⭐ 超级像素排列</h4><div class="px-nk">小米 × TCL华星光电 · 真RGB回归</div><p>OLED 上重新实现<strong>每个像素独立 RGB</strong>，告别共享。子像素 938 万，清晰度看齐 2K 钻石排列，功耗却更低。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CH3 · 刷新率 ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim" id="ch3">
+  <div class="ch-in">
+    <div class="ch-lb lb-green rv">CHAPTER 03</div>
+    <h2 class="ch-tt rv">流畅的秘密：<br><em>刷新率与触控采样率</em></h2>
+    <p class="ch-ds rv">一个管你看到的画面流不流畅，一个管你的操作跟不跟手。</p>
+    <div class="ref-duo rv">
+      <div class="ref-box"><div class="track"><div class="runner r60"></div></div><div class="hz" style="color:var(--accent2)">60Hz</div><h5>标准刷新率</h5><p class="rd">每秒 60 次画面<br>没对比不觉得卡</p></div>
+      <div class="ref-box"><div class="track"><div class="runner r120"></div></div><div class="hz" style="color:var(--accent4)">120Hz</div><h5>高刷新率</h5><p class="rd">每秒 120 次画面<br>用了就回不去</p></div>
+    </div>
+    <div class="alert alert-red rv">
+      <span class="big-text" style="color:var(--accent2)">🔴 120Hz 就是最好的选择！</span>
+      <strong>更高的 144Hz、240Hz 对手机屏幕来说基本是厂家的噱头。</strong>人眼对 120Hz 以上的流畅度提升感知已经极弱，但功耗会明显增加。手机不是电竞显示器，超过 120Hz 的刷新率在手机上几乎没有实际意义。<br><br>
+      <a href="超高刷屏幕的真相.html" style="color:var(--accent2);font-weight:700;text-decoration:underline">👉 详情见：超高刷屏幕的真相（点击跳转）</a>
+    </div>
+    <div class="info-row rv">
+      <div class="info-b"><div class="ib-ic">🖥️</div><h5>刷新率</h5><p>屏幕每秒<strong>刷新画面</strong>的次数。60Hz 每秒翻 60 页，120Hz 翻 120 页——<strong>翻得越快越丝滑</strong>。</p></div>
+      <div class="info-b"><div class="ib-ic">👆</div><h5>触控采样率</h5><p>屏幕每秒<strong>扫描手指位置</strong>的次数。数字越高操作越跟手。打游戏团战时，这可能就是五杀和送人头的区别。</p></div>
+      <div class="info-b"><div class="ib-ic">🆚</div><h5>它俩什么关系？</h5><p><strong>刷新率是"你看到的"，采样率是"你操作的"。</strong>游戏党：采样率比刷新率更重要！</p></div>
+    </div>
+    <div class="ltpo-card rv">
+      <h4>🧠 <strong>LTPO 自适应刷新率——真正的聪明方案</strong></h4>
+      <p><strong>LTPO 是什么？</strong>简单说，就是屏幕会<strong>根据你正在做的事情自动调整刷新率</strong>。看静态文字？降到 1Hz 省电。刷短视频？飙到 120Hz 丝滑。<br><br><strong>为什么重要？</strong>没有 LTPO 的 120Hz 屏幕就像一辆车——不管高速还是停车场，发动机都一直轰鸣。有了 LTPO，<strong>续航差距可以达到 20% 以上</strong>。<br><br><strong>谁在用？</strong>目前 LTPO 基本是<strong>各家母品牌旗舰的标配</strong>，子品牌/性价比机型通常不会给到。</p>
+      <div class="ltpo-demo"><div class="ltpo-hz" id="ltpoHz">120Hz</div><div class="ltpo-label" id="ltpoLabel">刷短视频中...</div></div>
+      <div class="brands">
+        <span class="brand-tag">小米数字系列</span><span class="brand-tag">iPhone Pro 系列</span><span class="brand-tag">三星 Galaxy S/Note</span><span class="brand-tag">华为 Mate/P 系列</span><span class="brand-tag">OPPO Find 系列</span><span class="brand-tag">vivo X 系列</span><span class="brand-tag">一加数字系列</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CH4 · 分辨率 ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim" id="ch4">
+  <div class="ch-in">
+    <div class="ch-lb lb-purple rv">CHAPTER 04</div>
+    <h2 class="ch-tt rv">分辨率的真相：<br><em>1.5K、超级像素 1.5K、2K 怎么选</em></h2>
+    <p class="ch-ds rv">1080P 已经是过去式了，2K 也不一定适合你。来看看真正该关注的是什么。</p>
+    <div class="alert alert-gold rv"><strong>📌 先说结论：</strong>目前最主流、最均衡的分辨率是 <strong>1.5K</strong>。想要更好？<strong>小米的 1.5K 超级像素</strong>比普通 1.5K 更清晰还更省电。2K 确实有提升，但日常感知最明显的反而是——<strong>耗电变多了</strong>。</div>
+    <div class="res-rungs">
+      <div class="res-rung rv"><div class="res-top-bar bar-green"></div><div class="rr-top"><div class="rr-name">1.5K</div><span class="rr-tag tag-main">当前主流</span></div><div class="rr-px">≈ 1220 × 2712 · 约 <span class="counter-num" data-target="330">0</span> 万像素</div><div class="rr-desc">目前<strong>最主流、性价比最高</strong>的分辨率。比被淘汰的 1080P 细腻一档，功耗比 2K 低不少。<strong>体验和 2K 差距很小，但省电差距很明显</strong>。</div><div class="rr-foot"><span class="y">✓ 细腻度够用</span><span class="y">✓ 功耗合理</span><span class="y">✓ 性价比之王</span></div></div>
+      <div class="res-rung best rv"><div class="res-top-bar bar-blue-flow"></div><div class="rr-top"><div class="rr-name">⭐ 1.5K 超级像素</div><span class="rr-tag tag-best">综合最佳</span></div><div class="rr-px">≈ 1220 × 2712 · <span class="counter-num" data-target="938">0</span> 万子像素</div><div class="rr-desc">小米 × TCL 华星光电的黑科技。<strong>完整 RGB 排列</strong>，子像素总数 <strong>938 万</strong>——<strong>和传统 2K 钻石排列屏一样多</strong>。更清晰还更省电。</div><div class="rr-foot"><span class="y">✓ 清晰度看齐 2K</span><span class="y">✓ 功耗比普通 1.5K 还低</span><span class="y">✓ 当前最优解</span></div></div>
+      <div class="res-rung rv"><div class="res-top-bar bar-red"></div><div class="rr-top"><div class="rr-name">2K (QHD+)</div><span class="rr-tag tag-gim">有提升但偏贵</span></div><div class="rr-px">≈ 1440 × 3200 · 约 <span class="counter-num" data-target="460">0</span> 万像素</div><div class="rr-desc">确实比 1.5K 更细腻。<strong>但日常使用感知最明显的不是"更清晰"，而是"更费电"。</strong>多耗 <span class="counter-num" data-target="25">0</span>% 的电，GPU 也更吃力。</div><div class="rr-foot"><span class="y">✓ 画面确实更细腻</span><span class="n">✗ 功耗高 15~25%</span><span class="n">✗ 日常感知有限</span></div></div>
+    </div>
+    <div class="rv"><div class="card" style="border-left:3px solid var(--accent5)"><h3 style="font-size:.95rem;margin-bottom:.6rem">💡 一句话总结</h3><p style="font-size:.86rem;color:var(--text-muted);line-height:2"><strong style="color:var(--accent4)">1.5K</strong> 是当下最均衡的选择。<br><strong style="color:var(--accent5)">1.5K 超级像素</strong> 是目前综合最优解。<br><strong style="color:var(--accent2)">2K</strong> 有提升，但日常体感不如续航差距来得直接。<br><br><strong>记住：</strong>分辨率只是画质的一小部分。色准、亮度、调光方式的影响往往比分辨率数字大得多。</p></div></div>
+  </div>
+</section>
+
+<!-- ========== CH5 · 护眼调光 ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim" id="ch5">
+  <div class="ch-in">
+    <div class="ch-lb lb-red rv">CHAPTER 05</div>
+    <h2 class="ch-tt rv">护眼的终极之战：<br><em>DC、PWM 与类 DC 调光</em></h2>
+    <p class="ch-ds rv">被窝里刷半小时手机眼睛酸到怀疑人生？这口锅很大程度上要"调光方式"来背。</p>
+    <div class="alert alert-gold rv"><strong>💡 亮度怎么调暗的？</strong>现在 OLED 屏幕的主流调光方案是 <strong>PWM 调光</strong>——屏幕通过<strong>快速的明暗交替闪烁</strong>来控制亮度。闪得越快，你感觉越"恒定"；闪得慢了，眼睛就会不舒服。</div>
+    <div class="wave-row rv">
+      <div class="wave-b"><div class="signal-light sl-green"></div><h5 style="color:var(--accent4)">DC 调光</h5><p class="wb-sub">直接降低电流</p><svg viewBox="0 0 300 60"><path d="M0,35 L300,35" stroke="#50e8a0" stroke-width="3"/><text x="150" y="26" text-anchor="middle" fill="#50e8a0" font-size="11" font-weight="700" font-family="Noto Sans SC">恒定 · 不闪</text></svg><p class="wb-nt">✅ 无频闪，最护眼<br>⚠️ OLED 低亮度会偏色</p></div>
+      <div class="wave-b"><div class="signal-light sl-red"></div><h5 style="color:var(--accent2)">PWM 调光</h5><p class="wb-sub">快速开关灯控制亮度</p><svg viewBox="0 0 300 60"><path d="M0,35 L0,10 L20,10 L20,35 L40,35 L40,10 L60,10 L60,35 L80,35 L80,10 L100,10 L100,35 L120,35 L120,10 L140,10 L140,35 L160,35 L160,10 L180,10 L180,35 L200,35 L200,10 L220,10 L220,35 L240,35 L240,10 L260,10 L260,35 L280,35 L280,10 L300,10" stroke="#e86060" stroke-width="2.5" fill="none"/><text x="150" y="54" text-anchor="middle" fill="#e86060" font-size="10" font-family="Noto Sans SC">亮→灭→亮→灭</text></svg><p class="wb-nt">频率低时肉眼可感<br>频率高了就接近"恒亮"</p></div>
+      <div class="wave-b"><div class="signal-light sl-blue"></div><h5 style="color:var(--accent5)">类 DC 调光</h5><p class="wb-sub">DC + PWM 混合方案</p><svg viewBox="0 0 300 60"><path d="M0,35 L100,35 L100,10 L110,10 L110,35 L130,35 L130,10 L140,10 L140,35 L160,35 L160,10 L165,10 L165,35 L180,35 L180,10 L183,10 L183,35 L200,35 L200,10 L202,10 L202,35 L300,35" stroke="#50b8e8" stroke-width="2.5" fill="none"/><text x="75" y="54" text-anchor="middle" fill="#50b8e8" font-size="10" font-family="Noto Sans SC">高亮度用DC</text><text x="225" y="54" text-anchor="middle" fill="#50b8e8" font-size="10" font-family="Noto Sans SC">低亮度用PWM</text></svg><p class="wb-nt">✅ 护眼效果最好<br>✅ 兼顾色准和护眼</p></div>
+    </div>
+    <div class="dim-4col">
+      <div class="dim-sm rv"><div class="ds-icon">🔋</div><h5>DC 调光</h5><div class="ds-sub">Direct Current</div><p>直接把电流调小。<strong>完全不闪</strong>，最护眼。LCD 天生用这个。<br>但 OLED 低亮度下<strong>会偏色</strong>。</p><div class="ds-badge" style="background:rgba(80,232,160,.06);color:var(--accent4)">LCD 标配 · 最护眼</div></div>
+      <div class="dim-sm rv"><div class="ds-icon">⚡</div><h5>PWM 调光</h5><div class="ds-sub">Pulse Width Modulation</div><p><strong>疯狂开关灯</strong>。灭的时间长=看起来暗。<br>色彩准。但频率低时<strong>眼睛能感觉到闪</strong>。</p><div class="ds-badge" style="background:rgba(232,96,96,.06);color:var(--accent2)">OLED 主流 · 频率是关键</div></div>
+      <div class="dim-sm rv"><div class="ds-icon">🔬</div><h5>高频 PWM</h5><div class="ds-sub">2160Hz / 2880Hz</div><p>每秒闪烁 <span class="counter-num" data-target="2160">0</span> 次以上，快到人眼感觉不到。<br>目前旗舰 OLED 的主流做法。</p><div class="ds-badge" style="background:rgba(80,184,232,.06);color:var(--accent5)">旗舰标配 · 接近DC体验</div></div>
+      <div class="dim-sm best-dim rv"><div class="ds-icon">🛡️</div><h5>类 DC 调光</h5><div class="ds-sub">DC-Like · 最佳方案</div><p><strong>高亮度用 DC，低亮度用 PWM。</strong>取长补短。<br><strong>比纯高频 PWM 更护眼。</strong></p><div class="ds-badge" style="background:rgba(80,232,160,.08);color:var(--accent4)">✅ 当前最优调光方案</div></div>
+    </div>
+    <div class="freq-m rv">
+      <h4>📏 PWM 频率安全等级</h4>
+      <div class="freq-r"><div class="fl">500~1000Hz</div><div class="ft"><div class="ff good" data-w="38%">🔶 中等</div></div><div class="fv">部分人不适</div></div>
+      <div class="freq-r"><div class="fl">1440~1920Hz</div><div class="ft"><div class="ff good" data-w="62%">✅ 良好</div></div><div class="fv">旗舰水平</div></div>
+      <div class="freq-r"><div class="fl">2160Hz</div><div class="ft"><div class="ff good" data-w="78%">✅ 优秀</div></div><div class="fv">旗舰标配</div></div>
+      <div class="freq-r"><div class="fl">2880Hz+</div><div class="ft"><div class="ff best" data-w="90%">🏆 顶级</div></div><div class="fv">接近DC</div></div>
+      <div class="freq-r"><div class="fl">类DC调光</div><div class="ft"><div class="ff best" data-w="100%">💚 最佳</div></div><div class="fv">优于高频PWM</div></div>
+    </div>
+    <div class="rv" style="margin-top:.5rem"><h3 style="font-size:1rem;text-align:center;margin-bottom:1.2rem">🛡️ 除了调光，这些也影响你的眼睛</h3></div>
+    <div class="eye-tips">
+      <div class="eye-tip rv"><div class="et-ic">🔵</div><h5>蓝光过滤</h5><p>415~455nm 短波蓝光可能伤害视网膜。"护眼模式"本质就是降蓝光。硬件级低蓝光优于软件滤镜。</p></div>
+      <div class="eye-tip rv"><div class="et-ic">☀️</div><h5>峰值亮度</h5><p>户外看不清？亮度不够。旗舰屏能到 1600~3000nit。但高亮度=高功耗=发热。</p></div>
+      <div class="eye-tip rv"><div class="et-ic">🧘</div><h5>终极护眼法</h5><p>最有效的永远是<strong>20-20-20 法则</strong>：每看 20 分钟，看 6 米外的地方 20 秒。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CH6 · 超级像素 ========== -->
+<div class="ch-hr"><div class="px-block"></div></div>
+<section class="ch ch-close-anim xm-section" id="ch6">
+  <div class="ch-in">
+    <div class="ch-lb lb-cyan rv">CHAPTER 06</div>
+    <h2 class="ch-tt rv">屏幕技术新突破：<br><em>小米「超级像素」技术</em></h2>
+    <p class="ch-ds rv">小米联合 TCL 华星光电，在 OLED 上重新实现了每个像素独立 RGB——这是一个改变游戏规则的突破。</p>
+    <div class="alert alert-green rv"><span class="big-text" style="color:var(--accent4)">🏆 小米超级像素 = 目前所有手机屏幕中综合表现最好的方案</span>它同时解决了 OLED 的像素公摊问题和功耗问题，做到了<strong>更清晰、更省电、更护眼</strong>的三重突破。</div>
+    <div class="sp-hero rv"><h3>告别共享，<em>像素独立</em></h3><p>每个像素都有独立的红绿蓝三个子像素，彻底消灭"公摊面积"。子像素总数 <span class="counter-num" data-target="938">0</span> 万，媲美传统 2K 屏。</p></div>
+    <div class="sp-grid">
+      <div class="sp-card rv"><div class="sp-n">01</div><h4><span>🔬</span> 原理：回归真 RGB</h4><p>全新红色发光材料 + 独立 RGB 排列，<strong>寿命和精细度同时拿下</strong>，告别 Pentile 共享排列。</p></div>
+      <div class="sp-card rv"><div class="sp-n">02</div><h4><span>⚡</span> 比 1.5K 还省电</h4><p>结果：<span class="hl">清晰度看齐 2K，功耗比传统 2K 低 <span class="counter-num" data-target="26">0</span>%，比普通 1.5K 还低！</span></p></div>
+      <div class="sp-card rv"><div class="sp-n">03</div><h4><span>📊</span> <span class="counter-num" data-target="938">0</span> 万子像素</h4><p>1.5K 物理分辨率 × 完整 RGB = 和 2K 钻石排列屏相当。精细度拉满。</p></div>
+      <div class="sp-card rv"><div class="sp-n">04</div><h4><span>🚀</span> 新赛道开启</h4><p>屏幕竞争从"堆参数"进入<strong>"拼内功"</strong>的新阶段。搭载于小米 17 Pro Max。</p></div>
+    </div>
+    <div class="crown-card rv">
+      <div class="crown-particles" id="crownParticles"></div>
+      <div class="crown-icon">👑</div>
+      <h3>超级像素 = <em>当前屏幕技术的综合最优解</em></h3>
+      <p>它不是某一项参数最强，而是在<strong>清晰度、功耗、护眼</strong>三个维度同时做到了最优——这在手机屏幕历史上还是第一次。<br><br>别人还在纠结"公摊面积"多大的时候，小米直接把"套内面积"做到了和"建筑面积"一样大，而且物业费还更低了。</p>
+      <div class="crown-list"><span>更清晰（看齐 2K）</span><span>更省电（低于 1.5K）</span><span>不偏色（真 RGB）</span><span>类 DC 调光</span><span>LTPO 自适应</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-ic">📱</div>
+  <p>看到这里的都是真爱</p>
+  <p style="font-size:.74rem;color:var(--text-muted)">保护眼睛最好的方式永远是——</p>
+  <div class="ft-w">⚠️ 放下手机，多看看远方（虽然你正在盯屏幕看这句话）</div>
+  <p style="margin-top:2rem;font-size:.66rem;color:var(--text-muted)">屏幕的史诗 · 手机显示技术终极指南 · 用人话讲硬核</p>
+</footer>
+
+<script>
+// ============ MOUSE GLOW ============
+const glow=document.getElementById('mouseGlow');
+document.addEventListener('mousemove',e=>{
+  if(window.innerWidth<769)return;
+  glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px';
+  glow.classList.add('visible');
+});
+document.addEventListener('mouseleave',()=>glow.classList.remove('visible'));
+
+// ============ FLOATING PARTICLES ============
+const fpContainer=document.getElementById('floatingParticles');
+const fpColors=['#e05555','#55b855','#5588dd'];
+for(let i=0;i<20;i++){
+  const d=document.createElement('div');d.className='fp-dot';
+  const c=fpColors[i%3];const sz=2+Math.random()*3;
+  d.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${c};animation-duration:${15+Math.random()*20}s;animation-delay:${-Math.random()*20}s`;
+  fpContainer.appendChild(d);
+}
+
+// ============ PIXEL PROGRESS BAR ============
+const progEl=document.getElementById('progress');
+const totalPx=60;
+for(let i=0;i<totalPx;i++){const b=document.createElement('div');b.className='px-bar';progEl.appendChild(b)}
+const bars=progEl.querySelectorAll('.px-bar');
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  const cnt=Math.floor(pct*totalPx);
+  bars.forEach((b,i)=>{b.classList.toggle('on',i<cnt)});
+},{passive:true});
+
+// ============ NAV ============
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+
+// ============ NAV ACTIVE SECTION ============
+const sections=document.querySelectorAll('.ch[id]');
+const navAnchors=document.querySelectorAll('#navLinks a,#mobileNav a');
+const secObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navAnchors.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id)});
+    }
+  });
+},{threshold:.3});
+sections.forEach(s=>secObs.observe(s));
+
+// ============ TYPEWRITER ============
+const twTarget=document.getElementById('tw-target');
+const twCursor=document.getElementById('tw-cursor');
+const twText='那块屏';
+let twIndex=0;
+twTarget.innerHTML='';
+setTimeout(()=>{
+  const twInterval=setInterval(()=>{
+    if(twIndex<twText.length){
+      twTarget.innerHTML='<em>'+twText.slice(0,twIndex+1)+'</em>';twIndex++;
+    }else{clearInterval(twInterval);setTimeout(()=>{twCursor.style.display='none'},1500)}
+  },120);
+},1800);
+
+// ============ BAR GLOW DOTS ============
+document.querySelectorAll('.bar-fl').forEach(b=>{
+  const dot=document.createElement('div');dot.className='glow-dot';b.appendChild(dot);
+});
+
+// ============ BAR FILL OBSERVER ============
+const barObs=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.querySelectorAll('.bar-fl,.ff').forEach((b,i)=>setTimeout(()=>{b.style.width=b.dataset.w;if(b.classList.contains('ff'))b.classList.add('filled')},i*80));
+      barObs.unobserve(entry.target);
+    }
+  });
+},{threshold:.2});
+document.querySelectorAll('.bar-g,.freq-m').forEach(el=>barObs.observe(el));
+
+// ============ REVEAL ============
+const allRv=document.querySelectorAll('.rv,.rv-l,.rv-r');
+const rvObs=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const sibs=[...entry.target.parentElement.children].filter(c=>c.classList.contains('rv')||c.classList.contains('rv-l')||c.classList.contains('rv-r'));
+      setTimeout(()=>entry.target.classList.add('show'),sibs.indexOf(entry.target)*80);
+      rvObs.unobserve(entry.target);
+    }
+  });
+},{threshold:.1,rootMargin:'0px 0px -20px 0px'});
+allRv.forEach(el=>rvObs.observe(el));
+
+// ============ PIXEL DIAGRAMS ============
+function mkPx(id,arr){const c=document.getElementById(id);if(!c)return;arr.forEach(cl=>{const d=document.createElement('div');d.className='dot '+cl;d.style.cssText='width:9px;height:9px';c.appendChild(d)})}
+mkPx('pxd-rgb','r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b'.split(','));
+mkPx('pxd-dia','g,r,g,b,g,r,g,b,g,r,r,g,b,g,r,g,b,g,r,g,g,b,g,r,g,b,g,r,g,b'.split(','));
+mkPx('pxd-zdy','g,r,g,b,g,r,g,b,g,r,b,g,r,g,b,g,r,g,b,g,g,b,g,r,g,b,g,r,g,b'.split(','));
+mkPx('pxd-sp','r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b'.split(','));
+
+// ============ LTPO CYCLING ============
+const ltpoHz=document.getElementById('ltpoHz'),ltpoLabel=document.getElementById('ltpoLabel');
+const ltpoStates=[{hz:'1Hz',label:'静态文字阅读中',color:'#7a7570'},{hz:'30Hz',label:'查看照片中',color:'#50b8e8'},{hz:'60Hz',label:'浏览网页中',color:'#50e8a0'},{hz:'120Hz',label:'刷短视频中',color:'#00e5ff'}];
+let ltpoIdx=0;
+setInterval(()=>{ltpoIdx=(ltpoIdx+1)%ltpoStates.length;const s=ltpoStates[ltpoIdx];ltpoHz.textContent=s.hz;ltpoHz.style.color=s.color;ltpoLabel.textContent=s.label},2500);
+
+// ============ NUMBER COUNTER ============
+const counterNums=document.querySelectorAll('.counter-num');
+const counterObs=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el=entry.target,target=parseInt(el.dataset.target),duration=1200,start=performance.now();
+      const animate=now=>{
+        const p=Math.min((now-start)/duration,1);
+        el.textContent=Math.floor(p*target);
+        if(p<1)requestAnimationFrame(animate);else el.textContent=target;
+      };
+      requestAnimationFrame(animate);
+      counterObs.unobserve(el);
+    }
+  });
+},{threshold:.5});
+counterNums.forEach(el=>counterObs.observe(el));
+
+// ============ CROWN PARTICLES ============
+const crownP=document.getElementById('crownParticles');
+const cpColors=['rgba(0,229,255,.4)','rgba(229,85,85,.3)','rgba(85,184,85,.3)'];
+for(let i=0;i<12;i++){const d=document.createElement('div');d.className='cp';d.style.cssText=`left:${5+Math.random()*90}%;background:${cpColors[i%3]};animation-delay:${-Math.random()*6}s`;crownP.appendChild(d)}
+
+// ============ NAV FLASH ============
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const flash=document.createElement('div');flash.style.cssText='position:fixed;inset:0;background:#fff;opacity:.06;z-index:9998;pointer-events:none;transition:opacity .15s';
+    document.body.appendChild(flash);
+    setTimeout(()=>{flash.style.opacity='0';setTimeout(()=>flash.remove(),200)},50);
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)setTimeout(()=>t.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  });
+});
+
+// ============ FOOTER CLOSE ANIMATION ============
+const lastCh=document.querySelectorAll('.ch-close-anim');
+const lastSection=lastCh[lastCh.length-1];
+const footerEl=document.querySelector('footer');
+const closeObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&lastSection){lastSection.classList.add('closed');closeObs.unobserve(e.target)}
+  });
+},{threshold:.3});
+if(footerEl)closeObs.observe(footerEl);
+
+// ============ AFTERIMAGE ON SCROLL ============
+let lastScrollY=0;
+const afterimageEls=document.querySelectorAll('.ch-tt em,.crown-card h3 em');
+window.addEventListener('scroll',()=>{
+  const dy=Math.abs(window.scrollY-lastScrollY);
+  if(dy>15){
+    afterimageEls.forEach(el=>{el.classList.add('afterimage-active');setTimeout(()=>el.classList.remove('afterimage-active'),400)});
+    lastScrollY=window.scrollY;
+  }
+},{passive:true});
+
+// ============ MOBILE NAV SCROLL ============
+const mobileNav=document.getElementById('mobileNav');
+let mnTimeout;
+if(mobileNav){
+  mobileNav.style.transition='transform .3s ease';
+  window.addEventListener('scroll',()=>{
+    if(window.innerWidth>768)return;
+    mobileNav.style.transform='translateY(0)';
+    clearTimeout(mnTimeout);
+    mnTimeout=setTimeout(()=>{mobileNav.style.transform='translateY(100%)'},2000);
+  },{passive:true});
+}
+</script>
+</body>
+</html>
