@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>猎户座解剖室 — 三星芯片全解剖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#08090e;--bg-card:#10121a;--bg-card-hover:#161926;
+  --accent:#14d4f4;--warm:#f4a714;--danger:#f44141;--green:#34d399;
+  --text-primary:#e8eaf0;--text-secondary:#7a8098;--text-muted:#4a506a;
+  --border:#1e2236;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  font-family:'Noto Sans SC','Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  background:var(--bg-deep);color:var(--text-primary);line-height:1.8;overflow-x:hidden;
+  font-size:16px;letter-spacing:-.011em;
+}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(20,212,244,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(244,167,20,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+a{color:var(--accent);text-decoration:none;transition:color .3s}
+a:hover{color:#5be8ff}
+.container{position:relative;z-index:2;max-width:980px;margin:0 auto;padding:0 22px}
+
+.site-nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;height:48px;display:flex;align-items:center;
+  background:rgba(8,9,14,.92);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid rgba(30,34,54,.6);
+}
+.site-nav .inner{max-width:980px;margin:0 auto;padding:0 22px;width:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-back{
+  display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:var(--accent);
+  transition:all .25s;padding:4px 10px 4px 6px;border-radius:18px;
+  border:1px solid rgba(20,212,244,.2);background:rgba(20,212,244,.06);
+  letter-spacing:-.006em;
+}
+.nav-back:hover{background:rgba(20,212,244,.12);border-color:rgba(20,212,244,.4);color:#fff}
+.nav-back svg{width:12px;height:12px;transition:transform .25s}
+.nav-back:hover svg{transform:translateX(-2px)}
+.nav-brand{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;color:var(--accent);letter-spacing:-.01em}
+.nav-links{display:flex;gap:2px}
+.nav-links a{
+  font-size:10px;font-family:'Space Mono',monospace;font-weight:400;
+  padding:4px 10px;border-radius:5px;color:var(--text-muted);
+  transition:all .25s;text-transform:uppercase;letter-spacing:-.006em;
+}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-links a.active{color:var(--accent);background:rgba(20,212,244,.12)}
+
+.nav-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:10px}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);cursor:pointer;transition:all .3s ease}
+.nav-dot:hover,.nav-dot.active{background:var(--accent);transform:scale(1.5)}
+
+.scroll-bar{position:fixed;top:0;left:0;height:1px;background:var(--accent);z-index:10001;width:0;transition:width .05s linear;opacity:.4}
+
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:120px 22px 100px;position:relative;overflow:hidden;
+}
+.hero-glow{
+  position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(20,212,244,.06) 0%,rgba(244,167,20,.03) 40%,transparent 70%);
+  pointer-events:none;animation:heroPulse 8s ease-in-out infinite;
+}
+@keyframes heroPulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.05)}}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:5px 16px;
+  border-radius:50px;font-size:12px;font-family:'Space Mono',monospace;color:var(--accent);
+  letter-spacing:1px;margin-bottom:30px;animation:fadeDown .8s ease forwards;
+  background:rgba(20,212,244,.08);border:1px solid rgba(20,212,244,.2);
+}
+.hero h1{
+  font-size:clamp(32px,8vw,64px);font-weight:900;line-height:1.1;
+  margin-bottom:20px;animation:fadeUp .8s ease .2s forwards;opacity:0;
+}
+.hero h1 .hl{text-decoration:underline;text-decoration-color:var(--danger);text-underline-offset:6px}
+.hero-sub{
+  font-size:clamp(16px,3vw,22px);color:var(--text-secondary);max-width:660px;
+  font-weight:400;line-height:1.5;
+  margin-bottom:48px;animation:fadeUp .8s ease .4s forwards;opacity:0;
+}
+.hero-sub em{color:var(--warm);font-style:normal;font-weight:700}
+.hero-scroll{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  color:var(--text-muted);font-size:13px;
+  animation:scrollBounce 2s ease-in-out infinite;
+}
+.hero-scroll::after{content:'↓';display:block;text-align:center;margin-top:6px;font-size:18px;opacity:.6}
+@keyframes scrollBounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-8px)}60%{transform:translateX(-50%) translateY(-4px)}}
+
+section{padding:100px 0}
+.section-header{text-align:center;margin-bottom:56px}
+.section-tag{
+  display:inline-block;padding:5px 14px;
+  background:rgba(20,212,244,.1);border:1px solid rgba(20,212,244,.2);
+  border-radius:50px;font-size:11px;font-family:'Space Mono',monospace;
+  color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
+}
+.section-header h2{font-size:clamp(24px,5vw,42px);font-weight:900;margin-bottom:12px;color:var(--text-primary)}
+.section-header p{color:var(--text-secondary);font-size:16px;max-width:600px;margin:0 auto}
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(20,212,244,.1),transparent)}
+
+.fade-in{opacity:0;transform:translateY(28px);transition:all .6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+.tldr-box{
+  background:linear-gradient(135deg,rgba(244,167,20,.08),rgba(244,65,65,.04));
+  border:1px solid rgba(244,167,20,.25);border-radius:18px;
+  padding:36px;margin-bottom:50px;position:relative;overflow:hidden;
+}
+.tldr-box::before{
+  content:'TL;DR';position:absolute;top:14px;right:18px;
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  color:var(--warm);letter-spacing:2px;
+}
+.tldr-box h3{font-size:20px;color:var(--warm);margin-bottom:12px}
+.tldr-box p{font-size:15px;color:var(--text-primary)}
+.tldr-box strong{color:var(--green)}
+
+.tl-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.tl-item .yr{min-width:60px;font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace;font-size:12px}
+.tl-item.good .yr{color:var(--green)}.tl-item.mid .yr{color:var(--warm)}.tl-item.bad .yr{color:var(--danger)}
+.tl-item .tx{color:var(--text-secondary);line-height:1.8}
+.tl-item .tx strong{color:var(--text-primary)}
+
+.chip-cards{display:grid;gap:28px}
+.chip-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:20px;
+  padding:40px;position:relative;overflow:hidden;transition:all .4s ease;
+}
+.chip-card:hover{border-color:rgba(20,212,244,.3);box-shadow:0 16px 48px rgba(0,0,0,.25)}
+.chip-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.chip-name{font-size:30px;font-weight:900;line-height:1.2}
+.chip-name .year-tag{display:inline-block;padding:3px 10px;font-size:11px;font-weight:700;border-radius:6px;margin-left:10px;vertical-align:middle}
+.tag-blue{background:rgba(20,212,244,.15);color:var(--accent)}.tag-warn{background:rgba(244,167,20,.15);color:var(--warm)}.tag-red{background:rgba(244,65,65,.12);color:var(--danger)}
+.chip-price-tag{padding:7px 16px;border-radius:10px;font-weight:700;font-size:13px}
+.price-blue{background:rgba(20,212,244,.1);border:1px solid rgba(20,212,244,.25);color:var(--accent)}
+.price-warn{background:rgba(244,167,20,.1);border:1px solid rgba(244,167,20,.25);color:var(--warm)}
+.price-muted{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text-muted)}
+.chip-intro{font-size:16px;color:var(--text-secondary);margin-bottom:28px;max-width:800px;line-height:1.8}
+.chip-intro strong{color:var(--text-primary)}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.spec-item{
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  border-radius:14px;padding:18px;transition:all .3s;
+}
+.spec-item:hover{background:rgba(20,212,244,.04);border-color:rgba(20,212,244,.25)}
+.spec-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;font-family:'Space Mono',monospace}
+.spec-value{font-size:16px;font-weight:700;color:var(--text-primary)}
+
+.fun-callout{
+  background:linear-gradient(135deg,rgba(244,65,65,.06),rgba(244,167,20,.03));
+  border-left:4px solid var(--danger);border-radius:0 14px 14px 0;
+  padding:20px;margin:20px 0;font-size:14px;color:var(--text-secondary);line-height:1.85;
+}
+.fun-callout strong{color:var(--danger)}
+.fun-callout.green{border-left-color:var(--green)}.fun-callout.green strong{color:var(--green)}
+
+.callout-box{
+  background:var(--bg-card);border-left:3px solid var(--danger);
+  border-radius:0 12px 12px 0;padding:20px;margin:20px 0;
+  font-size:13px;color:var(--text-secondary);line-height:1.85;
+}
+.callout-box strong{color:var(--danger)}
+.callout-box.warm{border-left-color:var(--warm)}.callout-box.warm strong{color:var(--warm)}
+
+.compare-table-wrap{overflow-x:auto;margin-top:24px;border-radius:14px;border:1px solid var(--border)}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+.compare-table th{
+  background:var(--bg-card-hover);padding:14px 16px;text-align:left;
+  color:var(--text-muted);border-bottom:1px solid var(--border);
+  font-size:12px;font-family:'Space Mono',monospace;
+}
+.compare-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top}
+.v-good{color:var(--green)}.v-bad{color:var(--danger)}.v-mid{color:var(--warm)}
+
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.pc-box{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:22px;
+}
+.pc-box h4{font-size:15px;font-weight:700;margin-bottom:12px}
+.pc-box.cons h4{color:var(--danger)}
+.pc-box ul{list-style:none;font-size:13px}
+.pc-box ul li{padding:5px 0;color:var(--text-secondary);padding-left:18px;position:relative;line-height:1.7}
+.pc-box.cons ul li::before{content:'✗';position:absolute;left:0;color:var(--danger);font-weight:700}
+
+.meme-card{
+  background:linear-gradient(135deg,#1a0e0e,#0e1a1a);
+  border:1px solid var(--danger);border-radius:14px;
+  padding:28px;text-align:center;margin-bottom:20px;
+}
+.meme-card h3{font-size:18px;font-weight:900;margin-bottom:10px;color:var(--danger)}
+.meme-card p{font-size:14px;color:var(--text-secondary);max-width:500px;margin:0 auto;line-height:1.8}
+
+.buy-card{
+  background:var(--bg-card);border:1px solid rgba(20,212,244,.15);
+  border-radius:20px;padding:28px 30px;overflow:hidden;
+}
+.buy-row{
+  display:flex;align-items:flex-start;gap:14px;padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.buy-row:last-child{border-bottom:none}
+.buy-icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+}
+.buy-text{flex:1}
+.buy-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.buy-desc{font-size:13px;color:var(--text-secondary);line-height:1.7}
+.buy-desc strong{color:var(--text-primary)}
+
+footer{text-align:center;padding:56px 24px;border-top:1px solid var(--border);margin-top:80px}
+footer p{color:var(--text-muted);font-size:13px}
+
+#egg-popup{
+  position:fixed;bottom:20px;right:20px;z-index:9000;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 16px;max-width:280px;
+  font-size:12px;color:var(--text-muted);line-height:1.7;
+  opacity:0;transform:translateY(10px);transition:all .4s;
+  pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+#egg-popup.show{opacity:1;transform:translateY(0);pointer-events:auto}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:768px){
+  .chip-card{padding:24px}.spec-grid{grid-template-columns:1fr 1fr}.pc-grid{grid-template-columns:1fr}
+  .nav-dots{display:none}.nav-links{display:none}
+  section{padding:60px 0}.hero{padding:100px 22px 80px}
+  .hero h1{font-size:clamp(28px,8vw,48px)}.chip-name{font-size:20px}
+  .buy-card{padding:20px 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-bar" id="scrollBar"></div>
+
+<nav class="site-nav">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="性能.html" class="nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      <span>返回</span>
+    </a>
+    <span class="nav-brand">🌌 猎户座</span>
+  </div>
+  <div class="nav-links">
+    <a href="snapdragon.html">骁龙</a>
+    <a href="dimensity.html">天玑</a>
+    <a href="apple.html">苹果</a>
+    <a href="samsung.html" class="active">三星</a>
+    <a href="xuanjie.html">玄戒</a>
+    <a href="kirin.html">麒麟</a>
+  </div>
+</div>
+</nav>
+
+<div class="nav-dots">
+  <div class="nav-dot active" data-section="hero"></div>
+  <div class="nav-dot" data-section="history"></div>
+  <div class="nav-dot" data-section="chips"></div>
+  <div class="nav-dot" data-section="foundry"></div>
+  <div class="nav-dot" data-section="compare"></div>
+  <div class="nav-dot" data-section="buy"></div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Exynos / Snapdragon / Dimensity — 三足鼎立还是独木难支？</div>
+  <h1>三星猎户座：<br>从<span class="hl">巅峰</span>到"整活"</h1>
+  <p class="hero-sub">苹果前三代 iPhone 用的就是三星芯片。而现在，<em>三星自己都不太想用 Exynos 了</em>。这中间到底发生了什么？</p>
+  <div class="hero-scroll">往下翻</div>
+</section>
+
+<!-- ===== HISTORY ===== -->
+<section id="history">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">编年史</div><h2>猎户座的起起落落落落落</h2></div>
+    <div class="tldr-box fade-in"><h3>一句话看全程</h3><p>2009 年蜂鸟初啼（当年三星芯片=手机圈"别人的爸爸"）→ 2015 年 14nm 封神 → 2015-2019 猫鼬架构翻车（猫被蛇咬了）→ 2020-2022 三星代工坑了半个安卓阵营（火龙 888）→ 2023 自废武功全线投骁龙 → 2025-2028 试图翻身。<strong>目前：自家人都不想用的亲儿子。</strong></p></div>
+    <div class="fade-in">
+      <div class="tl-item good"><div class="yr">2009</div><div class="tx"><strong>蜂鸟初啼</strong> — 45nm 单核 1.2G，Galaxy S 用它，iPhone 3GS 前身也是三星芯片。当年三星=手机圈的"别人的爸爸"。</div></div>
+      <div class="tl-item good"><div class="yr">2015</div><div class="tx"><strong>封神之战</strong> — Exynos 7420 率先 14nm，Galaxy S6 全球统一搭载。同期骁龙 810 翻车成"初代火龙"。</div></div>
+      <div class="tl-item mid"><div class="yr">15-19</div><div class="tx"><strong>猫鼬弯路</strong> — 自研 Mongoose 架构（因为猫鼬是蛇的天敌，专门克高通 Krait"环蛇"），结果猫鼬被蛇咬了。代代翻车，最终放弃。</div></div>
+      <div class="tl-item bad"><div class="yr">20-22</div><div class="tx"><strong>至暗时刻</strong> — 三星代工骁龙 888/8Gen1，坑了半个安卓阵营。Exynos 2200 功耗 12W，快赶上 MacBook Air。韩国人自己都不想用。</div></div>
+      <div class="tl-item bad"><div class="yr">2023</div><div class="tx"><strong>自废武功</strong> — Galaxy S23 全线投奔骁龙。欧洲用户终于不再是"大冤种"。</div></div>
+      <div class="tl-item mid"><div class="yr">25-28</div><div class="tx"><strong>试图翻身</strong> — Exynos 2500/2600/2800 号称要用 2nm/1.4nm 反击。问题是：真芯片还是"PPT 芯片"？</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== CHIPS ===== -->
+<section id="chips">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">当红阵容</div><h2>猎户座全家福</h2></div>
+    <div class="chip-cards">
+      <div class="chip-card fade-in">
+        <div class="chip-card-header"><div><div class="chip-name">Exynos 2600 <span class="year-tag tag-blue">2026 · 2nm</span></div></div><div class="chip-price-tag price-blue">全球首款 2nm</div></div>
+        <p class="chip-intro">三星的"救命稻草"。首发搭载于 Galaxy S26，中美市场仍可能用骁龙。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">三星 SF2 (2nm GAAFET)</div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">1+3+6 十核（C1-Ultra 3.8G）</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Xclipse 960 (RDNA 4) 16CU</div></div>
+          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">59 TOPS</div></div>
+          <div class="spec-item"><div class="spec-label">L3/SLC</div><div class="spec-value">16MB / 24MB</div></div>
+          <div class="spec-item"><div class="spec-label">GB6</div><div class="spec-value">单核 ~3455 / 多核 ~11621</div></div>
+        </div>
+        <div class="fun-callout">⚠️ <strong>纸面不错，但三星的历史让人不敢轻信…</strong></div>
+      </div>
+
+      <div class="chip-card fade-in">
+        <div class="chip-card-header"><div><div class="chip-name">Exynos 2500 <span class="year-tag tag-warn">2025 · 3nm</span></div></div><div class="chip-price-tag price-warn">重新出山</div></div>
+        <p class="chip-intro">三星"重新出山"之作，对标骁龙 8 Gen 4。初步测试追平，但量产良率和功耗待观察。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">三星 3nm GAA</div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">3×X925 + 5×A725 + 2×A520</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Xclipse 950 (RDNA 4)</div></div>
+        </div>
+      </div>
+
+      <div class="chip-card fade-in">
+        <div class="chip-card-header"><div><div class="chip-name">Exynos 1580 <span class="year-tag tag-blue">2025 · 中端</span></div></div><div class="chip-price-tag price-muted">中端主力</div></div>
+        <p class="chip-intro">Galaxy A 系列标配。性能约等于骁龙 888 水平…2025 年的中端跟 2020 年旗舰一样强，说不清是进步还是不思进取。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">1×A720 2.9G + 3×A720 2.6G + 4×A520</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Xclipse 540</div></div>
+          <div class="spec-item"><div class="spec-label">GB6</div><div class="spec-value">单核 ~1300 / 多核 ~3800</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== FOUNDRY ===== -->
+<section id="foundry">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">代工翻车</div><h2>三星代工：从"帮我代工"到"求你别代"</h2></div>
+    <div class="meme-card fade-in"><h3>🐉 "火龙 888" 名场面</h3><p>三星 5nm 代工骁龙 888，功耗 4.0W（台积电麒麟 9000 才 2.9W，苹果 A14 才 2.4W）。<strong>有测评博主直接说：三星 5nm = 7nm 改了个名字。</strong></p></div>
+    <div class="callout-box fade-in"><strong>受害者名单：</strong>小米 11 系列（烧 WiFi、烧主板）、一加 9 Pro（日常发烫卡顿）、vivo X80 Pro+（价格跳水）、OPPO Find X5 Pro（天玑版阉割影像）。整个 2021 年，测评博主看到三星代工就条件反射掏测温枪。</div>
+    <div class="callout-box warm fade-in"><strong>2024 转机：</strong>三星向高通提交 3nm 样品，报价比台积电便宜 20%。但厂商："先让三星代工做充电头芯片试试水深浅。"信任崩塌后的重建之路，路漫漫其修远兮。</div>
+    <div class="pc-grid fade-in">
+      <div class="pc-box cons"><h4>✗ 三星代工的锅</h4><ul><li>晶体管密度远低于台积电同级</li><li>同频率功耗比台积电高 25-30%</li><li>被戏称"7nm 改良版"</li><li>Exynos 2200 功耗 12W 快赶上 MacBook Air</li></ul></div>
+      <div class="pc-box cons"><h4>✗ 猫鼬架构也是坑</h4><ul><li>Mongoose 架构 2015-2019 代代翻车</li><li>最后放弃自研回归 ARM 公版</li><li>基带技术也落后高通和华为</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== COMPARE ===== -->
+<section id="compare">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">横向对比</div><h2>Exynos vs 骁龙 vs 天玑</h2></div>
+    <div class="compare-table-wrap fade-in">
+      <table class="compare-table">
+        <thead><tr><th>维度</th><th>骁龙 8 Elite</th><th>天玑 9400</th><th>Exynos 2600</th></tr></thead>
+        <tbody>
+          <tr><td>CPU</td><td class="v-good">跑分怪兽</td><td class="v-good">多核之王</td><td class="v-mid">纸面不错</td></tr>
+          <tr><td>GPU</td><td class="v-good">游戏之王</td><td class="v-good">够用还省电</td><td class="v-mid">参数漂亮</td></tr>
+          <tr><td>能效</td><td class="v-good">控制得当</td><td class="v-good">续航之王</td><td class="v-bad">待验证</td></tr>
+          <tr><td>AI</td><td class="v-good">AI 领先</td><td class="v-good">AI 懂你</td><td class="v-mid">努力追赶</td></tr>
+          <tr><td>游戏兼容</td><td class="v-good">最佳兼容</td><td class="v-mid">基本OK</td><td class="v-bad">玄学兼容</td></tr>
+          <tr><td>价格</td><td class="v-bad">钱包杀手</td><td class="v-good">真香</td><td class="v-mid">只给自家人</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fun-callout green fade-in"><strong>一句话：</strong>骁龙="全能但贵"，天玑="性价比怪物"，Exynos="自家人都不太敢用的潜力股"。<strong>国内买三星放心，全是骁龙版。</strong></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== BUY ===== -->
+<section id="buy">
+  <div class="container">
+    <div class="section-header fade-in"><div class="section-tag">选购指南</div><h2>不同人该选什么芯片？</h2></div>
+    <div class="buy-card fade-in">
+      <div class="buy-row">
+        <div class="buy-icon" style="background:rgba(52,211,153,.06);border-color:rgba(52,211,153,.1)">🎮</div>
+        <div class="buy-text">
+          <div class="buy-title" style="color:var(--green)">游戏玩家</div>
+          <div class="buy-desc"><strong>闭眼选骁龙 8 Elite Gen 5 / 天玑 9500。</strong>预算不够选骁龙 8 Elite。</div>
+        </div>
+      </div>
+      <div class="buy-row">
+        <div class="buy-icon" style="background:rgba(20,212,244,.06);border-color:rgba(20,212,244,.1)">📸</div>
+        <div class="buy-text">
+          <div class="buy-title" style="color:var(--accent)">拍照 / 续航</div>
+          <div class="buy-desc"><strong>骁龙 8 Elite Gen 5 / 骁龙 8 Elite</strong>，搭配旗舰影像模组，AI 计算摄影表现最佳。</div>
+        </div>
+      </div>
+      <div class="buy-row">
+        <div class="buy-icon" style="background:rgba(244,167,20,.06);border-color:rgba(244,167,20,.1)">📱</div>
+        <div class="buy-text">
+          <div class="buy-title" style="color:var(--warm)">三星粉</div>
+          <div class="buy-desc"><strong>买国行！</strong>国行全是骁龙。非要尝鲜猎户座——做好"连 B 站弹幕都可能掉帧"的心理准备。</div>
+        </div>
+      </div>
+      <div class="buy-row">
+        <div class="buy-icon">⏳</div>
+        <div class="buy-text">
+          <div class="buy-title" style="color:var(--text-muted)">等等党</div>
+          <div class="buy-desc">Exynos 2600 的 2nm 和 2800 的 96MB 缓存值得关注。但历史告诉我们——三星"PPT 性能"和实际体验的差距比你以为的大得多。</div>
+        </div>
+      </div>
+    </div>
+    <div class="tldr-box fade-in" style="margin-top:20px"><h3>终极忠告</h3><p>芯片再强，也强不过厂商调校。同颗骁龙换个品牌可能从<strong>"丝滑"变"暖手宝"</strong>。</p></div>
+  </div>
+</section>
+
+<footer><p>猎户座解剖室 · 2026 · "如果选了 Exynos…那你只能祈祷三星工程师这回真的加了班"</p></footer>
+
+<div id="egg-popup"></div>
+
+<script>
+const scrollBar=document.getElementById('scrollBar');
+window.addEventListener('scroll',()=>{const h=document.documentElement;scrollBar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%'});
+
+const obs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){i.target.classList.add('visible');obs.unobserve(i.target)}})},{threshold:.08});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+const sections=document.querySelectorAll('section[id]'),navDots=document.querySelectorAll('.nav-dot');
+window.addEventListener('scroll',()=>{let c='';sections.forEach(s=>{if(scrollY>=s.offsetTop-200)c=s.getAttribute('id')});navDots.forEach(d=>{d.classList.remove('active');if(d.dataset.section===c)d.classList.add('active')})});
+navDots.forEach(d=>{d.addEventListener('click',()=>{const s=document.getElementById(d.dataset.section);if(s)s.scrollIntoView({behavior:'smooth'})})});
+
+const eggs=["📱 三星 Exynos：韩国人自己都不想用的亲儿子","🤡 火龙 888 的亲爹：三星 5nm","🐉 猫鼬架构：名字起得响，结果被蛇咬了","🇰🇷 欧洲用户：交一样的钱凭什么我是大冤种？","📊 三星 5nm 晶体管密度 = 台积电 7nm 改名版","⚡ Exynos 2200 功耗 12W 快赶上 MacBook Air"];
+let eggT;function showEgg(){const el=document.getElementById('egg-popup');el.textContent=eggs[Math.floor(Math.random()*eggs.length)];el.classList.add('show');clearTimeout(eggT);eggT=setTimeout(()=>el.classList.remove('show'),5000)}
+setTimeout(showEgg,8000);setInterval(showEgg,45000+Math.random()*25000);
+</script>
+</body>
+</html>
