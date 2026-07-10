@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>手机的其他细节</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#08080c;--bg-card:rgba(18,18,26,.93);
+      --motor:#e85d3a;--speaker:#3ae8c7;--fp:#c73ae8;--water:#3a8ee8;--gold:#d4a040;
+      --t1:#eeeae2;--t2:#9a958d;--t3:#5a564f;--bd:#22222c;
+      --cur:#e85d3a;--cur-rgb:232,93,58;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--t1);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+    /* ===== 背景：极光渐变团 ===== */
+    .bg-aurora{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .blob{position:absolute;border-radius:50%;filter:blur(120px);will-change:transform}
+    .blob:nth-child(1){width:55vw;height:55vw;background:rgba(58,232,199,.07);top:-15%;left:-10%;animation:d1 26s ease-in-out infinite}
+    .blob:nth-child(2){width:50vw;height:50vw;background:rgba(232,93,58,.06);top:15%;right:-12%;animation:d2 32s ease-in-out infinite}
+    .blob:nth-child(3){width:45vw;height:45vw;background:rgba(199,58,232,.055);bottom:-10%;left:25%;animation:d3 22s ease-in-out infinite}
+    .blob:nth-child(4){width:40vw;height:40vw;background:rgba(58,142,232,.06);top:50%;left:5%;animation:d4 29s ease-in-out infinite}
+    .blob:nth-child(5){width:35vw;height:35vw;background:rgba(212,160,64,.045);bottom:20%;right:10%;animation:d5 35s ease-in-out infinite}
+    @keyframes d1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(8vw,6vh) scale(1.12)}66%{transform:translate(-5vw,-4vh) scale(.94)}}
+    @keyframes d2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-10vw,5vh) scale(1.08)}66%{transform:translate(6vw,-7vh) scale(.96)}}
+    @keyframes d3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(6vw,-8vh) scale(1.1)}66%{transform:translate(-8vw,4vh) scale(.92)}}
+    @keyframes d4{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12vw,3vh) scale(1.06)}66%{transform:translate(-4vw,-9vh) scale(.97)}}
+    @keyframes d5{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-7vw,-5vh) scale(1.08)}66%{transform:translate(9vw,6vh) scale(.93)}}
+
+    /* ===== 背景：点阵网格 ===== */
+    .bg-dots{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px}
+
+    /* ===== 背景：噪点 ===== */
+    .bg-noise{position:fixed;inset:0;pointer-events:none;z-index:9998;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")}
+
+    /* 进度条 */
+    #pb{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;background:linear-gradient(90deg,var(--motor),var(--speaker),var(--fp),var(--water),var(--gold));transition:width .1s}
+
+    ::selection{background:var(--cur);color:#000}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--cur);border-radius:3px;transition:background .8s}
+
+    /* ===== HERO ===== */
+    .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 clamp(1.5rem,6vw,6rem);position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;width:200vmax;height:200vmax;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,transparent 28%,rgba(58,232,199,.02) 29%,transparent 30%,transparent 48%,rgba(58,142,232,.015) 49%,transparent 50%);animation:ripple 25s linear infinite;pointer-events:none;z-index:0}
+    @keyframes ripple{to{transform:translate(-50%,-50%) scale(1.4)}}
+    .hero::after{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg at 50% 50%,transparent,rgba(58,232,199,.02) 60deg,transparent 120deg,rgba(199,58,232,.02) 180deg,transparent 240deg,rgba(58,142,232,.02) 300deg,transparent);animation:spin 30s linear infinite;pointer-events:none;z-index:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .glow-wrap{position:absolute;inset:0;pointer-events:none;z-index:0}
+    .glow{position:absolute;border-radius:50%;filter:blur(100px);opacity:.14;will-change:transform}
+    .glow--a{width:45vw;height:45vw;top:20%;left:15%;background:var(--motor);animation:ga 9s ease-in-out infinite}
+    .glow--b{width:40vw;height:40vw;top:15%;right:10%;background:var(--speaker);animation:gb 11s ease-in-out infinite}
+    .glow--c{width:38vw;height:38vw;bottom:10%;left:30%;background:var(--water);animation:gc 13s ease-in-out infinite}
+    .glow--d{width:32vw;height:32vw;top:40%;left:40%;background:var(--fp);animation:gd 10s ease-in-out infinite}
+    @keyframes ga{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,-4vh) scale(1.15)}}
+    @keyframes gb{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vw,5vh) scale(1.1)}}
+    @keyframes gc{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(5vw,-6vh) scale(1.2)}}
+    @keyframes gd{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5vw,-5vh) scale(1.1)}}
+    .glow-mask{position:absolute;inset:0;background:radial-gradient(ellipse 55% 55% at 50% 50%,transparent,var(--bg));pointer-events:none;z-index:1}
+    .hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+    .hero-eyebrow{font-weight:300;font-size:clamp(.7rem,1.1vw,.85rem);letter-spacing:.35em;color:var(--t3);margin-bottom:2rem;opacity:0;animation:fu .8s ease .3s forwards}
+    .hero-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(2.8rem,8vw,7.5rem);line-height:1.1;position:relative;opacity:0;animation:fu .8s ease .5s forwards}
+    .hero-title-glow{position:absolute;bottom:-10%;left:50%;transform:translateX(-50%);width:130%;height:60%;background:radial-gradient(ellipse at center,rgba(58,232,199,.15),rgba(58,142,232,.08) 40%,transparent 70%);filter:blur(30px);animation:tglow 4s ease-in-out infinite;pointer-events:none;z-index:0}
+    @keyframes tglow{0%,100%{opacity:.6;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.1)}}
+    .hero-title span{position:relative;z-index:1;background:linear-gradient(135deg,#f0ece4 0%,#f0ece4 20%,var(--speaker) 40%,var(--water) 55%,var(--fp) 70%,var(--motor) 85%,#f0ece4 100%);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:tg 6s ease-in-out infinite}
+    @keyframes tg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .hero-title::after{content:'';display:block;width:120px;height:2px;margin:1.2rem auto 0;background:linear-gradient(90deg,transparent,var(--speaker),var(--water),var(--fp),transparent);border-radius:1px}
+    .hero-sub{font-weight:300;font-size:clamp(.95rem,1.5vw,1.15rem);line-height:1.8;color:var(--t2);max-width:44ch;margin-top:2rem;opacity:0;animation:fu .8s ease .7s forwards}
+    .hero-notice{margin-top:2.5rem;padding:1.25rem 1.8rem;border-left:3px solid var(--motor);background:rgba(232,93,58,.05);border-radius:0 8px 8px 0;max-width:52ch;text-align:left;opacity:0;animation:fu .8s ease .9s forwards;position:relative;z-index:2}
+    .hero-notice-label{font-size:.65rem;font-weight:500;letter-spacing:.3em;color:var(--motor);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+    .hero-notice-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--motor);animation:np 2s ease infinite}
+    @keyframes np{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(232,93,58,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(232,93,58,0)}}
+    .hero-notice p{font-size:clamp(.82rem,1.05vw,.92rem);line-height:1.75;color:var(--t2)}
+    .hero-notice strong{color:var(--t1);font-weight:500}
+    .hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fu .8s ease 1.2s forwards;z-index:2}
+    .hero-scroll span{font-size:.65rem;letter-spacing:.2em;color:var(--t3)}
+    .scroll-dots{display:flex;gap:4px}
+    .scroll-dots i{width:4px;height:4px;border-radius:50%;background:var(--t3);animation:db 1.5s ease infinite}
+    .scroll-dots i:nth-child(2){animation-delay:.15s}
+    .scroll-dots i:nth-child(3){animation-delay:.3s}
+    @keyframes db{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-8px);opacity:1}}
+
+    /* NAV */
+    .nav-dots{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:1rem;z-index:100}
+    .nd{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--t3);background:transparent;cursor:pointer;transition:all .3s;position:relative}
+    .nd::after{content:attr(data-l);position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:.65rem;letter-spacing:.06em;color:var(--t3);white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none}
+    .nd:hover::after{opacity:1}
+    .nd.on{transform:scale(1.3)}
+    .nd.on::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--cur);opacity:0;animation:nr 2s ease infinite}
+    @keyframes nr{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.2);opacity:0}}
+    .nd[data-s="hero"]:hover,.nd[data-s="hero"].on{border-color:var(--t1);background:var(--t1)}
+    .nd[data-s="motor"]:hover,.nd[data-s="motor"].on{border-color:var(--motor);background:var(--motor)}
+    .nd[data-s="speaker"]:hover,.nd[data-s="speaker"].on{border-color:var(--speaker);background:var(--speaker)}
+    .nd[data-s="fp"]:hover,.nd[data-s="fp"].on{border-color:var(--fp);background:var(--fp)}
+    .nd[data-s="frame"]:hover,.nd[data-s="frame"].on{border-color:var(--gold);background:var(--gold)}
+    .nd[data-s="water"]:hover,.nd[data-s="water"].on{border-color:var(--water);background:var(--water)}
+
+    /* MODULE */
+    .mod{min-height:100vh;padding:clamp(3rem,8vw,7rem) clamp(1.5rem,6vw,6rem);position:relative;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+    .mi{max-width:1100px;width:100%;margin:0 auto;display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(2rem,4vw,4rem);align-items:start;opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s}
+    .mi.vis{opacity:1;transform:translateY(0)}
+    .mmeta{display:flex;flex-direction:column;gap:.8rem}
+    .mnum{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(5rem,12vw,10rem);line-height:1;opacity:.05;position:absolute;top:clamp(.5rem,3vw,2rem);left:clamp(1.5rem,6vw,6rem);pointer-events:none;user-select:none;background:linear-gradient(180deg,rgba(255,255,255,.1),transparent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;will-change:transform}
+    .mtag{display:inline-flex;font-size:.65rem;font-weight:500;letter-spacing:.25em;padding:.35rem .9rem;border-radius:20px;width:fit-content;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+    .mtitle{font-family:'Noto Serif SC',serif;font-weight:700;font-size:clamp(1.8rem,3.5vw,3rem);line-height:1.15;text-shadow:0 0 40px rgba(var(--cur-rgb),.15)}
+    .mtitle::after{content:'';display:block;width:60px;height:2px;margin-top:.5rem;border-radius:1px;background:linear-gradient(90deg,var(--cur),transparent)}
+    .mdesc{font-weight:300;font-size:clamp(.88rem,1.15vw,1rem);line-height:1.85;color:var(--t2)}
+    .mdesc strong{color:var(--t1);font-weight:500;padding:0 2px;background:linear-gradient(to top,rgba(var(--cur-rgb),.1),transparent 50%)}
+    .mbox{background:var(--bg-card);border:1px solid var(--bd);border-radius:12px;padding:clamp(1.5rem,2.5vw,2.5rem);position:relative;min-height:260px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+    .mbox::before{content:'';position:absolute;inset:-1px;border-radius:12px;padding:1px;background:linear-gradient(135deg,transparent 40%,var(--cur) 50%,transparent 60%);background-size:300% 300%;animation:bf 6s linear infinite;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.25;pointer-events:none}
+    @keyframes bf{to{background-position:300% 300%}}
+    .mod--motor .mtag{color:var(--motor);background:rgba(232,93,58,.12);border:1px solid rgba(232,93,58,.2)}
+    .mod--motor{background:radial-gradient(ellipse at 20% 50%,rgba(232,93,58,.06),transparent 60%)}
+    .mod--speaker .mtag{color:var(--speaker);background:rgba(58,232,199,.12);border:1px solid rgba(58,232,199,.2)}
+    .mod--speaker{background:radial-gradient(ellipse at 80% 30%,rgba(58,232,199,.06),transparent 60%)}
+    .mod--fp .mtag{color:var(--fp);background:rgba(199,58,232,.12);border:1px solid rgba(199,58,232,.2)}
+    .mod--fp{background:radial-gradient(ellipse at 30% 70%,rgba(199,58,232,.06),transparent 60%)}
+    .mod--frame .mtag{color:var(--gold);background:rgba(212,160,64,.12);border:1px solid rgba(212,160,64,.2)}
+    .mod--frame{background:radial-gradient(ellipse at 70% 40%,rgba(212,160,64,.06),transparent 60%)}
+    .mod--water .mtag{color:var(--water);background:rgba(58,142,232,.12);border:1px solid rgba(58,142,232,.2)}
+    .mod--water{background:radial-gradient(ellipse at 50% 60%,rgba(58,142,232,.06),transparent 60%)}
+
+    .divider{max-width:1100px;margin:0 auto;height:1px;background:linear-gradient(to right,transparent,var(--cur),transparent);opacity:.3}
+
+    /* TIER */
+    .tl{display:flex;flex-direction:column}
+    .th{display:grid;grid-template-columns:42px 1fr 85px;gap:.6rem;padding-bottom:.6rem;border-bottom:1px solid var(--bd);margin-bottom:.2rem;position:sticky;top:0;background:rgba(18,18,26,.98);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2;border-radius:4px}
+    .th span{font-size:.6rem;letter-spacing:.15em;color:var(--t3);text-transform:uppercase}
+    .th span:last-child{text-align:right}
+    .tr{display:grid;grid-template-columns:42px 1fr 85px;gap:.6rem;align-items:center;padding:.55rem .2rem;border-bottom:1px solid rgba(255,255,255,.025);transition:all .25s;cursor:default;border-radius:4px}
+    .tr:hover{background:rgba(255,255,255,.03);padding-left:.5rem;box-shadow:inset 3px 0 0 var(--cur)}
+    .tr:last-child{border-bottom:none}
+    .tb{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0;transition:transform .3s,box-shadow .3s}
+    .tr:hover .tb{transform:scale(1.15);box-shadow:0 0 15px rgba(255,255,255,.15)}
+    .tr--crown .tb{animation:bp 2.5s ease infinite}
+    @keyframes bp{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.3)}50%{box-shadow:0 0 0 6px rgba(255,215,0,0)}}
+    .ti{display:flex;flex-direction:column;gap:.25rem;min-width:0}
+    .tm{font-size:.8rem;font-weight:500}
+    .tm small{font-size:.62rem;color:var(--t3);margin-left:.3rem}
+    .tk{height:5px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
+    .bar{height:100%;border-radius:3px;width:0;transition:width 1.4s cubic-bezier(.34,1.56,.64,1);position:relative}
+    .bar::after{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,rgba(255,255,255,.3),transparent);border-radius:3px 3px 0 0}
+    .tp{font-size:.6rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tv{font-size:.75rem;font-weight:500;color:var(--t2);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .tr--crown{background:linear-gradient(90deg,rgba(255,215,0,.06),transparent 80%);border-left:2px solid rgba(255,215,0,.35);padding-left:.4rem}
+    .tr--lag{background:linear-gradient(90deg,rgba(107,114,128,.06),transparent 80%);border-left:2px solid rgba(107,114,128,.4);padding-left:.4rem}
+    .gap{height:1px;margin:.3rem 0;position:relative;overflow:hidden}
+    .gap::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:sw 3.5s ease-in-out infinite}
+    @keyframes sw{to{left:150%}}
+    .gap--g{background:linear-gradient(to right,rgba(255,215,0,.25),transparent 60%)}
+    .gap--g::after{content:'← 断层 →';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:.55rem;letter-spacing:.15em;color:rgba(255,215,0,.5);background:rgba(18,18,26,.95);padding:0 .6rem;animation:gb 2.5s ease infinite}
+    .gap--gr{background:linear-gradient(to right,rgba(107,114,128,.3),transparent 60%)}
+    .gap--gr::after{content:'← 断层 →';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:.55rem;letter-spacing:.15em;color:rgba(107,114,128,.6);background:rgba(18,18,26,.95);padding:0 .6rem;animation:gb 2.5s ease infinite}
+    @keyframes gb{0%,100%{opacity:.4}50%{opacity:1}}
+    .cr{font-size:.5rem;font-weight:700;background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;padding:.1rem .4rem;border-radius:2px;margin-left:.3rem;vertical-align:middle}
+    .lg{font-size:.5rem;font-weight:700;background:linear-gradient(135deg,#6b7280,#4b5563);color:#fff;padding:.1rem .4rem;border-radius:2px;margin-left:.3rem;vertical-align:middle}
+    .c0{background:linear-gradient(135deg,#FFD700,#FFA500)}.c1{background:linear-gradient(135deg,#e85d3a,#ff8c42)}.c2{background:linear-gradient(135deg,#3a8ee8,#5ba3f5)}.c3{background:linear-gradient(135deg,#3ae8c7,#5bf0d8)}.c4{background:linear-gradient(135deg,#8b5cf6,#a78bfa)}.c5{background:linear-gradient(135deg,#c73ae8,#d96bef)}.c6{background:linear-gradient(135deg,#6b7280,#9ca3af)}.c7{background:linear-gradient(135deg,#4b5563,#6b7280)}
+
+    /* RED FLAG */
+    .rf{margin-top:1.2rem;padding:1.2rem 1.5rem;border:2px solid var(--motor);border-radius:10px;background:linear-gradient(135deg,rgba(232,93,58,.08),rgba(232,93,58,.02));position:relative;overflow:hidden;animation:fp2 3s ease infinite}
+    @keyframes fp2{0%,100%{box-shadow:0 0 0 0 rgba(232,93,58,.2),inset 0 0 20px rgba(232,93,58,.02)}50%{box-shadow:0 0 20px 0 rgba(232,93,58,.1),inset 0 0 30px rgba(232,93,58,.04)}}
+    .rf::before{content:'';position:absolute;top:0;left:-100%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(232,93,58,.08),transparent);animation:sc 4s ease-in-out infinite}
+    @keyframes sc{to{left:140%}}
+    .rft{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.2em;color:#000;background:var(--motor);padding:.2rem .6rem;border-radius:20px;margin-bottom:.5rem;animation:tp2 1.5s ease infinite}
+    @keyframes tp2{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+    .rftitle{font-size:.92rem;font-weight:700;color:var(--t1);margin-bottom:.3rem;line-height:1.5}
+    .rfdesc{font-size:.8rem;line-height:1.7;color:var(--t2)}
+
+    /* EXTRA */
+    .extra{max-width:1100px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:2rem;opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}
+    .extra.vis{opacity:1;transform:translateY(0)}
+    .vtitle{font-family:'Noto Serif SC',serif;font-weight:700;font-size:clamp(1.1rem,2vw,1.4rem);margin-bottom:.3rem}
+    .vsub{font-size:.82rem;color:var(--t2);line-height:1.7;margin-bottom:1.2rem}
+    .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem}
+    .vc{background:var(--bg-card);border:1px solid var(--bd);border-radius:10px;padding:1.2rem;transition:all .35s cubic-bezier(.25,.46,.45,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+    .vc::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent,transparent 10px,rgba(255,255,255,.004) 10px,rgba(255,255,255,.004) 11px);pointer-events:none}
+    .vc:hover{border-color:var(--motor);transform:translateY(-4px) rotateX(1deg) rotateY(-1deg);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+    .vn{font-size:1rem;font-weight:700;font-family:'Noto Serif SC',serif;display:flex;align-items:center;gap:.4rem}
+    .vn::before{content:'';width:3px;height:1em;border-radius:2px;background:var(--cur);flex-shrink:0}
+    .vsu{font-size:.68rem;color:var(--t3);letter-spacing:.1em;margin-bottom:.6rem}
+    .vd{font-size:.78rem;line-height:1.65;color:var(--t2)}
+    .vd strong{color:var(--t1)}
+    .vt{display:inline-block;margin-top:.5rem;font-size:.65rem;padding:.25rem .65rem;border-radius:20px;font-weight:500;box-shadow:0 2px 10px rgba(0,0,0,.2);position:relative;overflow:hidden}
+    .vt--h{background:rgba(232,93,58,.12);color:var(--motor)}
+    .vt--h::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:sh 3s ease infinite}
+    @keyframes sh{to{left:150%}}
+    .vt--c{background:rgba(107,114,128,.15);color:#9ca3af}
+    .ic{background:linear-gradient(135deg,rgba(232,93,58,.05),rgba(58,142,232,.03));border:1px solid var(--bd);border-radius:10px;padding:1.5rem 1.8rem;position:relative;box-shadow:inset 0 2px 15px rgba(0,0,0,.25),0 4px 16px rgba(0,0,0,.15)}
+    .ic::before{content:'';position:absolute;left:0;top:1rem;bottom:1rem;width:3px;border-radius:2px;background:linear-gradient(to bottom,var(--cur),transparent)}
+    .ict{font-family:'Noto Serif SC',serif;font-weight:700;font-size:1.1rem;margin-bottom:.6rem;padding-left:1.5rem;position:relative}
+    .ict::before{content:'\201C';position:absolute;left:0;top:-.3rem;font-size:2.2rem;color:var(--cur);opacity:.3;font-family:Georgia,serif;line-height:1}
+    .ict::after{content:'';display:block;width:40px;height:1px;margin-top:.4rem;background:linear-gradient(90deg,var(--cur),transparent);opacity:.4}
+    .icp{font-size:.85rem;line-height:1.8;color:var(--t2)}
+    .icp strong{color:var(--t1)}
+    .mod--speaker+.extra .vc:hover{border-color:var(--speaker)}.mod--speaker+.extra .vt--h{background:rgba(58,232,199,.12);color:var(--speaker)}
+    .mod--fp+.extra .vc:hover{border-color:var(--fp)}.mod--fp+.extra .vt--h{background:rgba(199,58,232,.12);color:var(--fp)}
+    .mod--frame+.extra .vc:hover{border-color:var(--gold)}.mod--frame+.extra .vt--h{background:rgba(212,160,64,.12);color:var(--gold)}
+    .mod--water+.extra .vc:hover{border-color:var(--water)}.mod--water+.extra .vt--h{background:rgba(58,142,232,.12);color:var(--water)}
+
+    .footer{padding:3rem;text-align:center;color:var(--t3);font-size:.7rem;letter-spacing:.15em;position:relative;overflow:hidden;background:linear-gradient(to top,rgba(0,0,0,.4),transparent)}
+    .footer .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-size:4rem;font-family:'Noto Serif SC',serif;font-weight:900;color:rgba(255,255,255,.012);letter-spacing:.1em;white-space:nowrap;transform:rotate(-8deg)}
+
+    /* FUN PANEL */
+    .fp{position:fixed;bottom:5rem;right:1.5rem;width:min(360px,calc(100vw - 2rem));background:rgba(18,18,26,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);border-radius:14px;z-index:150;box-shadow:0 10px 50px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03);transform:translateY(20px) scale(.95);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;overflow:hidden}
+    .fp.show{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+    .fp::before{content:'';position:absolute;inset:-1px;border-radius:14px;padding:1px;background:linear-gradient(135deg,var(--motor),var(--fp),var(--speaker));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.4;pointer-events:none}
+    .fpi{padding:1rem 1.2rem;position:relative}
+    .fptag{font-size:.55rem;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+    .fptag i{font-style:normal;font-size:.8rem}
+    .fptxt{font-size:.85rem;line-height:1.7;color:var(--t2)}
+    .fpcl{position:absolute;top:.6rem;right:.8rem;width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,.05);color:var(--t3);cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .fpcl:hover{background:rgba(255,255,255,.1);color:var(--t1)}
+    .fpprog{position:absolute;bottom:0;left:0;height:2px;background:var(--cur);border-radius:0 0 14px 14px;transition:width linear}
+
+    .btop{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(10px);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--bd);color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;opacity:0;transition:all .3s;z-index:140}
+    .btop.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .btop:hover{background:rgba(255,255,255,.12);color:var(--t1)}
+
+    @keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+    /* MOBILE */
+    @media(max-width:768px){
+      .mi{grid-template-columns:1fr}.nav-dots{display:none}.vgrid{grid-template-columns:1fr}
+      .hero{padding:0 1.5rem}.glow{filter:blur(60px);opacity:.08;width:60vw;height:60vw}
+      .mod{padding-bottom:5rem}.mnum{font-size:3.5rem;top:.5rem;left:1.5rem}
+      .mtitle{font-size:1.5rem}.mtitle::after{width:40px}.mtag{font-size:.6rem;padding:.25rem .6rem}
+      .th,.tr{grid-template-columns:34px 1fr 60px;gap:.4rem;padding:.4rem .2rem}
+      .tb{width:28px;height:28px;font-size:.55rem}.tm{font-size:.72rem}.tp{font-size:.55rem}.tv{font-size:.65rem}
+      .fp{right:.5rem;left:.5rem;width:auto;bottom:5rem;max-height:40vh}
+      .btop{bottom:4.5rem;left:auto;right:1rem;transform:none;width:32px;height:32px;font-size:.7rem}
+      .btop.show{transform:none}
+      .vc,.tr{position:relative;overflow:hidden}
+      .rpf{position:absolute;border-radius:50%;background:rgba(255,255,255,.08);transform:scale(0);animation:ra .6s ease-out forwards;pointer-events:none}
+      @keyframes ra{to{transform:scale(4);opacity:0}}
+      .mbot{padding-bottom:env(safe-area-inset-bottom,.5rem)}
+    }
+    @media(min-width:769px){.mbot{display:none!important}.vc{transform-style:preserve-3d;perspective:800px}}
+    .mbot{position:fixed;bottom:0;left:0;right:0;z-index:130;background:rgba(8,8,12,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;padding:.35rem 0 .5rem}
+    .mprog{display:flex;gap:5px;margin-bottom:.25rem}
+    .mprog i{width:5px;height:5px;border-radius:50%;background:var(--t3);opacity:.25;transition:all .3s}
+    .mprog i.on{opacity:1;background:var(--cur);transform:scale(1.4)}
+    .mbtns{display:flex;justify-content:space-around;width:100%}
+    .mbtn{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.2rem .4rem;border:none;background:transparent;cursor:pointer;color:var(--t3);font-size:.5rem;letter-spacing:.05em;transition:color .2s}
+    .mbtn .mi2{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;transition:all .2s}
+    .mbtn.on{color:var(--t1)}.mbtn.on .mi2{background:var(--cur);border-color:var(--cur)}
+  </style>
+</head>
+<body>
+
+  <div class="bg-aurora"><div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div></div>
+  <div class="bg-dots"></div>
+  <div class="bg-noise"></div>
+  <div id="pb"></div>
+
+  <nav class="nav-dots">
+    <div class="nd on" data-s="hero" data-l="首页" onclick="go('hero')"></div>
+    <div class="nd" data-s="motor" data-l="马达" onclick="go('motor')"></div>
+    <div class="nd" data-s="speaker" data-l="扬声器" onclick="go('speaker')"></div>
+    <div class="nd" data-s="fp" data-l="指纹识别" onclick="go('fingerprint')"></div>
+    <div class="nd" data-s="frame" data-l="边框" onclick="go('frame')"></div>
+    <div class="nd" data-s="water" data-l="防水" onclick="go('water')"></div>
+  </nav>
+
+  <div class="mbot">
+    <div class="mprog"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="mbtns">
+      <button class="mbtn on" data-s="motor" onclick="go('motor')"><span class="mi2"></span>马达</button>
+      <button class="mbtn" data-s="speaker" onclick="go('speaker')"><span class="mi2"></span>扬声器</button>
+      <button class="mbtn" data-s="fp" onclick="go('fingerprint')"><span class="mi2"></span>指纹</button>
+      <button class="mbtn" data-s="frame" onclick="go('frame')"><span class="mi2"></span>边框</button>
+      <button class="mbtn" data-s="water" onclick="go('water')"><span class="mi2"></span>防水</button>
+    </div>
+  </div>
+
+  <div class="fp" id="funpanel">
+    <div class="fpi">
+      <button class="fpcl" onclick="hideFun()">✕</button>
+      <div class="fptag"><i>💡</i><span id="ftag">手机冷知识</span></div>
+      <div class="fptxt" id="ftxt"></div>
+    </div>
+    <div class="fpprog" id="fprog"></div>
+  </div>
+
+  <button class="btop" id="btop" onclick="go('hero')">↑</button>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="glow-wrap"><div class="glow glow--a"></div><div class="glow glow--b"></div><div class="glow glow--c"></div><div class="glow glow--d"></div></div>
+    <div class="glow-mask"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Beyond Specs & Benchmarks</p>
+      <h1 class="hero-title"><div class="hero-title-glow"></div><span>手机的其他细节</span></h1>
+      <p class="hero-sub">当我们讨论手机时，目光往往聚焦于屏幕、芯片与影像。<br>然而真正塑造日常体验的，还有许多容易被忽略的细节。</p>
+      <div class="hero-notice"><div class="hero-notice-label">被忽略的真相</div><p><strong>你花七八千买的旗舰，马达和扬声器可能还不如三千元的手机。</strong> 不是偷工减料——是手机内部寸土寸金，空间必须优先让给电池、相机和散热。不是成本问题，是物理问题。</p></div>
+    </div>
+    <div class="hero-scroll"><span>向下探索</span><div class="scroll-dots"><i></i><i></i><i></i></div></div>
+  </section>
+
+  <!-- 01 马达 -->
+  <section class="mod mod--motor" id="motor">
+    <div class="mnum">01</div>
+    <div class="mi" data-anim>
+      <div class="mmeta">
+        <div class="mtag">振感体验</div>
+        <h2 class="mtitle">马达</h2>
+        <p class="mdesc">马达是手机中负责<strong>振动反馈</strong>的零件。打字触感、游戏后坐力、来电振动，全靠它。<br><br>规律很简单：<strong>体积越大，振感越强越细腻</strong>。但旗舰机内部寸土寸金，电池、相机、散热都在抢地盘，马达往往第一个被压缩。<br><br>安卓X轴线性马达共分<strong>九个档次</strong>，从顶级的 CSA 0916C 到最常见的 ELA 0809，体积差两倍多，体验天差地别。</p>
+      </div>
+      <div class="mbox">
+        <div style="font-size:.65rem;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:.8rem">安卓X轴线性马达 · 天梯图</div>
+        <div class="tl">
+          <div class="th"><span>档位</span><span>型号</span><span>体积</span></div>
+          <div class="tr tr--crown"><div class="tb c0">T0</div><div class="ti"><div class="tm">CSA 0916C<span class="cr">安卓最强</span></div><div class="tk"><div class="bar c0" data-w="100"></div></div><div class="tp">Redmi K80 Ultra · N56钕铁硼 · 50-500Hz超宽频</div></div><div class="tv">601mm³</div></div>
+          <div class="gap gap--g"></div>
+          <div class="tr"><div class="tb c1">T1</div><div class="ti"><div class="tm">CSA 0916 Turbo <small>CSA+</small></div><div class="tk"><div class="bar c1" data-w="100"></div></div><div class="tp">一加 12 · OPPO Find X8 Ultra</div></div><div class="tv">602mm³</div></div>
+          <div class="tr"><div class="tb c2">T2</div><div class="ti"><div class="tm">CSA 0916</div><div class="tk"><div class="bar c2" data-w="100"></div></div><div class="tp">一加 11 · 一加 Ace 2 Pro · 魅族 21</div></div><div class="tv">602mm³</div></div>
+          <div class="tr"><div class="tb c3">T3</div><div class="ti"><div class="tm">ESA 1016 <small>ESA Gen3</small></div><div class="tk"><div class="bar c3" data-w="93"></div></div><div class="tp">iQOO 12 · 小米 14 Pro · 小米 13 Pro</div></div><div class="tv">560mm³</div></div>
+          <div class="tr"><div class="tb c4">T4</div><div class="ti"><div class="tm">SLA 0620</div><div class="tk"><div class="bar c4" data-w="68"></div></div><div class="tp">三星 Galaxy S23+ · 三星 Z Fold 4</div></div><div class="tv">408mm³</div></div>
+          <div class="tr"><div class="tb c5">T5</div><div class="ti"><div class="tm">SLA 0815</div><div class="tk"><div class="bar c5" data-w="60"></div></div><div class="tp">OPPO Find X6 Pro · 魅族 20 Pro</div></div><div class="tv">360mm³</div></div>
+          <div class="tr"><div class="tb c6">T6</div><div class="ti"><div class="tm">SLA 1010</div><div class="tk"><div class="bar c6" data-w="58"></div></div><div class="tp">小米 13 Ultra · 小米 12S Ultra</div></div><div class="tv">350mm³</div></div>
+          <div class="tr"><div class="tb c7">T7</div><div class="ti"><div class="tm">ELA 9595</div><div class="tk"><div class="bar c7" data-w="52"></div></div><div class="tp">华为 Mate 60 系列 · vivo X100 Pro</div></div><div class="tv">316mm³</div></div>
+          <div class="tr"><div class="tb c7" style="opacity:.7">T8</div><div class="ti"><div class="tm">ELA 0809</div><div class="tk"><div class="bar c7" data-w="42"></div></div><div class="tp">大部分机型</div></div><div class="tv">252mm³</div></div>
+        </div>
+        <div style="margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--bd);font-size:.68rem;color:var(--t3);line-height:1.7">T0→T8 体积差 <strong style="color:var(--t1)">2.4 倍</strong>，振感差距超 <strong style="color:var(--t1)">150%</strong>。</div>
+      </div>
+    </div>
+    <div class="extra" data-anim style="margin-top:3rem">
+      <div>
+        <div class="vtitle">ELA 0809 系列：出货量最大的马达家族</div>
+        <div class="vsub">0809 = 宽8mm × 长9mm，细分多个子型号：</div>
+        <div class="vgrid">
+          <div class="vc"><div class="vn">0809A</div><div class="vsu">标准基础版</div><div class="vd">基准款，252mm³，振感基础但够用，搭载最广泛。</div><span class="vt vt--c">应用最广</span></div>
+          <div class="vc"><div class="vn">0809B</div><div class="vsu">增强加厚版</div><div class="vd">同 footprint 但<strong>厚度更大</strong>，振感接近 SLA 1010。家族最强。</div><span class="vt vt--h">家族最强</span></div>
+          <div class="vc"><div class="vn">0809C</div><div class="vsu">新一代技术版</div><div class="vd"><strong>新一代 ELA 技术</strong>，振感和响应速度都优于 0809A。</div><span class="vt vt--h">技术升级</span></div>
+        </div>
+      </div>
+      <div class="ic"><div class="ict">为什么旗舰机反而用小马达？</div><div class="icp">顶级马达 602mm³，在寸土寸金的手机内部是<strong>很奢侈的占位</strong>。结果：<strong>7000 元影像旗舰可能只用了 T6 级（316mm³），3000 元性能机反而用了 T3 级（560mm³）。</strong>马达好坏和价格不成正比。</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 02 扬声器 -->
+  <section class="mod mod--speaker" id="speaker">
+    <div class="mnum">02</div>
+    <div class="mi" data-anim>
+      <div class="mmeta">
+        <div class="mtag">听觉体验</div>
+        <h2 class="mtitle">扬声器</h2>
+        <p class="mdesc">扬声器是手机外放的核心。规律和马达一样：<strong>单元越大、音腔越大，音质越好</strong>。<br><br>2021年小米10S登顶DXOMARK后，主流旗舰外放集体"静音"了四年。直到 Redmi K90 Pro Max 首创<strong>2.1声道三扬声器系统</strong>，塞进独立低音炮，<strong>断层领先所有竞品</strong>。</p>
+      </div>
+      <div class="mbox">
+        <div style="font-size:.65rem;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:.8rem">安卓手机扬声器 · 天梯图</div>
+        <div class="tl">
+          <div class="th"><span>档位</span><span>配置方案</span><span>单元</span></div>
+          <div class="tr tr--crown"><div class="tb c0">T0</div><div class="ti"><div class="tm">2.1声道三扬声器<span class="cr">断层领先</span></div><div class="tk"><div class="bar c0" data-w="100"></div></div><div class="tp">REDMI K90 Pro Max · BOSE联合调音</div></div><div class="tv">1115F×2+2016</div></div>
+          <div class="gap gap--g"></div>
+          <div class="tr"><div class="tb c1">T1</div><div class="ti"><div class="tm">双1216对称 · 大音腔</div><div class="tk"><div class="bar c1" data-w="68"></div></div><div class="tp">Redmi K80 Ultra · 荣耀 Magic8 Pro</div></div><div class="tv">1216×2</div></div>
+          <div class="tr"><div class="tb c2">T2</div><div class="ti"><div class="tm">对称双1216 · 哈曼卡顿</div><div class="tk"><div class="bar c2" data-w="62"></div></div><div class="tp">小米10S · 小米10 Pro</div></div><div class="tv">1216×2</div></div>
+          <div class="tr"><div class="tb c3">T3</div><div class="ti"><div class="tm">大音腔双扬 · 环磁/同轴</div><div class="tk"><div class="bar c3" data-w="48"></div></div><div class="tp">iQOO 15 Ultra · 小米17系列</div></div><div class="tv">各异</div></div>
+          <div class="tr"><div class="tb c4">T4</div><div class="ti"><div class="tm">听筒+底部单扬 · 非对称</div><div class="tk"><div class="bar c4" data-w="30"></div></div><div class="tp">大量中端机型</div></div><div class="tv">非对称</div></div>
+          <div class="tr"><div class="tb c5">T5</div><div class="ti"><div class="tm">单扬声器</div><div class="tk"><div class="bar c5" data-w="15"></div></div><div class="tp">百元入门机</div></div><div class="tv">单扬</div></div>
+        </div>
+        <div style="margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--bd);font-size:.68rem;color:var(--t3);line-height:1.7">T0→T1 断层：<strong style="color:var(--t1)">"有独立低音"vs"没有独立低音"</strong>是维度差距。</div>
+      </div>
+    </div>
+    <div class="extra" data-anim style="margin-top:3rem">
+      <div>
+        <div class="vtitle">K90 Pro Max 的 2.1 三扬声器系统</div>
+        <div class="vgrid">
+          <div class="vc"><div class="vn">2016 双音圈低音炮</div><div class="vsu">背部独立低音</div><div class="vd">覆盖 60-200Hz，响度提升 78%，低频下潜提升 40%。</div><span class="vt vt--h">核心突破</span></div>
+          <div class="vc"><div class="vn">双 1115F 对称中高频</div><div class="vsu">上下对称布局</div><div class="vd">中心对称设计，构成平衡声场。</div><span class="vt vt--c">声场基础</span></div>
+          <div class="vc"><div class="vn">BOSE 全链路调校</div><div class="vsu">18个月 · 2000+小时</div><div class="vd"><strong>首款实现全音量等响补偿的非苹果手机</strong>。</div><span class="vt vt--h">全链路调校</span></div>
+        </div>
+      </div>
+      <div class="ic"><div class="ict">四年沉寂，终于被打破</div><div class="icp">小米10S登顶后，手机外放<strong>集体静音了四年</strong>。K90 Pro Max 证明：<strong>空间受限 ≠ 音质必须妥协</strong>。</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 03 指纹识别 -->
+  <section class="mod mod--fp" id="fingerprint">
+    <div class="mnum">03</div>
+    <div class="mi" data-anim>
+      <div class="mmeta">
+        <div class="mtag">安全解锁</div>
+        <h2 class="mtitle">指纹识别</h2>
+        <p class="mdesc">手机指纹方案就三种：<strong style="color:var(--water)">侧面</strong>、<strong style="color:var(--fp)">光学</strong>、<strong style="color:var(--speaker)">超声波</strong>。<br><br><strong style="color:var(--water)">侧面指纹</strong>：成本最低，但平放桌面没法解锁。只剩百元机和折叠屏在用。<br><br><strong style="color:var(--fp)">光学指纹</strong>：屏下第一代，便宜成熟，但解锁时屏幕亮高光，湿手识别差。<br><br><strong style="color:var(--speaker)">超声波指纹</strong>：3D 建模更安全、湿手可解锁、不用亮屏。<br><br><strong style="color:var(--motor)">有没有超声波指纹，直接反映了厂商有没有省成本。</strong>现在买安卓手机，直接选超声波，没有的基本不用考虑。</p>
+      </div>
+      <div class="mbox">
+        <div style="font-size:.65rem;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:.8rem">手机指纹方案 · 天梯图</div>
+        <div class="tl">
+          <div class="th"><span>档位</span><span>方案</span><span>定位</span></div>
+          <div class="tr"><div class="tb c0">T0</div><div class="ti"><div class="tm">屏下超声波指纹</div><div class="tk"><div class="bar c0" data-w="95"></div></div><div class="tp">各品牌旗舰及中端性能机型</div></div><div class="tv">当前最优</div></div>
+          <div class="tr"><div class="tb c4">T1</div><div class="ti"><div class="tm">屏下光学指纹</div><div class="tk"><div class="bar c4" data-w="65"></div></div><div class="tp">部分中端机型 · 部分旧款旗舰</div></div><div class="tv">中端主力</div></div>
+          <div class="gap gap--gr"></div>
+          <div class="tr tr--lag"><div class="tb c7">T2</div><div class="ti"><div class="tm">侧面电容式<span class="lg">断层落后</span></div><div class="tk"><div class="bar c7" data-w="18"></div></div><div class="tp">百元入门机 · 折叠屏</div></div><div class="tv">场景受限</div></div>
+        </div>
+        <div style="margin-top:1rem;padding-top:.8rem;font-size:.68rem;color:var(--t3);line-height:1.7">T1→T2 是断层：<strong style="color:var(--t1)">平放桌面能不能解锁</strong>——侧面做不到。</div>
+        <div class="rf"><div class="rft">⚠ 避雷</div><div class="rftitle">安卓（除折叠屏）没有超声波指纹 → 直接避开</div><div class="rfdesc">有没有超声波<strong>直接反映厂商有没有省成本</strong>。没有的，整体配置大概率缩水。</div></div>
+      </div>
+    </div>
+    <div class="extra" data-anim style="margin-top:3rem">
+      <div><div class="vtitle">三种方案对比</div><div class="vgrid">
+        <div class="vc"><div class="vn">侧面电容式</div><div class="vsu">T2 · 断层落后</div><div class="vd"><strong style="color:var(--speaker)">能用：</strong>识别快、成本低。<br><br><strong style="color:var(--motor)">致命伤：</strong><strong>平放桌面没法解锁</strong>。</div><span class="vt vt--c">场景受限</span></div>
+        <div class="vc"><div class="vn">屏下光学</div><div class="vsu">T1 · 中端主力</div><div class="vd"><strong style="color:var(--speaker)">能用：</strong>屏下隐形、便宜成熟。<br><br><strong style="color:var(--motor)">硬伤：</strong><strong>屏幕亮高光</strong>；湿手差。</div><span class="vt vt--c">正被取代</span></div>
+        <div class="vc"><div class="vn">屏下超声波</div><div class="vsu">T0 · 当前最优</div><div class="vd"><strong style="color:var(--speaker)">全面领先：</strong>3D 安全性最高；湿手可解锁；<strong>不亮屏</strong>。<br><br><strong style="color:var(--t3)">注意：</strong>厚钢化膜可能略影响灵敏度。</div><span class="vt vt--h">红米引领</span></div>
+      </div></div>
+      <div class="ic"><div class="ict">超声波：不只是功能，更是信号</div><div class="icp"><strong style="color:var(--motor)">有没有搭载超声波，是判断厂商诚意的简单方法。</strong><br><br><strong style="color:var(--speaker)">红米率先把超声波下放到中端</strong>，带动行业跟进。<strong style="color:var(--fp)">安卓直接选超声波。</strong>没有的——<strong style="color:var(--motor)">性价比差的信号。</strong></div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 04 边框 -->
+  <section class="mod mod--frame" id="frame">
+    <div class="mnum">04</div>
+    <div class="mi" data-anim>
+      <div class="mmeta">
+        <div class="mtag">结构质感</div>
+        <h2 class="mtitle">边框</h2>
+        <p class="mdesc">手机边框分两种：<strong style="color:var(--gold)">金属</strong>和塑料。<br><br><strong style="color:var(--gold)">金属中框</strong>：更耐摔、质感好、<strong>导热好</strong>。<br><br><strong>塑料中框</strong>：成本低，不耐摔、质感差、导热差。<br><br><strong>怎么辨别？</strong>看边框上有没有<strong>横线</strong>。金属有天线带（注塑条），所以一定有横线；塑料表面光滑无横线。<br><br><strong style="color:var(--motor)">有没有金属中框，直接反映了厂商的诚意。</strong></p>
+      </div>
+      <div class="mbox">
+        <div style="font-size:.65rem;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:.8rem">手机边框材质 · 天梯图</div>
+        <div class="tl">
+          <div class="th"><span>档位</span><span>材质</span><span>定位</span></div>
+          <div class="tr"><div class="tb c0">T0</div><div class="ti"><div class="tm">金属中框</div><div class="tk"><div class="bar c0" data-w="100"></div></div><div class="tp">航空铝合金 · 不锈钢 · 钛合金</div></div><div class="tv">旗舰标配</div></div>
+          <div class="tr"><div class="tb c7">T1</div><div class="ti"><div class="tm">塑料中框</div><div class="tk"><div class="bar c7" data-w="22"></div></div><div class="tp">聚碳酸酯 · 复合材料</div></div><div class="tv">成本优先</div></div>
+        </div>
+        <div style="margin-top:1rem;padding-top:.8rem;font-size:.68rem;color:var(--t3);line-height:1.7"><strong style="color:var(--t1)">辨别：边框有横线 = 金属；光滑无横线 = 塑料。</strong></div>
+        <div class="rf"><div class="rft">⚠ 避雷</div><div class="rftitle">塑料中框 → 直接避开</div><div class="rfdesc">金属中框都普及了还在用塑料，说明<strong>厂商连最基本的结构件都在省成本</strong>。</div></div>
+      </div>
+    </div>
+    <div class="extra" data-anim style="margin-top:3rem">
+      <div><div class="vtitle">金属 vs 塑料</div><div class="vgrid">
+        <div class="vc"><div class="vn">金属中框</div><div class="vsu">T0 · 耐摔 · 质感 · 散热</div><div class="vd"><strong style="color:var(--speaker)">耐摔：</strong>吸收冲击力。<br><br><strong style="color:var(--speaker)">质感：</strong>冰凉触感。<br><br><strong style="color:var(--speaker)">导热：</strong>减少降频。</div><span class="vt vt--h">中端也有</span></div>
+        <div class="vc"><div class="vn">塑料中框</div><div class="vsu">T1 · 成本优先</div><div class="vd"><strong style="color:var(--motor)">不耐摔：</strong>冲击直接传到屏幕。<br><br><strong style="color:var(--motor)">质感差：</strong>塑料触感廉价。<br><br><strong style="color:var(--motor)">导热差：</strong>容易降频。</div><span class="vt vt--c">配置缩水</span></div>
+      </div></div>
+      <div class="ic"><div class="ict">边框和指纹：两招快速避雷</div><div class="icp"><strong style="color:var(--speaker)">有没有超声波指纹</strong> + <strong style="color:var(--gold)">有没有金属中框</strong>。这两项<strong style="color:var(--motor)">厂商不会在发布会大篇幅介绍</strong>，但最容易省成本。<strong>两项都没缩水的手机，其他配置大概率也不会差。</strong></div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 05 防水 -->
+  <section class="mod mod--water" id="water">
+    <div class="mnum">05</div>
+    <div class="mi" data-anim>
+      <div class="mmeta">
+        <div class="mtag">防护等级</div>
+        <h2 class="mtitle">防水</h2>
+        <p class="mdesc">IP后面两个数字：<strong>第一个防尘，第二个防水</strong>，越大越强。<br><br>旗舰标配IP68。IP69额外扛高温高压水冲洗，现在中端甚至入门机都有了。<br><br>记住：<strong>防水溅，不防手贱。</strong><br><br>所有IP等级都是实验室纯净水测的，海水、泳池、温泉都不算。而且<strong>防水会老化</strong>。<br><br>好消息：很多品牌支持线下售后<strong>重新做防水密封</strong>，费用不高。</p>
+      </div>
+      <div class="mbox">
+        <div style="font-size:.65rem;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:.8rem">IP防水等级 · 天梯图</div>
+        <div class="tl">
+          <div class="th"><span>等级</span><span>防护能力</span><span>定位</span></div>
+          <div class="tr"><div class="tb c0">IP69</div><div class="ti"><div class="tm">IP68 + 高温高压水冲洗</div><div class="tk"><div class="bar c0" data-w="100"></div></div><div class="tp">各品牌旗舰、中端已广泛搭载</div></div><div class="tv">已普及</div></div>
+          <div class="tr"><div class="tb c2">IP68</div><div class="ti"><div class="tm">完全防尘 + 深水浸泡</div><div class="tk"><div class="bar c2" data-w="75"></div></div><div class="tp">1.5米深清水浸泡30分钟</div></div><div class="tv">旗舰标配</div></div>
+        </div>
+        <div style="margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--bd);font-size:.68rem;color:var(--t3);line-height:1.7"><strong style="color:var(--t1)">两者互补才是满级防水</strong>。所有等级均为实验室纯净水测试。</div>
+      </div>
+    </div>
+    <div class="extra" data-anim style="margin-top:3rem">
+      <div><div class="vtitle">IP等级详解</div><div class="vgrid">
+        <div class="vc"><div class="vn">第一位：防尘</div><div class="vsu">0 - 6</div><div class="vd"><strong>5</strong> = 少量灰尘不影响使用。<br><br><strong>6</strong> = 完全防尘。手机基本都是6。</div><span class="vt vt--c">几乎全是6</span></div>
+        <div class="vc"><div class="vn">第二位：防水</div><div class="vsu">0 - 9</div><div class="vd"><strong>4</strong> = 防溅水<br><strong>7</strong> = 泡水（1米/30分钟）<br><strong>8</strong> = 深泡（1.5米+）<br><strong>9</strong> = 高压热水冲洗</div><span class="vt vt--h">核心指标</span></div>
+        <div class="vc"><div class="vn">IP69 ≠ 随便泡水</div><div class="vsu">常见误解</div><div class="vd">IP69 模拟<strong>高压水枪冲洗</strong>。海水的盐、温泉的矿物质、泳池的氯都会<strong>腐蚀密封材料</strong>。</div><span class="vt vt--c">别泡温泉</span></div>
+      </div></div>
+      <div class="ic"><div class="ict">防水会过期——记得"续命"</div><div class="icp">IP等级是<strong>出厂初始值</strong>。<br><br>· <strong>摔过磕过</strong>——密封件出现缝隙<br>· <strong>反复温差</strong>——防水胶加速老化<br>· <strong>用得久了</strong>——两年后明显下降<br>· <strong>拆修过</strong>——很难恢复出厂水平<br><br><strong>补救：</strong>到品牌线下售后重新做防水密封，费用不高。</div></div>
+    </div>
+  </section>
+
+  <footer class="footer">手机的其他细节 · 科普内容<div class="wm">手机的其他细节</div></footer>
+
+  <script>
+    function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});
+    document.querySelectorAll('[data-anim]').forEach(el=>obs.observe(el));
+    const tObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.bar').forEach((b,i)=>{setTimeout(()=>{b.style.width=b.dataset.w+'%'},i*80)});tObs.unobserve(e.target)}})},{threshold:.25});
+    document.querySelectorAll('.tl').forEach(el=>tObs.observe(el));
+
+    // 视差
+    const nums=document.querySelectorAll('.mnum');
+    addEventListener('scroll',()=>{nums.forEach(n=>{const r=n.parentElement.getBoundingClientRect();n.style.transform=`translateY(${(r.top/innerHeight)*30}px)`})},{passive:true});
+
+    // 主题色
+    const secs=['hero','motor','speaker','fingerprint','frame','water'];
+    const ac={hero:'#eeeae2',motor:'#e85d3a',speaker:'#3ae8c7',fingerprint:'#c73ae8',frame:'#d4a040',water:'#3a8ee8'};
+    const rm={hero:'238,234,226',motor:'232,93,58',speaker:'58,232,199',fingerprint:'199,58,232',frame:'212,160,64',water:'58,142,232'};
+    const nds=document.querySelectorAll('.nd'),mbs=document.querySelectorAll('.mbtn'),mps=document.querySelectorAll('.mprog i');
+    function upd(){
+      let c='hero',ci=0;
+      secs.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=innerHeight*.5){c=id;ci=i}});
+      document.documentElement.style.setProperty('--cur',ac[c]);document.documentElement.style.setProperty('--cur-rgb',rm[c]);
+      document.getElementById('pb').style.width=(document.documentElement.scrollTop/(document.documentElement.scrollHeight-innerHeight)*100)+'%';
+      nds.forEach(d=>d.classList.toggle('on',d.dataset.s===c));
+      mbs.forEach(b=>b.classList.toggle('on',b.dataset.s===c));
+      mps.forEach((d,i)=>d.classList.toggle('on',i===Math.max(0,ci-1)));
+      document.getElementById('btop').classList.toggle('show',innerHeight<document.documentElement.scrollTop);
+    }
+    addEventListener('scroll',upd,{passive:true});upd();
+
+    // 键盘
+    document.addEventListener('keydown',e=>{
+      if(['ArrowRight','ArrowDown'].includes(e.key)){e.preventDefault();const ci=secs.findIndex(id=>{const el=document.getElementById(id);return el&&el.getBoundingClientRect().top>=-50&&el.getBoundingClientRect().top<innerHeight*.5});if(ci<secs.length-1)go(secs[ci+1])}
+      if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();const ci=secs.findIndex(id=>{const el=document.getElementById(id);return el&&el.getBoundingClientRect().top>=-50&&el.getBoundingClientRect().top<innerHeight*.5});if(ci>0)go(secs[ci-1])}
+    });
+
+    // 触摸涟漪
+    document.querySelectorAll('.vc,.tr').forEach(el=>{
+      el.addEventListener('touchstart',function(e){const r=document.createElement('span');r.className='rpf';const rect=this.getBoundingClientRect();const x=e.touches[0].clientX-rect.left,y=e.touches[0].clientY-rect.top;const s=Math.max(rect.width,rect.height);r.style.cssText=`left:${x}px;top:${y}px;width:${s}px;height:${s}px;margin-left:${-s/2}px;margin-top:${-s/2}px`;this.appendChild(r);setTimeout(()=>r.remove(),600)},{passive:true});
+    });
+
+    // ===== 弹出窗口 =====
+    const F=[
+      '手机马达体积从252mm³到602mm³不等，差了2.4倍，但大多数人感受不到区别。',
+      'iPhone的Taptic Engine曾被iFixit评为"手机里最精密的零件"。',
+      '超声波指纹可以穿透0.4mm以下的玻璃，但0.5mm就不行了。',
+      'IP68的"6"完全防尘，"8"1.5米深水泡30分钟。',
+      '金属中框导热系数是塑料的1000倍以上，摸起来只是"凉凉的"。',
+      '手机内部约30%空间被电池占据，剩下70%才是其他零件的家。',
+      '马达从静止到最大振幅只要50毫秒，比眨眼快10倍。',
+      '0809马达的"0809"代表宽8mm×长9mm，和身份证厚度差不多。',
+      '防水胶寿命一般2-3年，之后自然老化失效。',
+      '钛合金中框比铝合金贵3-5倍，但重量只轻了不到20%。',
+      '人耳对2000-5000Hz最敏感，恰好是人声频率范围。',
+      '手机天线带（边框横线）宽仅1-2mm，但没有它手机就没信号。',
+      '一颗好马达成本超10元，差的不到3元。',
+      'IP69最初是为食品加工设备设计的，不是为手机。',
+      '不锈钢中框比铝合金重约40%，所以有些旗舰特别沉。',
+      '瑞声科技(AAC)是全球最大手机微型扬声器供应商。',
+      '苹果从iPhone 7取消耳机孔，主要就是为塞进更大马达。',
+      '超声波指纹可以在水下工作，光学在水下基本废了。',
+      '三星是最早在手机上使用超声波指纹的品牌。',
+      'K90 Pro Max是第一款搭载2.1声道的手机，用了三颗扬声器。',
+      '高温加速防水胶老化，千万别把手机放在汽车前挡风玻璃下。',
+      'CSA 0916C是目前安卓体积最大的X轴线性马达。',
+      '线性马达的"线性"指振动方向是直线往复，不是旋转。',
+      '扬声器失真率超1%，人耳就能明显感到"破音"。',
+      '手机马达功耗一般0.1-0.5W，是屏幕亮度的千分之一。',
+      '手机扬声器最大音量一般75-80dBA。',
+      '有些手机扬声器音腔里会填充N\'bass吸音材料来增强低频。',
+      '边框天线带一般用PBT+PC塑料填充。',
+      '一颗手机扬声器重量一般只有1-3克。',
+      'IP68手机淡水中泡30分钟没问题，但海水中可能5分钟就进水了。',
+      '有些厂商发布会强调马达型号，但绝口不提体积。',
+      'IP69测试用的是80°C的高压水流，压力相当于消防水枪。',
+      'iPhone的马达虽然体积不大，但软件调校弥补了硬件不足。',
+      'Z轴马达和X轴马达体验差距巨大，就像坐电梯和坐过山车。',
+      '大部分千元机用的都是转子马达，成本不到1块钱。',
+      '铝合金6063边框成本大约是聚碳酸酯的8倍。',
+      '超声波指纹安全级别可达金融支付标准，光学不行。',
+      '手机扬声器频响范围一般300Hz-18kHz，人耳能听到20Hz-20kHz。',
+      '金属中框能让手机整体刚性提升30%以上。',
+      'IP68测试水温是室温，热水会让密封胶加速膨胀。',
+      '马达振动加速度单位是G，顶级马达可达6G以上。',
+      '边框注塑条宽度误差不能超过0.1mm。',
+      '扬声器振膜材料从纸盆到石墨烯，成本能差10倍。',
+      '防水手机的麦克风和扬声器开孔都覆盖了纳米防水膜。',
+      '有些旗舰的马达调试成本比马达本身还贵。',
+      '超声波指纹区域一般是屏幕下方1/3。',
+      '手机中框用钛合金的只有极少数超高端机型。',
+      '手机掉进海水后应立即用淡水冲洗。',
+      '线性马达弹簧材料决定使用寿命，好的能用5年以上。',
+      '双扬声器声场宽度一般是单扬声器的2-3倍。',
+      '你知道吗？你每天敲键盘产生的振动次数可能超过10000次，全靠马达。',
+      '有人说手机马达不重要，那是因为他没用过好马达。',
+      '超声波指纹每次解锁都在你手指上做一次3D扫描，很科幻。',
+      '手机防水等级测的是新机，你的旧手机可能已经不防水了。',
+      '扬声器的低频表现和音腔大小直接相关，物理定律无法突破。',
+      '塑料中框摔了容易变形，金属中框摔了容易……心疼。',
+      '手机的扬声器和耳机是两码事，别搞混了。',
+      '如果你的手机可以无线充电，后盖一定是玻璃或陶瓷，不是金属。',
+      '手机厂商做防水需要额外成本，很多中端机不做IP68不是做不到，是不想花钱。',
+      '马达好的手机打字会上瘾，差的手机打字像在敲塑料板。',
+      '手机防水不防蒸汽，洗澡时放在浴室里其实也不太好。',
+      '边框表面处理方式有阳极氧化、喷砂、抛光、拉丝等。',
+      '扬声器的磁铁用的是钕铁硼，和电动车电机同一种材料。',
+      '有人说："我的手机三楼掉下去都没碎。" 那是因为它有金属中框。',
+      '手机厂商的发布会PPT上，边框材质通常只占一行字，但这一行字值200块。',
+      '你的手机防水等级多少？看心情，心情好IP68，心情不好IP53。',
+      '为什么旗舰机用小马达？大马达让位给电池、相机、散热……马达排最后。',
+      '手机最防水的地方是？发票和保修卡。',
+      '塑料中框的手机有什么优点？轻。还有呢？……轻。',
+      'IP68什么意思？我很强，但你别试。',
+      '你的手机防水吗？防水溅，不防手贱。',
+      '手机边框有横线是什么意思？金属的。没有呢？便宜的。',
+      '为什么游戏手机扬声器好？不装大相机，空间多。',
+      '手机马达好是什么体验？打字像弹钢琴。差呢？打字像敲铁板。',
+      '你怎么知道手机用的什么马达？拆开看。不想拆？震一下感受感受。',
+      '防水手机能不能洗澡？理论上可以，实际上热水会加速防水胶老化。',
+      '光学指纹最大缺点？晚上解锁屏幕一亮，室友醒了。',
+      '你的手机什么材质？航空级……塑料。',
+      '侧面指纹最大缺点？手机放桌上只能输密码，回到2010年。',
+      '手机扬声器好有什么用？外放抖音全办公室都能听到。',
+      '防水手机掉水里了？赶紧捞出来，防水不是让你泡水玩的。',
+      '超声波在水下能用吗？理论上可以，但你为什么要水下解锁？',
+      '手机边框摸起来凉凉的？金属。温温的？塑料。',
+      '用了两年手机防水还行吗？不知道，不敢试。',
+      '手机防水终极建议？别拿手机去游泳。',
+      '你觉得手机最重要的是什么？能打电话。除了呢？能发微信。除了呢？……能充电。',
+      '塑料中框最怕什么？和金属手机放一起对比。',
+      '如果手机有灵魂，马达一定是那个最容易被忽略但一直在默默工作的小透明。',
+      '超声波和光学指纹区别？一个贵一个便宜，一个有诚意一个没有。',
+      '买手机看什么？芯片、屏幕、电池。还有呢？马达、扬声器、指纹、边框、防水……算了太多了。',
+      '手机厂商最怕你关注什么？马达型号、边框材质、指纹类型——这些他们不怎么宣传。',
+      '折叠屏为什么用侧面指纹？屏幕折了，放不了屏下传感器。',
+      '为什么红米要做2.1声道？别人不做，我们来做。',
+      '手机马达升级了是什么感觉？从"嗡"变成"哒"。',
+      '为什么千元机也有IP68了？因为消费者开始关注了。',
+      '超声波和光学差距到底大不大？体验上一般。信号上很大。',
+      '厂商最不想让你知道：塑料中框成本只有金属的1/8。',
+      '马达好你能感受到吗？能，但你可能不知道那是马达好。',
+      'IP68手机泡温泉行不行？不行，温泉矿物质比海水还猛。',
+      '手机厂商：我们支持IP68。用户：太好了我去游泳！厂商：不是……你别……',
+      '有人说超声波指纹是智商税，用过之后就再也不想回到光学了。',
+      '每次你按屏幕按钮，都是马达在给你"反馈"。没马达你就是在摸玻璃。',
+      '好扬声器让你听到音乐的灵魂，差扬声器让你只听到歌词。',
+      '防水手机最大敌人不是水，是时间。',
+      '有人问边框材质真的重要吗？我说：你摸摸我的，再摸摸你的，就知道了。',
+      '马达振动频率太低像按摩器，太高像蚊子叫，恰到好处才是艺术。',
+      '如果手机有性格，金属中框是硬汉，塑料中框是……算了不说了。',
+      '防不防水，关键时刻才知道——比如掉进火锅那一刻。',
+      '手机的扬声器外放音质再好也比不上30块蓝牙音箱，但谁在乎呢，方便就行。',
+      '每次手机震动，马达都要消耗0.000几毫安的电，积少成多啊。',
+      '手机边框为什么做成圆角？因为直角太硌手了。',
+      '振动马达分ERM转子、LRA线性和压电三种。',
+      '苹果Force Touch曾用非常精密的线性马达模拟按压感。',
+      '你的手机掉进马桶过吗？如果掉过，IP68可能救了它一命。',
+      '手机边框天线带就像人的关节，没有它手机就不能"弯曲"（发信号）。',
+      '用金属中框的手机拍照时手更稳，因为重量分布更均匀。',
+      '手机的振动模式其实可以传递信息——短振、长振、组合振，就像摩斯密码。',
+      '如果iPhone的马达可以用来发电，大概够充0.001%的电。',
+      '手机扬声器的振膜比人的头发还薄，但要承受几万次每秒的振动。',
+      '有人做过实验：把手机放进米缸里除潮，结果米粒卡进了扬声器孔。',
+      '防水手机进水不保修——因为IP68只是"抗"水，不是"防"水。',
+      '手机边框的阳极氧化层厚度只有10-15微米，比纸还薄。',
+      '好的马达让你感觉手机在跟你"对话"，差的马达让你觉得手机在"发脾气"。',
+      '超声波指纹不亮屏就能解锁，晚上用特别爽——不会吵醒室友。',
+      '手机掉进火锅后捞出来，第一件事不是擦，是关机。',
+      '测试IP68用的是纯净水，你的手机可没这个待遇。',
+      '有人花几千块买手机壳，不如直接买个有金属中框的手机。',
+      '手机振动时发出的声音也能判断马达好坏——好的是"嗡"，差的是"嘎嘎嘎"。',
+      '防水手机最大的作用不是防水，是让你掉手机时少心疼一点。',
+      '边框材质和指纹类型，是厂商最容易省成本但你最不容易发现的两个地方。'
+    ];
+    let fs=false,dt,ft;
+    function showFun(){
+      if(fs)return;fs=true;
+      const t=F[Math.floor(Math.random()*F.length)];
+      document.getElementById('ftag').textContent=Math.random()>.5?'🧊 冷知识':'😂 段子';
+      document.getElementById('ftxt').textContent=t;
+      const p=document.getElementById('funpanel'),pg=document.getElementById('fprog');
+      p.classList.add('show');
+      pg.style.transition='none';pg.style.width='100%';
+      requestAnimationFrame(()=>{requestAnimationFrame(()=>{pg.style.transition='width 7s linear';pg.style.width='0%'})});
+      dt=setTimeout(hideFun,7000);
+    }
+    function hideFun(){fs=false;document.getElementById('funpanel').classList.remove('show');clearTimeout(dt)}
+    function sched(){ft=setTimeout(()=>{showFun();sched()},20000+Math.random()*20000)}
+    setTimeout(showFun,10000);sched();
+    document.querySelector('.fpcl').addEventListener('click',()=>{hideFun();clearTimeout(ft);sched()});
+  </script>
+</body>
+</html>
