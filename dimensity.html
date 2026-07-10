@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天玑选购生存指南 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-deep:#0a0a12;--bg-card:#111120;--bg-card-hover:#181830;--accent:#4fc3f7;--accent-cyan:#00e5ff;--accent-green:#b4ff39;--accent-orange:#ff6b2b;--accent-red:#ff2222;--text-primary:#e0e4f0;--text-secondary:#8a8e9e;--text-muted:#555568;--border:#282840}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg-deep);color:var(--text-primary);line-height:1.8;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.35) 100%),radial-gradient(ellipse at 20% 10%,rgba(79,195,247,.05) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(0,229,255,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+.circuit-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg width='120' height='120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 60h40M60 10v40M60 70v40M70 60h40M30 30h20v20M80 80h20v-20M20 80h10M90 30h10' stroke='%234fc3f7' stroke-width='1' fill='none'/%3E%3Ccircle cx='60' cy='60' r='3' fill='%234fc3f7'/%3E%3Ccircle cx='30' cy='30' r='2' fill='%2300e5ff'/%3E%3Ccircle cx='90' cy='90' r='2' fill='%2300e5ff'/%3E%3Ccircle cx='10' cy='60' r='2' fill='%234fc3f7'/%3E%3Ccircle cx='110' cy='60' r='2' fill='%234fc3f7'/%3E%3C/svg%3E");background-size:120px 120px}
+.noise-overlay{position:fixed;inset:0;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+.container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 24px}
+a{color:var(--accent);text-decoration:none}
+.scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-cyan),var(--accent-green));z-index:10001;width:0%;transition:width .05s linear;box-shadow:0 0 8px rgba(79,195,247,.4)}
+.site-nav{position:fixed;top:3px;left:0;right:0;z-index:1000;background:rgba(10,10,18,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center}
+.site-nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 10%,rgba(79,195,247,.2),rgba(0,229,255,.35),rgba(79,195,247,.2),transparent 90%);animation:navGlow 3s ease-in-out infinite}
+@keyframes navGlow{0%,100%{opacity:.3}50%{opacity:.8}}
+.site-nav .inner{max-width:1200px;margin:0 auto;padding:0 24px;width:100%;display:flex;align-items:center;justify-content:space-between}
+.site-nav .brand{font-family:'Space Mono',monospace;font-weight:700;font-size:.85rem;color:var(--accent);letter-spacing:.04em;animation:elecPulse 2.5s ease-in-out infinite}
+@keyframes elecPulse{0%,100%{text-shadow:0 0 8px rgba(79,195,247,.3),0 0 16px rgba(79,195,247,.1)}50%{text-shadow:0 0 14px rgba(0,229,255,.6),0 0 28px rgba(79,195,247,.2)}}
+.site-nav .links{display:flex;gap:4px;flex-wrap:wrap}
+.site-nav .links a{font-size:10px;font-family:'Space Mono',monospace;padding:4px 8px;border-radius:5px;color:var(--text-muted);transition:all .2s;text-transform:uppercase;letter-spacing:.02em}
+.site-nav .links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.site-nav .links a.active{background:rgba(79,195,247,.15);color:var(--accent)}
+.home-btn{display:inline-flex;align-items:center;gap:8px;padding:7px 18px 7px 14px;background:linear-gradient(135deg,rgba(79,195,247,.12),rgba(0,229,255,.08));border:1.5px solid rgba(79,195,247,.35);border-radius:24px;font-size:12px;font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);letter-spacing:.03em;text-decoration:none;transition:all .3s ease;white-space:nowrap;position:relative;overflow:hidden;flex-shrink:0}
+.home-btn:hover{border-color:var(--accent-cyan);box-shadow:0 0 18px rgba(79,195,247,.25);transform:translateY(-1px)}
+.home-btn:active{transform:translateY(0) scale(.97)}
+.home-btn svg{width:16px;height:16px;flex-shrink:0;transition:transform .3s ease}
+.home-btn:hover svg{transform:translateX(-3px)}
+.home-btn .btn-glow{position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(79,195,247,.1),transparent,rgba(0,229,255,.08),transparent);animation:btnRotate 6s linear infinite;opacity:0;transition:opacity .4s}
+.home-btn:hover .btn-glow{opacity:1}
+@keyframes btnRotate{to{transform:rotate(360deg)}}
+.nav-dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:10px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);cursor:pointer;transition:all .3s}
+.nav-dot:hover,.nav-dot.active{background:var(--accent);transform:scale(1.4)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:100px 24px 80px;position:relative;overflow:hidden}
+.hero-wireframe{position:absolute;inset:0;pointer-events:none;perspective:600px;overflow:hidden}
+.hero-wireframe-inner{position:absolute;bottom:-20%;left:50%;transform:translateX(-50%) rotateX(55deg) rotateZ(-5deg);width:160%;height:160%;background-image:linear-gradient(rgba(79,195,247,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(79,195,247,.07) 1px,transparent 1px);background-size:60px 60px;animation:wireframeDrift 20s linear infinite}
+@keyframes wireframeDrift{to{transform:translateX(-50%) rotateX(55deg) rotateZ(-5deg) translateY(-60px)}}
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-particle{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:0;animation:particleFloat 8s ease-in-out infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.6}90%{opacity:.3}100%{opacity:0;transform:translateY(-20vh) scale(1.5)}}
+.hero-badge{display:inline-block;padding:6px 18px;background:rgba(79,195,247,.1);border:1px solid rgba(79,195,247,.25);border-radius:50px;font-size:13px;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:28px;animation:fadeDown .8s ease forwards}
+.hero h1{font-size:clamp(36px,8vw,72px);font-weight:900;line-height:1.1;margin-bottom:20px;animation:fadeUp .8s ease .2s forwards;opacity:0}
+.hero h1 .gradient-text{background:linear-gradient(135deg,var(--accent),var(--accent-cyan),var(--accent-green),var(--accent),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% 300%;animation:gradientFlow 5s ease infinite}
+@keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero-subtitle{font-size:clamp(16px,3vw,22px);color:var(--text-secondary);max-width:660px;margin-bottom:40px;animation:fadeUp .8s ease .4s forwards;opacity:0}
+.hero-subtitle em{color:var(--accent-orange);font-style:normal;font-weight:700}
+section{padding:100px 0}
+.section-header{text-align:center;margin-bottom:60px;position:relative}
+.section-tag{display:inline-block;padding:5px 14px;background:rgba(79,195,247,.1);border:1px solid rgba(79,195,247,.2);border-radius:50px;font-size:11px;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.section-header h2{font-size:clamp(24px,5vw,42px);font-weight:900;margin-bottom:12px;position:relative;display:inline-block}
+.section-header h2::before,.section-header h2::after{content:'';position:absolute;top:50%;width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--text-muted));transform:translateY(-50%)}
+.section-header h2::before{right:calc(100% + 16px)}
+.section-header h2::after{left:calc(100% + 16px);background:linear-gradient(90deg,var(--text-muted),transparent)}
+.section-header p{color:var(--text-secondary);font-size:16px;max-width:600px;margin:0 auto}
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent 5%,rgba(79,195,247,.15) 20%,rgba(0,229,255,.25) 50%,rgba(79,195,247,.15) 80%,transparent 95%);margin:0;position:relative;z-index:2}
+.section-divider::before{content:'◆';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:8px;color:var(--accent);background:var(--bg-deep);padding:0 12px}
+.evo-timeline{display:flex;align-items:center;justify-content:center;gap:0;margin:30px 0 10px;overflow-x:auto;padding:8px 0}
+.evo-node{display:flex;align-items:center;flex-shrink:0}
+.evo-chip{padding:6px 14px;border-radius:8px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;white-space:nowrap;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);transition:all .3s}
+.evo-node.current .evo-chip{border-color:rgba(79,195,247,.5);color:var(--accent);background:rgba(79,195,247,.08)}
+.evo-line{width:24px;height:2px;flex-shrink:0}
+.evo-line-grey{background:var(--text-muted)}
+.evo-line-blue{background:linear-gradient(90deg,var(--accent),var(--accent-cyan))}
+.evo-node-breaker .evo-chip{border-color:rgba(79,195,247,.5);color:var(--accent);background:rgba(79,195,247,.08);position:relative}
+.evo-node-breaker .evo-chip::after{content:'⚡';position:absolute;top:-8px;right:-8px;font-size:12px}
+.evo-node-not .evo-chip{text-decoration:line-through;opacity:.5}
+.buy-advice-section{padding:0 0 60px;position:relative;z-index:2}
+.buy-advice-card{max-width:900px;margin:0 auto;background:linear-gradient(135deg,rgba(79,195,247,.06),rgba(0,229,255,.04),rgba(180,255,57,.03));border:1.5px solid rgba(79,195,247,.3);border-radius:22px;padding:40px 36px;position:relative;overflow:hidden}
+.buy-advice-card::before{content:'';position:absolute;top:-60%;right:-30%;width:300px;height:300px;background:radial-gradient(circle,rgba(79,195,247,.06) 0%,transparent 70%);pointer-events:none}
+.buy-advice-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.buy-advice-icon{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-cyan));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.buy-advice-title{font-size:clamp(20px,4vw,28px);font-weight:900;line-height:1.2}
+.buy-advice-title span{background:linear-gradient(135deg,var(--accent),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.buy-advice-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(79,195,247,.2),transparent);margin:24px 0}
+.buy-recommend-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.buy-recommend-chip{background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.25);border-radius:14px;padding:20px;text-align:center;transition:all .3s;perspective:600px;cursor:pointer}
+.flip-card-inner{transition:transform .6s;transform-style:preserve-3d;position:relative}
+.flip-card-flipped .flip-card-inner{transform:rotateY(180deg)}
+.flip-card-front,.flip-card-back{backface-visibility:hidden}
+.flip-card-back{position:absolute;inset:0;transform:rotateY(180deg);background:rgba(10,10,18,.95);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center;gap:6px;font-size:12px;color:var(--text-secondary);backface-visibility:hidden}
+.flip-card-back .fb-title{font-weight:700;color:var(--accent);font-size:11px;font-family:'Space Mono',monospace;margin-bottom:4px}
+.flip-card-back .fb-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.flip-card-back .fb-label{color:var(--text-muted)}
+.flip-card-back .fb-val{color:var(--text-primary);font-weight:700}
+.buy-recommend-chip:hover{border-color:var(--accent-cyan);box-shadow:0 8px 32px rgba(79,195,247,.1);transform:translateY(-2px)}
+.buy-recommend-chip .chip-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+.buy-recommend-chip .chip-title{font-size:20px;font-weight:900;color:var(--text-primary);margin-bottom:4px}
+.buy-recommend-chip .chip-desc{font-size:12px;color:var(--text-muted)}
+.buy-recommend-chip .chip-tag{display:inline-block;margin-top:8px;padding:3px 10px;font-size:10px;font-family:'Space Mono',monospace;border-radius:20px;font-weight:700}
+.tag-best{background:var(--accent-cyan);color:#0a0a12}
+.tag-value{background:rgba(255,107,43,.15);color:var(--accent-orange);border:1px solid rgba(255,107,43,.3)}
+.buy-advice-warn{background:rgba(255,34,34,.05);border:1px solid rgba(255,34,34,.15);border-radius:12px;padding:18px 20px;margin-top:8px}
+.buy-advice-warn .warn-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.buy-advice-warn .warn-title{font-weight:700;color:var(--accent-red);font-size:14px}
+.buy-advice-warn p{font-size:13px;color:var(--text-secondary);line-height:1.85}
+.buy-advice-warn strong{color:var(--accent-red)}
+.buy-advice-note{margin-top:16px;font-size:12px;color:var(--text-muted);text-align:center;font-style:italic}
+.buy-tip-bar{position:fixed;bottom:0;left:0;right:0;z-index:998;background:linear-gradient(135deg,rgba(10,10,18,.96),rgba(17,17,32,.96));backdrop-filter:blur(12px);border-top:1px solid rgba(79,195,247,.2);padding:10px 20px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .4s ease}
+.buy-tip-bar.show{transform:translateY(0)}
+.buy-tip-bar .tip-text{font-size:12px;color:var(--text-secondary)}
+.buy-tip-bar .tip-text strong{color:var(--accent-cyan)}
+.buy-tip-bar .tip-btn{padding:6px 16px;background:rgba(79,195,247,.12);border:1px solid rgba(79,195,247,.3);border-radius:20px;font-size:11px;font-family:'Space Mono',monospace;color:var(--accent);cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
+.buy-tip-bar .tip-btn:hover{background:rgba(79,195,247,.2)}
+.tldr-box{background:linear-gradient(135deg,rgba(0,229,255,.06),rgba(79,195,247,.04));border:1px solid rgba(0,229,255,.2);border-radius:18px;padding:36px;margin-bottom:50px;position:relative;overflow:hidden}
+.tldr-box::before{content:'TL;DR';position:absolute;top:14px;right:18px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent-cyan);letter-spacing:2px}
+.tldr-box h3{font-size:20px;color:var(--accent-cyan);margin-bottom:12px}
+.tldr-box p{font-size:15px;color:var(--text-primary)}
+.tldr-box strong{color:var(--accent-green)}
+.evolution-card{background:linear-gradient(135deg,rgba(79,195,247,.08),rgba(0,229,255,.04));border:2px solid rgba(79,195,247,.4);border-radius:20px;padding:36px;margin-top:40px;position:relative;overflow:hidden}
+.evolution-card::before{content:'';position:absolute;top:-80px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(79,195,247,.06) 0%,transparent 70%);pointer-events:none}
+.evolution-card .evo-badge{display:inline-block;padding:4px 14px;background:var(--accent);color:#0a0a12;border-radius:20px;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;letter-spacing:.1em;margin-bottom:16px}
+.evolution-card .evo-title{font-size:clamp(20px,4vw,28px);font-weight:900;line-height:1.3;margin-bottom:16px}
+.evolution-card .evo-title span{background:linear-gradient(135deg,var(--accent),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.evolution-card .evo-text{font-size:15px;color:var(--text-secondary);line-height:1.9;margin-bottom:20px}
+.evolution-card .evo-text strong{color:var(--text-primary)}
+.evolution-card .evo-highlight{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.evolution-card .evo-tag{padding:6px 16px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid}
+.evo-tag-blue{background:rgba(79,195,247,.08);border-color:rgba(79,195,247,.3);color:var(--accent)}
+.evo-tag-orange{background:rgba(255,107,43,.08);border-color:rgba(255,107,43,.3);color:var(--accent-orange)}
+.evo-tag-red{background:rgba(255,34,34,.08);border-color:rgba(255,34,34,.3);color:var(--accent-red)}
+.evolution-card .evo-verdict{margin-top:20px;padding:16px 20px;background:rgba(0,0,0,.25);border-radius:12px;border-left:3px solid var(--accent)}
+.evolution-card .evo-verdict p{font-size:14px;color:var(--text-secondary);line-height:1.85}
+.evolution-card .evo-verdict strong{color:var(--accent-orange)}
+.chip-cards{display:grid;gap:28px}
+.chip-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden;transition:all .4s ease;--mx:50%;--my:50%}
+.chip-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx) var(--my),rgba(79,195,247,.05) 0%,transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:1}
+.chip-card:hover::before{opacity:1}
+.chip-card::after{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:repeating-linear-gradient(90deg,transparent 0,transparent 10px,rgba(79,195,247,.08) 10px,rgba(79,195,247,.08) 12px);pointer-events:none;z-index:1}
+.chip-card:hover{border-color:rgba(79,195,247,.3);box-shadow:0 16px 48px rgba(0,0,0,.25)}
+.chip-card:active{transform:scale(.98);opacity:.9}
+.chip-pin-decor{position:absolute;bottom:8px;right:12px;display:grid;grid-template-columns:repeat(4,4px);gap:3px;opacity:.1;pointer-events:none}
+.chip-pin-decor span{width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.chip-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.chip-name{font-size:30px;font-weight:900;line-height:1.2}
+.chip-name .year-tag{display:inline-block;padding:3px 10px;font-size:11px;font-weight:700;border-radius:6px;margin-left:10px;vertical-align:middle}
+.tag-old{background:rgba(255,255,255,.04);color:var(--text-muted)}
+.tag-turning{background:rgba(79,195,247,.15);color:var(--accent)}
+.tag-top{background:var(--accent-cyan);color:#0a0a12}
+.tag-budget{background:rgba(255,107,43,.12);color:var(--accent-orange)}
+.chip-price-tag{padding:7px 16px;border-radius:10px;font-weight:700;font-size:13px}
+.price-old{background:rgba(138,138,154,.1);border:1px solid rgba(138,138,154,.25);color:var(--text-secondary)}
+.price-budget{background:rgba(255,107,43,.1);border:1px solid rgba(255,107,43,.25);color:var(--accent-orange)}
+.price-top{background:linear-gradient(135deg,var(--accent-cyan),#00e676);color:#0a0a12}
+.price-not-rec{background:rgba(138,138,154,.08);border:1px solid rgba(138,138,154,.2);color:var(--text-muted)}
+.chip-intro{font-size:16px;color:var(--text-secondary);margin-bottom:28px;max-width:800px}
+.chip-intro strong{color:var(--text-primary)}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.spec-item{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .3s}
+.spec-item:hover{background:rgba(79,195,247,.04);border-color:rgba(79,195,247,.25)}
+.spec-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;font-family:'Space Mono',monospace}
+.spec-value{font-size:16px;font-weight:700;color:var(--text-primary)}
+.spec-value .hl-cyan{color:var(--accent-cyan)}
+.spec-value .hl-green{color:var(--accent-green)}
+.spec-value .hl-warn{color:var(--accent-orange)}
+.spec-value .hl-blue{color:var(--accent)}
+.bench-bar-container{margin:16px 0}
+.bench-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);font-family:'Space Mono',monospace;margin-bottom:6px}
+.bench-bar-track{height:26px;background:rgba(255,255,255,.03);border-radius:13px;overflow:hidden}
+.bench-bar-fill{height:100%;border-radius:13px;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;font-size:11px;font-weight:700;color:#fff;width:0%;transition:width 1.5s cubic-bezier(.16,1,.3,1)}
+.bench-bar-fill.bar-cyan{background:linear-gradient(90deg,var(--accent),var(--accent-cyan))}
+.bench-bar-fill.bar-blue{background:linear-gradient(90deg,var(--accent),#2196f3)}
+.cache-section{background:rgba(79,195,247,.03);border:1px solid rgba(79,195,247,.12);border-radius:14px;padding:22px;margin-bottom:20px}
+.cache-section h4{font-size:15px;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace}
+.cache-bars{display:flex;flex-direction:column;gap:10px}
+.cache-bar{display:flex;align-items:center;gap:10px}
+.cache-bar-label{width:70px;font-size:12px;color:var(--text-secondary);font-family:'Space Mono',monospace}
+.cache-bar-track{flex:1;height:22px;background:rgba(255,255,255,.03);border-radius:11px;overflow:hidden}
+.cache-bar-fill{height:100%;border-radius:11px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:11px;font-weight:700;color:#fff;transition:width 1s ease}
+.bar-cyan{background:linear-gradient(90deg,var(--accent),var(--accent-cyan))}
+.bar-orange{background:linear-gradient(90deg,var(--accent-orange),#ff9100)}
+.bar-green{background:linear-gradient(90deg,var(--accent-green),#00e676)}
+.bar-blue{background:linear-gradient(90deg,var(--accent),#2196f3)}
+.fun-callout{background:linear-gradient(135deg,rgba(79,195,247,.06),rgba(0,229,255,.03));border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:20px;margin:20px 0;font-size:14px;color:var(--text-secondary);line-height:1.85}
+.fun-callout strong{color:var(--accent)}
+.verdict-card{background:linear-gradient(135deg,rgba(79,195,247,.06),rgba(0,229,255,.03));border:1px solid rgba(79,195,247,.25);border-radius:18px;padding:28px;margin-top:20px}
+.verdict-card h4{color:var(--accent);font-size:16px;margin-bottom:10px}
+.verdict-card p{color:var(--text-secondary);font-size:14px;line-height:1.85}
+.quote-box{border-left:3px solid var(--accent);background:rgba(79,195,247,.04);padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-secondary);line-height:1.85;border-radius:0 10px 10px 0}
+.quote-box strong{color:var(--accent)}
+.tier-container{margin:36px 0}
+.tier-row{display:flex;align-items:stretch;margin-bottom:6px;position:relative}
+.tier-label{width:60px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;border-radius:10px 0 0 10px;color:#000}
+.tier-s{background:linear-gradient(135deg,var(--accent-cyan),var(--accent))}.tier-a{background:linear-gradient(135deg,var(--accent-orange),#ff9100)}.tier-b{background:linear-gradient(135deg,var(--accent),#2196f3)}.tier-c{background:rgba(138,138,154,.25);color:var(--text-muted)}
+.tier-content{flex:1;display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-left:none;border-radius:0 10px 10px 0;flex-wrap:wrap;font-size:13px}
+.tier-chip{padding:4px 10px;background:rgba(255,255,255,.04);border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap}
+.tier-row.tier-s .tier-content{border-color:rgba(79,195,247,.3);position:relative;overflow:hidden}
+.tier-row.tier-s .tier-content::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(79,195,247,.04),transparent);pointer-events:none}
+.guide-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:12px;position:relative;transition:border-color .3s}
+.guide-card:hover{border-color:#3a3a50}
+.guide-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.g-guide::before{background:var(--accent-cyan)}.g-blue::before{background:var(--accent)}.g-orange::before{background:var(--accent-orange)}.g-muted::before{background:var(--text-muted)}
+.guide-tag{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.1em;margin-bottom:8px}
+.guide-title{font-size:18px;font-weight:900;margin-bottom:8px;line-height:1.2}
+.guide-text{font-size:13px;color:var(--text-secondary);line-height:1.85}
+.checklist{margin:20px 0}
+.checklist-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all .2s}
+.checklist-item:last-child{border-bottom:none}
+.checklist-box{width:20px;height:20px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:2px}
+.checklist-item.checked .checklist-box{background:var(--accent);border-color:var(--accent)}
+.checklist-item.checked .checklist-box::after{content:'✓';color:#000;font-size:12px;font-weight:700}
+.checklist-item.checked .checklist-label{text-decoration:line-through;color:var(--text-muted)}
+.checklist-label{font-size:14px;color:var(--text-secondary);line-height:1.6}
+.checklist-result{margin-top:16px;padding:16px;border-radius:12px;font-size:14px;display:none}
+.checklist-result.danger{display:block;background:rgba(255,34,34,.08);border:1px solid rgba(255,34,34,.2);color:var(--accent-red)}
+.checklist-result.safe{display:block;background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.2);color:var(--accent)}
+footer{text-align:center;padding:56px 24px;border-top:1px solid var(--border);margin-top:80px;padding-bottom:calc(56px + env(safe-area-inset-bottom))}
+footer p{color:var(--text-muted);font-size:13px}
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);color:var(--text-muted);font-size:13px;animation:bounce 2s infinite}
+.scroll-hint::after{content:'↓';display:block;text-align:center;margin-top:6px;font-size:18px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-8px)}60%{transform:translateX(-50%) translateY(-4px)}}
+.fade-in{opacity:0;transform:translateY(28px);transition:all .6s ease}
+.fade-in.from-left{transform:translateX(-40px)}
+.fade-in.from-right{transform:translateX(40px)}
+.fade-in.visible{opacity:1;transform:translateY(0) translateX(0)}
+.section-cta{text-align:center;padding:20px 0;position:relative;z-index:2}
+.section-cta-btn{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:12px;font-family:'Space Mono',monospace;letter-spacing:.05em;cursor:pointer;transition:color .3s}
+.section-cta-btn:hover{color:var(--accent)}
+.section-cta-btn::after{content:'↓';font-size:16px;animation:bounce 2s infinite;display:inline-block}
+.fab-top{position:fixed;bottom:24px;right:24px;z-index:997;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-cyan));border:none;color:#0a0a12;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(79,195,247,.3);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none}
+.fab-top.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.fab-top:active{transform:scale(.9)}
+.compare-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+.compare-overlay.show{opacity:1;pointer-events:auto}
+.compare-sheet{width:100%;max-width:500px;margin:0 auto;background:var(--bg-card);border-radius:20px 20px 0 0;padding:24px;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);max-height:70vh;overflow-y:auto}
+.compare-overlay.show .compare-sheet{transform:translateY(0)}
+.compare-handle{width:36px;height:4px;background:var(--text-muted);border-radius:2px;margin:0 auto 16px}
+.compare-title{font-size:16px;font-weight:900;margin-bottom:16px;text-align:center;color:var(--accent)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)}
+.compare-cell{padding:10px 8px;font-size:12px;background:var(--bg-card);text-align:center}
+.compare-cell.header{font-weight:700;color:var(--text-muted);font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase}
+.compare-cell.best{color:var(--accent);font-weight:700}
+.compare-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+#egg-popup{position:fixed;bottom:20px;right:20px;z-index:9000;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;max-width:280px;font-size:12px;color:var(--text-muted);line-height:1.7;opacity:0;transform:translateY(10px);transition:all .4s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+#egg-popup.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.sticky-title{position:sticky;top:55px;z-index:50;background:rgba(10,10,18,.9);backdrop-filter:blur(10px);padding:8px 0;text-align:center;font-size:12px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.08em;border-bottom:1px solid var(--border);display:none}
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,10,18,.96);backdrop-filter:blur(16px);border-top:1px solid var(--border);height:auto;padding-bottom:env(safe-area-inset-bottom)}
+.mobile-bottom-nav .mbn-inner{display:flex;justify-content:space-around;padding:6px 0}
+.mobile-bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;text-decoration:none;font-size:9px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.02em;transition:color .2s}
+.mobile-bottom-nav a.active{color:var(--accent)}
+.mobile-bottom-nav a svg{width:20px;height:20px}
+@media(max-width:768px){
+  .chip-card{padding:20px 16px}
+  .spec-grid{grid-template-columns:1fr 1fr}
+  .nav-dots{display:none}
+  .site-nav .links{display:none}
+  .buy-recommend-grid{grid-template-columns:1fr}
+  .buy-advice-card{padding:24px 16px}
+  .evolution-card{padding:20px 16px}
+  .buy-tip-bar{bottom:60px}
+  .fab-top{bottom:80px;right:16px}
+  #egg-popup{bottom:80px;right:12px;max-width:240px}
+  .mobile-bottom-nav{display:block}
+  section{padding:60px 0}
+  .section-header h2::before,.section-header h2::after{width:20px}
+  .sticky-title{display:block}
+  .chip-card{--tx:50%;--ty:50%}
+  .touch-glow{position:absolute;inset:0;pointer-events:none;border-radius:20px;background:radial-gradient(circle at var(--tx) var(--ty),rgba(79,195,247,.12) 0%,transparent 50%);opacity:0;transition:opacity .2s;z-index:0}
+  .chip-card.touching .touch-glow{opacity:1}
+}
+@media(min-width:769px){.mobile-bottom-nav{display:none!important}.sticky-title{display:none!important}}
+</style>
+</head>
+<body>
+<div class="circuit-bg"></div>
+<div class="noise-overlay"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="site-nav">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="性能.html" class="home-btn"><span class="btn-glow"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg><span>返回</span></a>
+    <span class="brand">⚡ 天玑</span>
+  </div>
+  <div class="links">
+    <a href="snapdragon.html">骁龙</a><a href="dimensity.html" class="active">天玑</a><a href="apple.html">苹果</a><a href="samsung.html">三星</a><a href="xuanjie.html">玄戒</a><a href="kirin.html">麒麟</a>
+  </div>
+</div>
+</nav>
+
+<div class="nav-dots">
+  <div class="nav-dot active" data-section="hero"></div>
+  <div class="nav-dot" data-section="buy-advice"></div>
+  <div class="nav-dot" data-section="intro"></div>
+  <div class="nav-dot" data-section="lineup"></div>
+  <div class="nav-dot" data-section="guide"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-wireframe"><div class="hero-wireframe-inner"></div></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-badge">2026 · 天玑芯片选型与避坑指南</div>
+  <h1>天玑<span class="gradient-text">选购生存指南</span></h1>
+  <p class="hero-subtitle">旗舰 9500 已经降到<em>两千块</em>了——别再被 8 系和老芯片忽悠。看完这篇，一分钱冤枉钱都不花。</p>
+  <div class="scroll-hint">往下翻</div>
+</section>
+
+<!-- 购买建议 -->
+<div class="buy-advice-section fade-in from-left" id="buy-advice">
+  <div class="container">
+    <div class="buy-advice-card">
+      <div class="buy-advice-header">
+        <div class="buy-advice-icon">🎯</div>
+        <div class="buy-advice-title"><span>天玑，只买这一颗</span></div>
+      </div>
+      <p style="font-size:15px;color:var(--text-secondary);line-height:1.85;margin-bottom:6px">
+        说直白点：<strong style="color:var(--accent-cyan)">天玑 9500</strong> 是目前天玑阵营<strong style="color:var(--text-primary)">唯一值得买的处理器</strong>。它已经下探到 2000 元价位，16MB L3、100 TOPS NPU、安兔兔 360 万+——同样的钱，没有任何理由选其他天玑芯片。
+      </p>
+      <div class="buy-advice-divider"></div>
+      <div class="buy-recommend-grid">
+        <div class="buy-recommend-chip" id="flip9500">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="chip-label">唯一推荐</div>
+              <div class="chip-title">天玑 9500</div>
+              <div class="chip-desc">100 TOPS · L3 16MB · 360万+ · 2000元起</div>
+              <div class="chip-tag tag-best">就买这颗</div>
+            </div>
+            <div class="flip-card-back">
+              <div class="fb-title">9500 详细参数</div>
+              <div class="fb-row"><span class="fb-label">工艺</span><span class="fb-val" style="color:var(--accent-cyan)">3nm 第三代</span></div>
+              <div class="fb-row"><span class="fb-label">CPU</span><span class="fb-val">全大核 4.1GHz</span></div>
+              <div class="fb-row"><span class="fb-label">GPU</span><span class="fb-val" style="color:var(--accent-cyan)">Immortalis-G925+</span></div>
+              <div class="fb-row"><span class="fb-label">NPU</span><span class="fb-val" style="color:var(--accent-cyan)">100 TOPS</span></div>
+              <div class="fb-row"><span class="fb-label">L3</span><span class="fb-val" style="color:var(--accent-cyan)">16 MB</span></div>
+              <div class="fb-row"><span class="fb-label">SLC</span><span class="fb-val">10 MB</span></div>
+              <div style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:6px">点击翻回</div>
+            </div>
+          </div>
+        </div>
+        <div class="buy-recommend-chip" id="flip9400">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="chip-label">预算真不够</div>
+              <div class="chip-title">9400 / 9500s</div>
+              <div class="chip-desc">48 TOPS · L3 12MB · 300万+ · 同级</div>
+              <div class="chip-tag tag-value">实在没钱再考虑</div>
+            </div>
+            <div class="flip-card-back">
+              <div class="fb-title">9400 / 9500s 参数</div>
+              <div class="fb-row"><span class="fb-label">工艺</span><span class="fb-val">3nm</span></div>
+              <div class="fb-row"><span class="fb-label">CPU</span><span class="fb-val">X925 3.62G+A720</span></div>
+              <div class="fb-row"><span class="fb-label">GPU</span><span class="fb-val">Immortalis-G925</span></div>
+              <div class="fb-row"><span class="fb-label">NPU</span><span class="fb-val">48 TOPS</span></div>
+              <div class="fb-row"><span class="fb-label">L3</span><span class="fb-val">12 MB</span></div>
+              <div class="fb-row"><span class="fb-label">SLC</span><span class="fb-val">10 MB</span></div>
+              <div style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:6px">9500s ≈ 9400+ 换马甲，同级</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buy-advice-warn">
+        <div class="warn-header">
+          <span style="font-size:16px">🚫</span>
+          <span class="warn-title">其他天玑处理器？统统避雷。</span>
+        </div>
+        <p>
+          不管是<strong>9500s、9300、9300+</strong>，还是看起来便宜的<strong>天玑 8 系（8300、8400 等）</strong>——绝大多数情况下<strong>统统不建议购买</strong>。9300 架构虽好但工艺和缓存已经落后；天玑 8 系看起来便宜，但 9500 已经降到 2000 元了，<strong style="color:var(--accent-red)">很多 8 系手机卖得比 9500 还贵</strong>——同样的钱买更弱的芯片，这是坑。<strong>除了 9500，其他的能避就避。预算实在紧再看 9400/9500s。</strong>
+        </p>
+      </div>
+      <div class="buy-advice-note">选芯记住：只看天玑 9500，预算实在紧再看 9400/9500s，其他一个字——跑。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="sticky-title">天玑 · 基础认知</div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">基础认知</div>
+      <h2>天玑：强在哪？弱在哪？</h2>
+      <p>了解天玑的特色，才能更好地做选择</p>
+    </div>
+    <div class="tldr-box fade-in">
+      <h3>一句话总结</h3>
+      <p><strong>强项：</strong>全大核架构先锋（比骁龙更早抛弃小核）、GPU 跑分经常压骁龙一头、能效比优秀、性价比碾压（9500 已经降到 2000 元）。<br><strong>弱项：</strong>游戏厂商优先适配骁龙（骁龙份额大，生态飞轮效应）、CPU 单核稍弱、部分游戏实际帧率不如骁龙（不是芯片不行，是游戏没针对它优化）。<br><br><strong>选谁？</strong>游戏多、模拟器 → 骁龙；日常为主、追求性价比 → 天玑 9500 更香。</p>
+    </div>
+
+    <div class="evolution-card fade-in from-right">
+      <div class="evo-badge">⚡ 全大核觉醒 · 从 9300 开始</div>
+      <div class="evo-title">9300 是天玑的<span>「全大核时刻」</span></div>
+      <div class="evo-text">
+        从天玑 9300 开始，联发科做了一件<strong>比高通更早的壮举</strong>：率先采用<strong>全大核架构设计</strong>，4 个超大核 + 4 个大核，没有任何小核。高通的骁龙 8 Elite 在 2024 年才跟进这个思路——<strong>天玑领先了整整一代</strong>。
+      </div>
+      <div class="evo-text">
+        9300 之前：天玑 9200 用公版 ARM + 少量大核 + 小核，虽然性价比高但只是"够用"。9300 之后：全大核带来质变，9400 升级到 3nm + L2 翻倍 7MB + L3 涨到 12MB，9500 更是 L3 拉到 16MB、NPU 破 100 TOPS——<strong>进化路线清晰而凶猛</strong>。
+      </div>
+      <div class="evo-highlight">
+        <span class="evo-tag evo-tag-blue">全大核无小核</span>
+        <span class="evo-tag evo-tag-blue">比骁龙更早采用</span>
+        <span class="evo-tag evo-tag-blue">3nm + L3 16MB</span>
+        <span class="evo-tag evo-tag-orange">9500 已降至 2000 元</span>
+        <span class="evo-tag evo-tag-red">9300 前：只是够用</span>
+      </div>
+      <div class="evo-timeline fade-in">
+        <div class="evo-node evo-node-not"><div class="evo-chip">9200</div></div>
+        <div class="evo-line evo-line-grey"></div>
+        <div class="evo-node evo-node-breaker"><div class="evo-chip">9300 ⚡</div></div>
+        <div class="evo-line evo-line-blue"></div>
+        <div class="evo-node evo-node-breaker"><div class="evo-chip">9400</div></div>
+        <div class="evo-line evo-line-blue"></div>
+        <div class="evo-node evo-node-breaker current"><div class="evo-chip">9500 ⭐</div></div>
+      </div>
+      <div class="evo-verdict">
+        <p>
+          9300 的全大核设计是天玑历史上的<strong>转折点</strong>。但现在 9500 已经降到 2000 元价位，9300/9400 的性价比优势不复存在。<strong style="color:var(--accent-orange)">不是它们变差了，是 9500 太便宜了。</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+<div class="section-cta"><span class="section-cta-btn">继续看芯片详解</span></div>
+
+<!-- LINEUP -->
+<section id="lineup">
+  <div class="sticky-title">天玑 · 芯片详解</div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">芯片详解</div>
+      <h2>天玑 9 系五大金刚</h2>
+      <p>9200 → 9300 → 9400 → 9500s → 9500，看清每一代的定位</p>
+    </div>
+    <div class="chip-cards">
+      <!-- 9200 -->
+      <div class="chip-card fade-in from-left">
+        <div class="chip-pin-decor"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="chip-card-header">
+          <div><div class="chip-name">天玑 9200 <span class="year-tag tag-old">2022 · 老兵</span></div></div>
+          <div class="chip-price-tag price-old">不推荐</div>
+        </div>
+        <p class="chip-intro">联发科冲击高端的"先锋大将"，第一个用上台积电 4nm 的天玑旗舰。但<strong>架构太老，已被 9500 全面碾压</strong>。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">台积电 4nm</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Immortalis-G715 MC11</div></div>
+          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">~16 TOPS</div></div>
+          <div class="spec-item"><div class="spec-label">UFS</div><div class="spec-value">3.1</div></div>
+          <div class="spec-item"><div class="spec-label">安兔兔</div><div class="spec-value">~160 万</div></div>
+        </div>
+        <div class="cache-section">
+          <h4>📊 缓存配置</h4>
+          <div class="cache-bars">
+            <div class="cache-bar"><div class="cache-bar-label">L2</div><div class="cache-bar-track"><div class="cache-bar-fill bar-cyan" style="width:35%">3.5 MB</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">L3</div><div class="cache-bar-track"><div class="cache-bar-fill bar-orange" style="width:50%">8 MB 共享</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">SLC</div><div class="cache-bar-track"><div class="cache-bar-fill bar-green" style="width:60%">6 MB</div></div></div>
+          </div>
+        </div>
+        <div class="fun-callout"><strong>现在值得买吗？</strong> 不推荐。跑分只有 9500 的不到一半。</div>
+      </div>
+
+      <!-- 9300 -->
+      <div class="chip-card fade-in from-right">
+        <div class="chip-pin-decor"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="chip-card-header">
+          <div><div class="chip-name">天玑 9300 <span class="year-tag tag-turning">2023 · 转折点</span></div></div>
+          <div class="chip-price-tag price-not-rec">历史意义巨大 · 已不推荐购买</div>
+        </div>
+        <p class="chip-intro">联发科的"封神之作"——<strong>率先采用全大核架构</strong>，比骁龙 8 Elite 早了整整一代。但<strong style="color:var(--accent-orange)">9500 已经降到 2000 元，9300 的时代结束了</strong>。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">台积电 4nm（227 亿晶体管）</div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value"><span class="hl-blue">全大核</span> 1×3.25G X4 + 3×2.85G X4 + 4×2.0G A720</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Immortalis-G720 MC12</div></div>
+          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">~21 TOPS</div></div>
+          <div class="spec-item"><div class="spec-label">UFS</div><div class="spec-value">4.0</div></div>
+          <div class="spec-item"><div class="spec-label">安兔兔</div><div class="spec-value">~220 万</div></div>
+        </div>
+        <div class="cache-section">
+          <h4>📊 缓存配置 — SLC 跳到 10MB</h4>
+          <div class="cache-bars">
+            <div class="cache-bar"><div class="cache-bar-label">L2</div><div class="cache-bar-track"><div class="cache-bar-fill bar-cyan" style="width:35%">3.5 MB</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">L3</div><div class="cache-bar-track"><div class="cache-bar-fill bar-orange" style="width:50%">8 MB 共享</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">SLC</div><div class="cache-bar-track"><div class="cache-bar-fill bar-green" style="width:100%">10 MB ⬆️</div></div></div>
+          </div>
+          <p style="margin-top:10px;font-size:12px;color:var(--text-muted)">SLC 从 9200 的 6MB 跳到 10MB，全大核设计是历史转折点。</p>
+        </div>
+        <div class="quote-box">
+          <strong>为什么不推荐了？</strong> 全大核设计开创性十足，但 4nm 工艺、3.5MB L2、8MB L3 在 9500 面前已经是上一代产物。<strong style="color:var(--accent-orange)">9500 才 2000 元，没理由选 9300。</strong>
+        </div>
+      </div>
+
+      <!-- 9400 -->
+      <div class="chip-card fade-in from-left">
+        <div class="chip-pin-decor"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="chip-card-header">
+          <div><div class="chip-name">天玑 9400 <span class="year-tag tag-budget">2024 · 同级</span></div></div>
+          <div class="chip-price-tag price-budget">预算实在不够可以考虑</div>
+        </div>
+        <p class="chip-intro"><strong>3nm 时代到来。</strong>Cortex-X925 "Blackhawk" 超大核，L2 飙到 7MB，L3 涨到 12MB。单核↑35%，GPU 峰值↑41%，功耗↓44%。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value"><span class="hl-cyan">台积电 3nm</span>（291 亿晶体管）</div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value"><span class="hl-blue">第二代全大核</span> 1×3.62G X925 + 3×3.3G X4 + 4×2.4G A720</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Immortalis-G925 MC12</div></div>
+          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value"><span class="hl-cyan">NPU 890 · 48 TOPS</span></div></div>
+          <div class="spec-item"><div class="spec-label">内存</div><div class="spec-value">LPDDR5X 10.7Gbps</div></div>
+          <div class="spec-item"><div class="spec-label">安兔兔</div><div class="spec-value"><span class="hl-cyan">~300 万+</span></div></div>
+        </div>
+        <div class="bench-bar-container">
+          <div class="bench-bar-label"><span>安兔兔跑分</span><span class="counter" data-target="3000000">0</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill bar-cyan" data-width="83%">300万+</div></div>
+        </div>
+        <div class="cache-section">
+          <h4>📊 缓存配置 — 全面升级</h4>
+          <div class="cache-bars">
+            <div class="cache-bar"><div class="cache-bar-label">L2</div><div class="cache-bar-track"><div class="cache-bar-fill bar-cyan" style="width:88%">7 MB ⬆️</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">L3</div><div class="cache-bar-track"><div class="cache-bar-fill bar-orange" style="width:75%">12 MB 共享 ⬆️</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">SLC</div><div class="cache-bar-track"><div class="cache-bar-fill bar-green" style="width:100%">10 MB</div></div></div>
+          </div>
+          <p style="margin-top:10px;font-size:12px;color:var(--text-muted)">L2 从 3.5MB 飙到 7MB，L3 从 8MB 涨到 12MB！</p>
+        </div>
+        <div class="fun-callout"><strong>预算实在不够可以考虑</strong>——但 9500 才 2000 元起，能加一点就加，差距是 16MB L3 vs 12MB + 100 TOPS vs 48 TOPS。</div>
+      </div>
+
+      <!-- 9500s -->
+      <div class="chip-card fade-in from-right">
+        <div class="chip-pin-decor"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="chip-card-header">
+          <div><div class="chip-name">天玑 9500s <span class="year-tag tag-budget">2025 · 与 9400 同级</span></div></div>
+          <div class="chip-price-tag price-budget">9400+ 换马甲 · 同级</div>
+        </div>
+        <p class="chip-intro">天玑 9400+ 的<strong>官方更名版</strong>。跑分比 9400 高 5-8%，日常感知为零。<strong style="color:var(--accent)">和 9400 完全同级——哪个便宜买哪个，都贵了就上 9500。</strong></p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">本质</div><div class="spec-value">天玑 9400+ 更名版</div></div>
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">台积电 3nm</div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">与 9400+ 基本一致，小幅提频</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Immortalis-G925 MC12</div></div>
+          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">~48 TOPS</div></div>
+          <div class="spec-item"><div class="spec-label">安兔兔</div><div class="spec-value">~320 万</div></div>
+        </div>
+        <div class="bench-bar-container">
+          <div class="bench-bar-label"><span>安兔兔跑分</span><span class="counter" data-target="3200000">0</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill bar-cyan" data-width="89%">320万</div></div>
+        </div>
+        <div class="cache-section">
+          <h4>📊 缓存配置 — 和 9400+ 一模一样</h4>
+          <div class="cache-bars">
+            <div class="cache-bar"><div class="cache-bar-label">L2</div><div class="cache-bar-track"><div class="cache-bar-fill bar-cyan" style="width:88%">7 MB</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">L3</div><div class="cache-bar-track"><div class="cache-bar-fill bar-orange" style="width:75%">12 MB 共享</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">SLC</div><div class="cache-bar-track"><div class="cache-bar-fill bar-green" style="width:100%">10 MB</div></div></div>
+          </div>
+        </div>
+        <div class="fun-callout"><strong>和 9400 同级。</strong>同价选它无所谓，贵了直接上 9500。别为 5% 多花钱。</div>
+      </div>
+
+      <!-- 9500 -->
+      <div class="chip-card fade-in from-left">
+        <div class="chip-pin-decor"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="chip-card-header">
+          <div><div class="chip-name">天玑 9500 <span class="year-tag tag-top">2025 · 唯一推荐</span></div></div>
+          <div class="chip-price-tag price-top">就买这颗</div>
+        </div>
+        <p class="chip-intro">联发科的<strong>"究极形态"！</strong>主频 <strong>4.1GHz</strong>，NPU 突破 <strong>100 TOPS</strong>，L3 缓存拉到 <strong>16MB</strong>，UFS 4.1。<strong>而且才 2000 元起</strong>。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value"><span class="hl-cyan">台积电 3nm 第三代</span></div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value"><span class="hl-cyan">全大核 · 主频 4.1GHz</span></div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value"><span class="hl-cyan">Immortalis-G925+</span></div></div>
+          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value"><span class="hl-cyan">100 TOPS</span></div></div>
+          <div class="spec-item"><div class="spec-label">UFS</div><div class="spec-value"><span class="hl-cyan">4.1</span></div></div>
+          <div class="spec-item"><div class="spec-label">安兔兔</div><div class="spec-value"><span class="hl-cyan">360 万+</span></div></div>
+        </div>
+        <div class="bench-bar-container">
+          <div class="bench-bar-label"><span>安兔兔跑分</span><span class="counter" data-target="3600000">0</span></div>
+          <div class="bench-bar-track"><div class="bench-bar-fill bar-cyan" data-width="100%">360万+</div></div>
+        </div>
+        <div class="bench-bar-container">
+          <div class="bench-bar-label"><span>AI 算力</span><span class="counter" data-target="100">0</span> TOPS</div>
+          <div class="bench-bar-track"><div class="bench-bar-fill bar-blue" data-width="100%">100 TOPS</div></div>
+        </div>
+        <div class="cache-section">
+          <h4>📊 缓存配置 — 史上最大，"缓存自由"</h4>
+          <div class="cache-bars">
+            <div class="cache-bar"><div class="cache-bar-label">L2</div><div class="cache-bar-track"><div class="cache-bar-fill bar-cyan" style="width:88%">7 MB</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">L3</div><div class="cache-bar-track"><div class="cache-bar-fill bar-orange" style="width:100%">16 MB 共享</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">SLC</div><div class="cache-bar-track"><div class="cache-bar-fill bar-green" style="width:100%">10 MB</div></div></div>
+          </div>
+          <p style="margin-top:10px;font-size:12px;color:var(--text-muted)">L3 16MB！从 9200 的 8MB 翻了一倍。</p>
+        </div>
+        <div class="fun-callout"><strong>2000 元起，安卓性价比天花板。买天玑，就买这颗，没得商量。</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+<div class="section-cta"><span class="section-cta-btn">继续看选购指南</span></div>
+
+<!-- GUIDE -->
+<section id="guide">
+  <div class="sticky-title">天玑 · 选购指南</div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">选购指南</div>
+      <h2>到底该买哪个？</h2>
+    </div>
+    <div class="guide-card g-guide fade-in from-left"><div class="guide-tag" style="color:var(--accent-cyan)">✅ 唯一推荐</div><div class="guide-title" style="color:var(--accent-cyan)">天玑 9500</div><div class="guide-text">3nm 第三代 + 全大核 4.1GHz + L3 16MB + 100 TOPS + UFS 4.1。<strong>2000 元起，没有不买的理由。</strong></div></div>
+    <div class="guide-card g-blue fade-in from-right"><div class="guide-tag" style="color:var(--accent)">💰 预算实在不够</div><div class="guide-title" style="color:var(--accent)">天玑 9400 / 9500s（同级）</div><div class="guide-text">同样 3nm + 全大核，L3 12MB，48 TOPS。<strong>能加一点就加一点上 9500。9500s ≈ 9400+ 换马甲，哪个便宜买哪个。</strong></div></div>
+    <div class="guide-card g-muted fade-in from-left"><div class="guide-tag" style="color:var(--text-muted)">⚠ 不推荐</div><div class="guide-title" style="color:var(--text-muted)">9300 / 9300+ / 9200</div><div class="guide-text">9300 架构好但缓存和工艺落后；9200 太老。<strong>9500 都 2000 了，没必要选这些。</strong></div></div>
+    <div class="guide-card g-orange fade-in from-right"><div class="guide-tag" style="color:var(--accent-orange)">⚠ 陷阱</div><div class="guide-title" style="color:var(--accent-orange)">天玑 8300 / 8400 及全部 8 系</div><div class="guide-text">性价比确实比骁龙 7 系高，但 9500 已降到 2000。<strong style="color:var(--accent-red)">很多 8 系手机卖得比 9500 还贵，花更多钱买更弱的芯片。</strong></div></div>
+
+    <div class="tldr-box fade-in" style="margin-top:30px;border-color:rgba(79,195,247,.25);background:linear-gradient(135deg,rgba(79,195,247,.05),rgba(0,229,255,.03))">
+      <h3 style="color:var(--accent)">选芯 Checklist · 自查一下</h3>
+      <div class="checklist" id="checklist">
+        <div class="checklist-item" data-risk="high"><div class="checklist-box"></div><div class="checklist-label">我正在看的手机用的是 <strong>天玑 8300 / 8400 及任何 8 系</strong></div></div>
+        <div class="checklist-item" data-risk="mid"><div class="checklist-box"></div><div class="checklist-label">我正在看的手机用的是 <strong>天玑 9300 / 9300+ / 9200</strong>（已过时）</div></div>
+        <div class="checklist-item" data-risk="high"><div class="checklist-box"></div><div class="checklist-label">我看的 8 系手机价格 <strong>超过 1800 元</strong>（9500 才 2000 啊！）</div></div>
+        <div class="checklist-item" data-risk="high"><div class="checklist-box"></div><div class="checklist-label">我看的 8 系手机价格 <strong>比某些 9500 手机还贵</strong></div></div>
+      </div>
+      <div class="checklist-result danger" id="checkResultDanger">⚠ 你踩雷了！建议只看 <strong>天玑 9500</strong>，预算紧再看 9400/9500s。</div>
+      <div class="checklist-result safe" id="checkResultSafe" style="display:none">✅ 看起来你选的没问题！</div>
+    </div>
+
+    <div class="tldr-box fade-in" style="margin-top:20px;border-color:rgba(79,195,247,.25);background:linear-gradient(135deg,rgba(79,195,247,.05),rgba(0,229,255,.03))">
+      <h3 style="color:var(--accent)">选芯四步法</h3>
+      <p><strong style="color:var(--accent)">① 看代际：</strong>只看 9500，预算紧再看 9400/9500s，其他 pass。<br><strong style="color:var(--accent)">② 看价格：</strong>9500 手机 2000 元起，8 系卖 2000+ 的全是坑。<br><strong style="color:var(--accent)">③ 看需求：</strong>游戏多、模拟器 → 选骁龙 8E/8EG5；日常为主、性价比 → 天玑 9500。<br><strong style="color:var(--accent)">④ 别纠结"+"号：</strong>9300+、9400+、9500s 都是小幅提频马甲。9500 才是正确答案。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>天玑<span style="color:var(--accent)">选购</span>生存指南 · 2026 · 2000 元就能买到顶级旗舰芯，别再被 8 系忽悠了</p>
+</footer>
+
+<button class="fab-top" id="fabTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="buy-tip-bar" id="buyTipBar">
+  <div class="tip-text">只买 <strong>天玑 9500</strong>，其他统统避雷</div>
+  <a class="tip-btn" href="#buy-advice">查看详情</a>
+</div>
+<div class="compare-overlay" id="compareOverlay">
+  <div class="compare-sheet">
+    <div class="compare-handle"></div>
+    <button class="compare-close" id="compareClose">×</button>
+    <div class="compare-title">快速对比</div>
+    <div class="compare-grid" id="compareGrid"></div>
+  </div>
+</div>
+
+<nav class="mobile-bottom-nav">
+  <div class="mbn-inner">
+    <a href="snapdragon.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>骁龙</a>
+    <a href="dimensity.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>天玑</a>
+    <a href="apple.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z"/></svg>苹果</a>
+    <a href="samsung.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>三星</a>
+    <a href="xuanjie.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/></svg>玄戒</a>
+  </div>
+</nav>
+
+<div id="egg-popup"></div>
+
+<script>
+const progressBar=document.getElementById('scrollProgress');
+window.addEventListener('scroll',()=>{const h=document.documentElement;progressBar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%'});
+const obs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){i.target.classList.add('visible');obs.unobserve(i.target)}})},{threshold:.08});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+document.querySelectorAll('.chip-card').forEach(card=>{card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')})});
+document.querySelectorAll('.chip-card').forEach(card=>{const glow=card.querySelector('.touch-glow');if(!glow)return;card.addEventListener('touchstart',e=>{card.classList.add('touching');const t=e.touches[0];const r=card.getBoundingClientRect();glow.style.setProperty('--tx',(t.clientX-r.left)+'px');glow.style.setProperty('--ty',(t.clientY-r.top)+'px')},{passive:true});card.addEventListener('touchmove',e=>{const t=e.touches[0];const r=card.getBoundingClientRect();glow.style.setProperty('--tx',(t.clientX-r.left)+'px');glow.style.setProperty('--ty',(t.clientY-r.top)+'px')},{passive:true});card.addEventListener('touchend',()=>{card.classList.remove('touching')})});
+const sections=document.querySelectorAll('section[id], .buy-advice-section[id]'),navDots=document.querySelectorAll('.nav-dot');
+window.addEventListener('scroll',()=>{let c='';sections.forEach(s=>{if(scrollY>=s.offsetTop-200)c=s.getAttribute('id')});navDots.forEach(d=>{d.classList.remove('active');if(d.dataset.section===c)d.classList.add('active')})});
+navDots.forEach(d=>{d.addEventListener('click',()=>{const s=document.getElementById(d.dataset.section);if(s)s.scrollIntoView({behavior:'smooth'})})});
+const counters=document.querySelectorAll('.counter');
+const cObs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){animateCounter(i.target);cObs.unobserve(i.target)}})},{threshold:.5});
+counters.forEach(c=>cObs.observe(c));
+function animateCounter(el){const target=parseInt(el.dataset.target);const duration=1500;const start=performance.now();(function tick(now){const p=Math.min((now-start)/duration,1);const ease=1-Math.pow(1-p,3);const current=Math.round(target*ease);el.textContent=target>10000?(current/10000).toFixed(0)+'0000+':current+(target>=100?'':'');if(p<1)requestAnimationFrame(tick)})(start)}
+const benchBars=document.querySelectorAll('.bench-bar-fill');
+const bObs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){i.target.style.width=i.target.dataset.width;bObs.unobserve(i.target)}})},{threshold:.3});
+benchBars.forEach(b=>bObs.observe(b));
+window.addEventListener('scroll',()=>{const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);document.body.style.boxShadow='inset 0 0 '+(pct*15*20)+'px rgba(79,195,247,'+(pct*.04)+')'});
+document.querySelectorAll('.buy-recommend-chip').forEach(card=>{card.addEventListener('click',()=>{card.classList.toggle('flip-card-flipped')})});
+const checklist=document.getElementById('checklist');
+const checkResultDanger=document.getElementById('checkResultDanger');
+const checkResultSafe=document.getElementById('checkResultSafe');
+if(checklist){checklist.querySelectorAll('.checklist-item').forEach(item=>{item.addEventListener('click',()=>{item.classList.toggle('checked');updateChecklist()})})}
+function updateChecklist(){const checked=checklist.querySelectorAll('.checked');const hasRisk=checked.length>0;checkResultDanger.style.display=hasRisk?'block':'none';checkResultSafe.style.display=hasRisk?'none':'block';if(hasRisk){const highest=[...checked].some(i=>i.dataset.risk==='high')?'high':'mid';checkResultDanger.textContent=highest==='high'?'🚨 你在看 8 系或过时芯片？只买天玑 9500！':'⚠ 这些芯片已经被 9500 全面碾压，建议重新选择。'}}
+const fabTop=document.getElementById('fabTop');
+const buyTipBar=document.getElementById('buyTipBar');
+const buyAdviceSection=document.getElementById('buy-advice');
+window.addEventListener('scroll',()=>{fabTop.classList.toggle('show',window.scrollY>600);if(buyAdviceSection){const r=buyAdviceSection.getBoundingClientRect();buyTipBar.classList.toggle('show',r.bottom<0&&window.scrollY>800)}});
+let longPressTimer=null;
+const compareOverlay=document.getElementById('compareOverlay');
+const compareGrid=document.getElementById('compareGrid');
+const compareClose=document.getElementById('compareClose');
+const chipData={'9500':['天玑 9500','3nm 第三代','全大核 4.1G','G925+','100 TOPS','7MB','16MB','360万+'],'9400':['天玑 9400','3nm','X925+A720','G925 MC12','48 TOPS','7MB','12MB','300万+'],'9300':['天玑 9300','4nm','全大核 X4+A720','G720 MC12','21 TOPS','3.5MB','8MB','220万']};
+document.querySelectorAll('.chip-card').forEach(card=>{card.addEventListener('touchstart',e=>{longPressTimer=setTimeout(()=>{const name=card.querySelector('.chip-name')?.textContent||'';let key='9300';if(name.includes('9500')&&!name.includes('9500s'))key='9500';else if(name.includes('9400'))key='9400';showCompare(key)},600)},{passive:true});card.addEventListener('touchend',()=>{clearTimeout(longPressTimer)});card.addEventListener('touchmove',()=>{clearTimeout(longPressTimer)})});
+function showCompare(key){const d=chipData[key];const best=chipData['9500'];const labels=['型号','工艺','CPU','GPU','NPU','L2','L3','安兔兔'];let html='';labels.forEach((l,i)=>{html+=`<div class="compare-cell header">${l}</div><div class="compare-cell ${d[i]===best[i]?'best':''}">${d[i]}</div><div class="compare-cell ${best[i]===d[i]?'best':''}">${best[i]}</div>`});compareGrid.innerHTML=html;compareOverlay.querySelector('.compare-title').textContent=d[0]+' vs 9500';compareOverlay.classList.add('show')}
+compareClose?.addEventListener('click',()=>compareOverlay.classList.remove('show'));
+compareOverlay?.addEventListener('click',e=>{if(e.target===compareOverlay)compareOverlay.classList.remove('show')});
+const eggs=["⚡ 天玑 9300：小核？不认识，直接开除了","📉 9500 降到 2000 了，8 系还有什么存在意义？","🤡 9500s = 9400+ 换了件马甲就来了","💰 天玑的 s 不是缩水，是 '省钱' 的 s","🔋 9400：学霸决定考 120 分，还特别省电","🍜 9400 和 9500 的差距？省下来多吃几顿火锅","💸 花 2500 买 8400 的人，看到旁边 2000 的 9500 作何感想"];
+let eggT;function showEgg(){const el=document.getElementById('egg-popup');el.textContent=eggs[Math.floor(Math.random()*eggs.length)];el.classList.add('show');clearTimeout(eggT);eggT=setTimeout(()=>el.classList.remove('show'),5000)}
+setTimeout(showEgg,8000);setInterval(showEgg,45000+Math.random()*25000);
+(function(){const c=document.getElementById('heroParticles');if(!c)return;for(let i=0;i<20;i++){const p=document.createElement('div');p.className='hero-particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*8+'s';p.style.animationDuration=(6+Math.random()*6)+'s';p.style.width=p.style.height=(2+Math.random()*3)+'px';p.style.background=['var(--accent)','var(--accent-cyan)','var(--accent-green)'][Math.floor(Math.random()*3)];c.appendChild(p)}})();
+</script>
+</body>
+</html>
