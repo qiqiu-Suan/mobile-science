@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>玄戒O1：小米造芯十年的答卷 | 深度拆解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-deep:#0a0a0a;--bg-card:#12121a;--bg-card-hover:#1a1a28;--accent:#FF6900;--accent-light:#FF8A00;--accent-green:#b4ff39;--accent-blue:#33aaff;--accent-red:#ff2222;--text-primary:#e8e4dc;--text-secondary:#8a857e;--text-muted:#555566;--border:#2a2a2a}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg-deep);color:var(--text-primary);line-height:1.8;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 10%,rgba(255,105,0,.05) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,138,0,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+.noise-overlay{position:fixed;inset:0;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+.container{position:relative;z-index:2;max-width:980px;margin:0 auto;padding:0 22px}
+a{color:var(--accent);text-decoration:none;transition:color .3s}
+a:hover{color:var(--accent-light)}
+
+.scroll-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light),var(--accent-green));z-index:10001;width:0;transition:width .05s linear;box-shadow:0 0 8px rgba(255,105,0,.4)}
+
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:48px;display:flex;align-items:center;background:rgba(10,10,10,.88);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border)}
+.site-nav .inner{max-width:980px;margin:0 auto;padding:0 22px;width:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:var(--accent);transition:all .25s;padding:4px 10px 4px 6px;border-radius:18px;border:1px solid rgba(255,105,0,.2);background:rgba(255,105,0,.06)}
+.nav-back:hover{background:rgba(255,105,0,.12);border-color:rgba(255,105,0,.4);color:#fff}
+.nav-back svg{width:12px;height:12px;transition:transform .25s}
+.nav-back:hover svg{transform:translateX(-2px)}
+.nav-brand{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;color:var(--accent);letter-spacing:.04em}
+.nav-links{display:flex;gap:2px}
+.nav-links a{font-size:10px;font-family:'Space Mono',monospace;font-weight:400;padding:4px 10px;border-radius:5px;color:var(--text-muted);transition:all .25s;text-transform:uppercase}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-links a.active{background:rgba(255,105,0,.15);color:var(--accent)}
+
+.nav-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:10px}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);cursor:pointer;transition:all .3s ease}
+.nav-dot:hover,.nav-dot.active{background:var(--accent);transform:scale(1.5)}
+
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(10,10,10,.94);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+.mobile-bottom-nav .mbn-inner{display:flex;justify-content:space-around;padding:6px 0}
+.mobile-bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;font-size:9px;font-family:'Space Mono',monospace;color:var(--text-muted);transition:color .2s;text-decoration:none;letter-spacing:.02em;position:relative}
+.mobile-bottom-nav a.active{color:var(--accent)}
+.mobile-bottom-nav a.active::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:16px;height:2px;border-radius:1px;background:var(--accent)}
+.mobile-bottom-nav a svg{width:20px;height:20px}
+
+.sticky-title{display:none;position:sticky;top:48px;z-index:50;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:8px 0;text-align:center;font-size:11px;font-family:'Space Mono',monospace;color:var(--text-muted);letter-spacing:.08em;border-bottom:1px solid var(--border)}
+
+.chapter-progress{display:none;position:fixed;top:48px;left:0;right:0;z-index:998;height:2px;background:rgba(255,255,255,.04)}
+.chapter-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .15s linear}
+
+.fab-top{position:fixed;bottom:24px;right:20px;z-index:997;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));border:none;color:#0a0a0a;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(255,105,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none}
+.fab-top.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.fab-top:active{transform:scale(.9)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 22px 100px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,105,0,.06) 0%,rgba(255,138,0,.03) 40%,transparent 70%);pointer-events:none;animation:heroPulse 8s ease-in-out infinite}
+@keyframes heroPulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.05)}}
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-particle{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:0;animation:particleFloat 8s ease-in-out infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.5}90%{opacity:.2}100%{opacity:0;transform:translateY(-20vh) scale(1.5)}}
+.hero-badge{display:inline-block;padding:6px 18px;background:rgba(255,105,0,.1);border:1px solid rgba(255,105,0,.25);border-radius:50px;font-size:13px;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:28px;animation:fadeDown .8s ease forwards}
+.hero h1{font-size:clamp(32px,8vw,64px);font-weight:900;line-height:1.1;margin-bottom:20px;animation:fadeUp .8s ease .2s forwards;opacity:0}
+.hero h1 .gradient-text{background:linear-gradient(135deg,var(--accent),var(--accent-light),var(--accent-green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% 300%;animation:gradientFlow 5s ease infinite}
+@keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero-subtitle{font-size:clamp(15px,3vw,20px);color:var(--text-secondary);max-width:620px;margin-bottom:48px;animation:fadeUp .8s ease .4s forwards;opacity:0}
+.hero-subtitle em{color:var(--accent-light);font-style:normal;font-weight:700}
+.hero-scroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);color:var(--text-muted);font-size:12px;animation:bounce 2.5s infinite}
+.hero-scroll::after{content:'↓';display:block;text-align:center;margin-top:4px;font-size:16px;opacity:.6}
+@keyframes bounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-6px)}}
+
+section{padding:100px 0}
+.section-header{text-align:center;margin-bottom:60px}
+.section-tag{display:inline-block;padding:5px 14px;background:rgba(255,105,0,.1);border:1px solid rgba(255,105,0,.2);border-radius:50px;font-size:11px;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.section-header h2{font-size:clamp(22px,5vw,42px);font-weight:900;margin-bottom:12px}
+.section-header p{color:var(--text-secondary);font-size:15px;max-width:600px;margin:0 auto}
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,105,0,.12),transparent)}
+
+.fade-in{opacity:0;transform:translateY(28px);transition:all .6s cubic-bezier(.25,.1,.25,1)}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+.tldr-box{background:linear-gradient(135deg,rgba(255,105,0,.08),rgba(255,138,0,.04));border:1px solid rgba(255,105,0,.25);border-radius:18px;padding:36px;margin-bottom:50px;position:relative;overflow:hidden}
+.tldr-box::before{content:'TL;DR';position:absolute;top:14px;right:18px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent-light);letter-spacing:2px}
+.tldr-box h3{font-size:20px;color:var(--accent-light);margin-bottom:12px}
+.tldr-box p{font-size:15px;color:var(--text-primary)}.tldr-box strong{color:var(--accent-green)}
+
+.feat-list{list-style:none;margin-bottom:36px}
+.feat-list li{padding:14px 0;border-bottom:1px solid var(--border);font-size:15px;color:var(--text-secondary);line-height:1.85}
+.feat-list li strong{color:var(--text-primary);font-weight:700}
+.feat-tag{display:inline-block;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.08em;padding:3px 10px;border-radius:20px;margin-right:10px;vertical-align:middle;font-weight:500}
+.tag-str{background:rgba(180,255,57,.1);color:var(--accent-green)}
+
+.chip-cards{display:grid;gap:28px}
+.chip-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden;transition:all .4s ease;--mx:50%;--my:50%}
+.chip-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx) var(--my),rgba(255,105,0,.04) 0%,transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:1}
+.chip-card:hover::before{opacity:1}
+.chip-card:hover{border-color:rgba(255,105,0,.3);box-shadow:0 16px 48px rgba(0,0,0,.25)}
+.chip-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px;position:relative;z-index:2}
+.chip-name{font-size:30px;font-weight:900;line-height:1.2}
+.chip-name .year-tag{display:inline-block;padding:3px 10px;font-size:11px;font-weight:700;border-radius:6px;margin-left:10px;vertical-align:middle}
+.tag-top{background:var(--accent-green);color:#0a0a0a}
+.chip-price-tag{padding:7px 16px;border-radius:10px;font-weight:700;font-size:13px}
+.price-recommend{background:linear-gradient(135deg,rgba(180,255,57,.12),rgba(51,170,255,.08));border:1px solid rgba(180,255,57,.25);color:var(--accent-green)}
+.chip-intro{font-size:16px;color:var(--text-secondary);margin-bottom:28px;max-width:800px;line-height:1.8;position:relative;z-index:2}
+.chip-intro strong{color:var(--text-primary)}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px;position:relative;z-index:2}
+.spec-item{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .3s}
+.spec-item:hover{background:rgba(255,105,0,.04);border-color:rgba(255,105,0,.25)}
+.spec-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;font-family:'Space Mono',monospace}
+.spec-value{font-size:16px;font-weight:700;color:var(--text-primary)}
+.spec-value .hl-green{color:var(--accent-green)}
+.spec-value .hl-warn{color:var(--accent-light)}
+
+.cache-section{background:rgba(255,105,0,.03);border:1px solid rgba(255,105,0,.12);border-radius:14px;padding:22px;margin-bottom:20px;position:relative;z-index:2}
+.cache-section h4{font-size:15px;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace}
+.cache-bars{display:flex;flex-direction:column;gap:10px}
+.cache-bar{display:flex;align-items:center;gap:10px}
+.cache-bar-label{width:70px;font-size:12px;color:var(--text-secondary);font-family:'Space Mono',monospace;flex-shrink:0}
+.cache-bar-track{flex:1;height:22px;background:rgba(255,255,255,.03);border-radius:11px;overflow:hidden}
+.cache-bar-fill{height:100%;border-radius:11px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:11px;font-weight:700;color:#fff;transition:width 1s ease;width:0%}
+.bar-orange{background:linear-gradient(90deg,var(--accent-light),#ff9100)}
+.bar-blue{background:linear-gradient(90deg,var(--accent-blue),#2196f3)}
+.bar-warn{background:linear-gradient(90deg,#ff5252,#ff2222)}
+
+.fun-callout{background:linear-gradient(135deg,rgba(255,105,0,.06),rgba(255,138,0,.03));border-left:4px solid var(--accent);border-radius:0 14px 14px 0;padding:20px;margin:20px 0;font-size:14px;color:var(--text-secondary);line-height:1.85;position:relative;z-index:2}
+.fun-callout strong{color:var(--accent-light)}
+.fun-callout .emoji{font-size:18px;margin-right:6px}
+
+.verdict-card{background:linear-gradient(135deg,rgba(180,255,57,.06),rgba(51,170,255,.03));border:1px solid rgba(180,255,57,.25);border-radius:18px;padding:28px;margin-top:20px}
+.verdict-card h4{color:var(--accent-green);font-size:16px;margin-bottom:10px}
+.verdict-card p{color:var(--text-secondary);font-size:14px;line-height:1.85}
+
+.quote-box{border-left:3px solid var(--accent);background:rgba(255,105,0,.04);padding:16px 20px;margin:16px 0;font-size:13px;color:var(--text-secondary);line-height:1.85;border-radius:0 10px 10px 0}
+.quote-box strong{color:var(--accent-light)}
+
+.timeline{position:relative;max-width:800px;margin:48px auto}
+.timeline::before{content:'';position:absolute;top:0;left:30px;width:2px;height:100%;background:linear-gradient(to bottom,var(--accent),#AB47BC)}
+.timeline-item{position:relative;padding-left:80px;margin-bottom:40px;opacity:0;transform:translateX(-20px);animation:fadeInLeft .6s ease forwards}
+.timeline-item:nth-child(1){animation-delay:.2s}.timeline-item:nth-child(2){animation-delay:.4s}.timeline-item:nth-child(3){animation-delay:.6s}.timeline-item:nth-child(4){animation-delay:.8s}
+@keyframes fadeInLeft{to{opacity:1;transform:translateX(0)}}
+.timeline-dot{position:absolute;left:20px;top:24px;width:22px;height:22px;border-radius:50%;background:var(--bg-card);border:3px solid var(--accent)}
+.timeline-content{background:var(--bg-card);padding:24px;border-radius:12px;border:1px solid var(--border)}
+.timeline-year{font-size:.9rem;color:var(--accent);font-weight:700;margin-bottom:8px;font-family:'Space Mono',monospace}
+.timeline-title{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.timeline-text{color:var(--text-secondary);font-size:.95rem}
+
+.pros-cons-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
+.pros-list,.cons-list{background:var(--bg-card);border-radius:16px;padding:36px;border:1px solid var(--border)}
+.pros-list{border-top:4px solid var(--accent-green)}.cons-list{border-top:4px solid var(--accent-red)}
+.list-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.list-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.pros-icon{background:rgba(180,255,57,.1);color:var(--accent-green)}.cons-icon{background:rgba(255,34,34,.1);color:var(--accent-red)}
+.list-title{font-size:1.3rem;font-weight:700}
+.list-items li{list-style:none;padding:12px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text-secondary);line-height:1.85}
+.list-items li:last-child{border-bottom:none}
+.bullet{width:8px;height:8px;border-radius:50%;margin-top:10px;flex-shrink:0}
+.pro-bullet{background:var(--accent-green)}.con-bullet{background:var(--accent-red)}
+
+.devices-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:48px}
+.device-card{background:var(--bg-card);border-radius:16px;overflow:hidden;border:1px solid var(--border);transition:all .3s ease;text-decoration:none;color:inherit;display:block}
+.device-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.device-card:active{transform:scale(.98)}
+.device-image{height:200px;background:linear-gradient(135deg,rgba(255,105,0,.2),rgba(255,138,0,.1));display:flex;align-items:center;justify-content:center;font-size:80px}
+.device-info{padding:24px}
+.device-name{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.device-price{color:var(--accent);font-weight:700;margin-bottom:12px}
+.device-desc{color:var(--text-secondary);font-size:.9rem}
+
+footer{text-align:center;padding:56px 22px;border-top:1px solid var(--border);margin-top:80px;padding-bottom:calc(56px + env(safe-area-inset-bottom))}
+footer p{color:var(--text-muted);font-size:13px}
+
+#egg-popup{position:fixed;bottom:20px;right:20px;z-index:9000;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;max-width:280px;font-size:12px;color:var(--text-muted);line-height:1.7;opacity:0;transform:translateY(10px);transition:all .4s cubic-bezier(.25,.1,.25,1);pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+#egg-popup.show{opacity:1;transform:translateY(0);pointer-events:auto}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:768px){
+  section{padding:60px 0}
+  .hero{padding:80px 18px 80px;min-height:90vh}
+  .hero h1{font-size:clamp(26px,8vw,42px);margin-bottom:16px}
+  .hero-subtitle{font-size:15px;margin-bottom:32px;padding:0 4px}
+  .hero-badge{font-size:11px;padding:5px 14px;margin-bottom:20px}
+  .hero-scroll{bottom:24px;font-size:11px}
+  .container{padding:0 16px}
+  .section-header{margin-bottom:36px}
+  .section-header h2{font-size:clamp(20px,6vw,32px)}
+  .section-header p{font-size:14px;padding:0 8px}
+  .section-tag{font-size:10px;padding:4px 12px;margin-bottom:12px}
+  .chip-card{padding:20px 16px;border-radius:16px}
+  .chip-name{font-size:20px;line-height:1.3}
+  .chip-name .year-tag{font-size:10px;padding:2px 8px;margin-left:6px;display:inline-block}
+  .chip-intro{font-size:14px;margin-bottom:20px}
+  .spec-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .spec-item{padding:12px 14px;border-radius:12px}
+  .spec-label{font-size:9px;letter-spacing:.06em}
+  .spec-value{font-size:13px}
+  .cache-section{padding:16px;border-radius:12px;margin-bottom:14px}
+  .cache-section h4{font-size:13px;margin-bottom:10px}
+  .cache-bar-track{height:18px}
+  .cache-bar-fill{font-size:10px;padding-right:8px}
+  .cache-bar-label{width:50px;font-size:10px}
+  .fun-callout{padding:14px 16px;font-size:13px;border-radius:0 12px 12px 0;margin:14px 0}
+  .tldr-box{padding:22px 18px;border-radius:14px;margin-bottom:32px}
+  .tldr-box h3{font-size:17px;margin-bottom:8px}
+  .tldr-box p{font-size:13px}
+  .tldr-box::before{font-size:11px;top:10px;right:14px}
+  .feat-list li{font-size:14px;padding:12px 0}
+  .feat-tag{font-size:9px;padding:2px 8px}
+  .timeline{margin:28px auto}
+  .timeline::before{left:18px}
+  .timeline-dot{left:8px;width:18px;height:18px;top:20px}
+  .timeline-item{padding-left:46px;margin-bottom:28px}
+  .timeline-content{padding:16px;border-radius:10px}
+  .timeline-year{font-size:.8rem}
+  .timeline-title{font-size:1rem}
+  .timeline-text{font-size:.85rem}
+  .pros-cons-grid{grid-template-columns:1fr;gap:16px;margin-top:32px}
+  .pros-list,.cons-list{padding:22px 18px;border-radius:14px}
+  .list-title{font-size:1.1rem}
+  .list-items li{font-size:13px;padding:10px 0;gap:10px}
+  .devices-grid{grid-template-columns:1fr;gap:14px;margin-top:32px}
+  .device-image{height:140px;font-size:60px}
+  .device-info{padding:18px}
+  .device-name{font-size:1rem}
+  .device-price{font-size:.9rem;margin-bottom:8px}
+  .device-desc{font-size:.85rem}
+  .verdict-card{padding:20px 18px;border-radius:14px}
+  .verdict-card h4{font-size:14px}
+  .verdict-card p{font-size:13px}
+  .quote-box{padding:12px 16px;font-size:12px}
+  .nav-dots{display:none}
+  .nav-links{display:none}
+  .site-nav .inner{padding:0 16px}
+  .mobile-bottom-nav{display:block}
+  .chapter-progress{display:block}
+  .sticky-title{display:block}
+  .fab-top{bottom:76px;right:16px;width:40px;height:40px;font-size:16px}
+  #egg-popup{bottom:72px;right:12px;max-width:240px}
+  .section-divider{margin:0}
+  .chip-card:active{transform:scale(.98);opacity:.9}
+  .device-card:active{transform:scale(.97)}
+  .fade-in:nth-child(1){transition-delay:.05s}
+  .fade-in:nth-child(2){transition-delay:.15s}
+  .fade-in:nth-child(3){transition-delay:.25s}
+  .section-header{scroll-margin-top:100px}
+  .hero-particle{width:2px;height:2px}
+  .chip-price-tag{font-size:11px;padding:5px 12px}
+}
+@media(max-width:380px){
+  .hero h1{font-size:24px}
+  .chip-name{font-size:18px}
+  .section-header h2{font-size:20px}
+  .spec-grid{grid-template-columns:1fr}
+  .device-image{height:120px;font-size:50px}
+}
+@media(max-width:768px) and (orientation:landscape){
+  .hero{min-height:auto;padding:80px 18px 60px}
+  .hero-glow{width:400px;height:400px}
+}
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+<div class="scroll-bar" id="scrollBar"></div>
+<div class="chapter-progress"><div class="chapter-progress-fill" id="chapterFill"></div></div>
+
+<nav class="site-nav">
+<div class="inner">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="性能.html" class="nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      <span>返回</span>
+    </a>
+    <span class="nav-brand">⚡ 玄戒</span>
+  </div>
+  <div class="nav-links">
+    <a href="snapdragon.html">骁龙</a>
+    <a href="dimensity.html">天玑</a>
+    <a href="apple.html">苹果</a>
+    <a href="samsung.html">三星</a>
+    <a href="xuanjie.html" class="active">玄戒</a>
+    <a href="kirin.html">麒麟</a>
+  </div>
+</div>
+</nav>
+
+<div class="nav-dots">
+  <div class="nav-dot active" data-section="hero"></div>
+  <div class="nav-dot" data-section="origin"></div>
+  <div class="nav-dot" data-section="architecture"></div>
+  <div class="nav-dot" data-section="efficiency"></div>
+  <div class="nav-dot" data-section="tradeoff"></div>
+  <div class="nav-dot" data-section="devices"></div>
+  <div class="nav-dot" data-section="future"></div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-badge">2025 · 小米自研旗舰 SoC 深度拆解</div>
+  <h1>玄戒O1：<span class="gradient-text">低频封神</span>，却被信号拖了后腿</h1>
+  <p class="hero-subtitle">一颗让日常续航<em>"开了挂"</em>的芯片，也是一颗 5G 场景下让你时刻焦虑电量的<em>"偏科生"</em>。十年造芯路，小米交出的第一份旗舰答卷。</p>
+  <div class="hero-scroll">往下翻</div>
+</section>
+
+<!-- ===== 芯片来路 ===== -->
+<div class="sticky-title">玄戒 · 芯片来路</div>
+<section id="origin">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">芯片来路</div>
+      <h2>从澎湃到玄戒：十年沉浮，卷土重来</h2>
+      <p>造芯不是一天的事。小米用两次失败、五年蛰伏、135 亿真金白银，才换来今天的"全球第四"。</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-year">2014 — 2017</div><div class="timeline-title">松果起步，澎湃 S1 翻车</div><div class="timeline-text">2014 年成立松果电子，2017 年发布澎湃 S1。28nm 工艺在当时就已落后，搭载它的小米 5C 发热严重。澎湃 S2 多次流片失败，芯片业务随之冷冻了将近五年。</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-year">2021</div><div class="timeline-title">玄戒成立，从"小芯片"练手</div><div class="timeline-text">小米决定同时造车与造芯，成立子公司"玄戒"。先从 ISP、充电管理等辅助芯片入手，四年间投入 135 亿元，组建超 2500 人的团队，为旗舰 SoC 积蓄能力。</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-year">2025 年 5 月 22 日</div><div class="timeline-title">玄戒 O1 正式发布</div><div class="timeline-text">小米成为继苹果、高通、联发科之后，全球第四家能够设计 3nm 手机 SoC 的企业，也是中国大陆第一家。采用台积电 N3E 工艺，集成 190 亿晶体管，CPU 由小米自主设计后端。</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-year">当下与未来</div><div class="timeline-title">从手机芯片到生态中枢</div><div class="timeline-text">短期只服务小米自家旗舰，长期将成为"人车家"生态的统一算力底座，未来还将进入小米汽车的智能座舱。</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 架构解析 ===== -->
+<div class="sticky-title">玄戒 · 架构解析</div>
+<section id="architecture">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">架构解析</div>
+      <h2>"十核四丛集"：不靠堆料，靠排列组合</h2>
+      <p>没有用最暴力的核心配置，却搭出一套能效曲线极其平滑的"聪明架构"。</p>
+    </div>
+    <div class="chip-cards">
+      <div class="chip-card fade-in">
+        <div class="chip-card-header">
+          <div><div class="chip-name">玄戒 O1 <span class="year-tag tag-top">2025 · 首发</span><br><span style="font-size:12px;color:var(--text-muted);font-weight:400">小米首款旗舰 SoC · 全球第四家 3nm</span></div></div>
+          <div class="chip-price-tag price-recommend">⚡ 首发旗舰</div>
+        </div>
+        <p class="chip-intro"><strong>小米十年造芯的结晶。</strong>采用台积电 N3E 工艺，集成 190 亿晶体管。10 核 4 丛集架构，没有堆最暴力的配置，却用极其聪明的排列组合，把低频能效做到了行业天花板。</p>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value"><span class="hl-green">台积电 N3E（第二代 3nm）</span></div></div>
+          <div class="spec-item"><div class="spec-label">晶体管</div><div class="spec-value"><span class="hl-green">190 亿</span></div></div>
+          <div class="spec-item"><div class="spec-label">芯片面积</div><div class="spec-value">109 mm²</div></div>
+          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">2×X925 3.9G + 4×A725 3.4G + 2×A725 1.9G + 2×A520 1.8G</div></div>
+          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">Immortalis-G925 16核</div></div>
+          <div class="spec-item"><div class="spec-label">基带</div><div class="spec-value"><span class="hl-warn">外挂联发科 T800（5G）</span></div></div>
+        </div>
+        <div class="cache-section">
+          <h4>📊 缓存配置 — 有取有舍</h4>
+          <div class="cache-bars">
+            <div class="cache-bar"><div class="cache-bar-label">L2</div><div class="cache-bar-track"><div class="cache-bar-fill bar-orange" data-width="44%">10.5 MB</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">L3</div><div class="cache-bar-track"><div class="cache-bar-fill bar-blue" data-width="67%">16 MB 共享</div></div></div>
+            <div class="cache-bar"><div class="cache-bar-label">SLC</div><div class="cache-bar-track"><div class="cache-bar-fill bar-warn" data-width="5%" style="min-width:60px">故意没有！</div></div></div>
+          </div>
+          <p style="margin-top:10px;font-size:12px;color:var(--text-muted)">砍掉 SLC 换来极致低频能效——这是最关键的取舍。</p>
+        </div>
+        <div class="fun-callout"><span class="emoji">🤔</span><strong>为什么砍 SLC？</strong> 传统旗舰芯片的 SLC 是 GPU 的"高速缓存"和全局加速器，但轻负载下它也费电。玄戒 O1 说：为了省电，我把它拆了！代价是 GPU 跑分不敌天玑 9400。</div>
+        <div class="spec-grid" style="margin-top:20px">
+          <div class="spec-item"><div class="spec-label">低频能效</div><div class="spec-value"><span class="hl-green">全球同级第一（超越苹果能效核）</span></div></div>
+          <div class="spec-item"><div class="spec-label">WiFi 续航</div><div class="spec-value"><span class="hl-green">极其出色</span></div></div>
+          <div class="spec-item"><div class="spec-label">5G 续航</div><div class="spec-value"><span class="hl-warn">断崖式下降（外挂基带的代价）</span></div></div>
+          <div class="spec-item"><div class="spec-label">GPU 跑分</div><div class="spec-value"><span class="hl-warn">略逊天玑 9400，强于 A18 Pro</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 能效神话 ===== -->
+<div class="sticky-title">玄戒 · 能效神话</div>
+<section id="efficiency">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">能效神话</div>
+      <h2>3W 以下"电表倒转"：低频能效封神</h2>
+      <p>手机九成时间功耗不超过 3 瓦。在这个最影响日常体验的功耗段，玄戒 O1 几乎没有对手。</p>
+    </div>
+    <div class="tldr-box fade-in">
+      <h3>一句话总结</h3>
+      <p><strong>为什么低频能效是圣杯？</strong> 打游戏、跑分是偶尔为之；你每天 90% 的时间，CPU 功耗都在 2–3W 以内。在这个区间省下的每一毫瓦，都直接变成多刷半小时短视频、多聊一小时微信的续航。玄戒 O1 最厉害之处，不是峰值性能有多炸裂，而是<strong>把最影响日常的"地板能效"做到了行业天花板</strong>。</p>
+    </div>
+    <ul class="feat-list fade-in">
+      <li><span class="feat-tag tag-str">核心优势</span><strong>后端物理设计立大功</strong> — 核心架构来自 ARM 公版 A725，但小米在后端物理实现上下了苦功：晶体管级布线、供电网络优化、时钟树综合。同样的"食材"，小米做出了"米其林级别"的能效表现。</li>
+      <li><span class="feat-tag tag-str">核心优势</span><strong>全核心能效曲线完美续接</strong> — 四组核心之间的性能/功耗切换极为平滑，没有"断崖"，也没有突然飙升的功耗台阶。调度器可以无缝地在最合适的时机挑出最合适的核。</li>
+      <li><span class="feat-tag tag-str">核心优势</span><strong>低频 A725：0.2W 级能效之王</strong> — 据极客湾测试，低频 A725 能效核在能效曲线上全面领先全球同级竞品，甚至超越苹果的能效核心。日常轻负载基本只靠这 6 颗 A725 运转。</li>
+      <li><span class="feat-tag tag-str">核心优势</span><strong>"准下一代"水准的起点</strong> — 作为首次自研旗舰 SoC，其 CPU 低频能效竟能与传闻中骁龙 8 Elite 5、天玑 9500 不相上下——起步即接近天花板。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 硬币的另一面 ===== -->
+<div class="sticky-title">玄戒 · 另一面</div>
+<section id="tradeoff">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag" style="color:var(--accent-light);border-color:rgba(255,107,43,.2);background:rgba(255,107,43,.08)">硬币的另一面</div>
+      <h2>"WiFi 战神"的隐痛：砍掉 SLC 和基带的代价</h2>
+      <p>为了极致的日常能效和控制芯片面积，玄戒 O1 做出了两个重大妥协。</p>
+    </div>
+    <div class="pros-cons-grid">
+      <div class="pros-list fade-in">
+        <div class="list-header"><div class="list-icon pros-icon">✓</div><div class="list-title">妥协带来的优势</div></div>
+        <ul class="list-items">
+          <li><div class="bullet pro-bullet"></div><div><strong>极致低频能效</strong>：砍掉 SLC 后，轻负载下省去了这个"大房间"的维护功耗，成就了逆天的日常续航。</div></li>
+          <li><div class="bullet pro-bullet"></div><div><strong>控制芯片面积与成本</strong>：不集成基带、不堆大 SLC，109mm² 的面积处于合理区间。</div></li>
+          <li><div class="bullet pro-bullet"></div><div><strong>"WiFi 战神"体验</strong>：WiFi 场景下，最耗电的 5G 模块基本不工作，续航极其出色。</div></li>
+          <li><div class="bullet pro-bullet"></div><div><strong>设计目标聚焦</strong>：芯片明确为 WiFi 主力使用场景优化，打造顶级日常体验。</div></li>
+        </ul>
+      </div>
+      <div class="cons-list fade-in">
+        <div class="list-header"><div class="list-icon cons-icon">✗</div><div class="list-title">妥协带来的痛点</div></div>
+        <ul class="list-items">
+          <li><div class="bullet con-bullet"></div><div><strong>5G 续航断崖式下降</strong>：一开移动数据，外挂基带功耗飙升，续航从"战神"秒变"焦虑制造机"。</div></li>
+          <li><div class="bullet con-bullet"></div><div><strong>GPU 性能未完全释放</strong>：缺少 SLC 作为 GPU 高速缓存层，图形跑分不敌同代天玑 9400。</div></li>
+          <li><div class="bullet con-bullet"></div><div><strong>"偏科生"属性明显</strong>：针对特定场景优化到极致，但并非全能水桶。</div></li>
+          <li><div class="bullet con-bullet"></div><div><strong>长期结构风险</strong>：外挂基带集成度低，不利于做薄机身和进一步功耗控制。</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote-box fade-in" style="text-align:center;font-size:15px;padding:22px;margin-top:32px">
+      <strong>WiFi = 续航战神，5G = 电量焦虑制造机。</strong><br>使用玄戒 O1 设备的朋友请牢记这个公式。
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 搭载设备 ===== -->
+<div class="sticky-title">玄戒 · 搭载设备</div>
+<section id="devices">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">搭载设备</div>
+      <h2>自产自销：小米的"战略性亏损"</h2>
+      <p>这颗芯片目前只搭载在小米自家少量高端设备上。</p>
+    </div>
+    <div class="devices-grid fade-in">
+      <a href="xiaomi15spro.html" class="device-card">
+        <div class="device-image">📱</div>
+        <div class="device-info"><div class="device-name">小米 15S Pro →</div><div class="device-price">起售价 ¥5499</div><div class="device-desc">首发旗舰。使用体验与骁龙 8 至尊版机型"没有分别"。</div></div>
+      </a>
+      <a href="xiaomi-pad7-ultra.html" class="device-card">
+        <div class="device-image">💻</div>
+        <div class="device-info"><div class="device-name">小米平板 7 Ultra →</div><div class="device-price">搭载降频版玄戒 O1（3.7GHz）</div><div class="device-desc">降频版在平板上运行，证明了架构的灵活性。</div></div>
+      </a>
+      <div class="device-card" style="cursor:default">
+        <div class="device-image">⌚</div>
+        <div class="device-info"><div class="device-name">Redmi Watch 5</div><div class="device-price">搭载玄戒 T1 手表芯片</div><div class="device-desc">展示了小米自研芯片向生态设备扩展的能力。</div></div>
+      </div>
+    </div>
+    <div class="tldr-box fade-in" style="margin-top:40px">
+      <h3>为什么说它"亏本在卖"？</h3>
+      <p><strong>1. 研发成本是天文数字：</strong>累计投入超 135 亿元，当年预算超 60 亿。<br><strong>2. 初期出货量有限：</strong>百万颗级别的规模，无法拿到最优代工价格。<br><strong>3. 定价却非常克制：</strong>小米 15S Pro 定价 5499 元起，没有因为"自研"就大幅溢价。<br>这更像是一场<strong>技术投资</strong>和<strong>生态入场券</strong>。</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 未来展望 ===== -->
+<div class="sticky-title">玄戒 · 未来展望</div>
+<section id="future">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">未来展望</div>
+      <h2>从"手机芯片"到"生态神经中枢"</h2>
+      <p>玄戒 O1 只是起点。它的真正使命，是成为小米"人车家"全生态的统一算力底座。</p>
+    </div>
+    <ul class="feat-list fade-in">
+      <li><span class="feat-tag tag-str">上车</span><strong>小米汽车的"最强大脑"</strong> — 未来小米汽车的智能座舱，很可能搭载基于玄戒架构的车规级芯片。</li>
+      <li><span class="feat-tag tag-str">进家</span><strong>IoT 设备的统一指挥官</strong> — 小米澎湃 OS 已支持 354 个芯片平台。玄戒芯片未来可下放到中端手机、高端路由器乃至智能家居中枢。</li>
+      <li><span class="feat-tag tag-str">迭代</span><strong>不追年更，但求突破</strong> — 小米已明确不会像苹果那样每年迭代 SoC，每一代都会追求实质性飞跃。</li>
+      <li><span class="feat-tag tag-str">自主</span><strong>供应链自主：终极目标</strong> — 当前依赖台积电代工和联发科基带。长远看，小米的终极目标是从设计到制造实现完全自主。</li>
+    </ul>
+    <div class="verdict-card fade-in">
+      <h4>💡 最终宣判</h4>
+      <p>玄戒 O1 是一颗"偏科"的优等生：5G 续航是硬伤，GPU 性能有短板。但在决定日常体验的低频能效上，它做到了行业顶尖，甚至超越了同期的国际巨头。它代表的，是中国科技企业向核心技术高地发起的又一次冲锋。这颗"逆天"与"无奈"并存的芯片，值得掌声与耐心。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>玄戒 O1 深度拆解 · 2025 · "技术为本，不断向前"——这句话，从未像今天这样具体</p>
+</footer>
+
+<button class="fab-top" id="fabTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<nav class="mobile-bottom-nav">
+  <div class="mbn-inner">
+    <a href="snapdragon.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>骁龙</a>
+    <a href="dimensity.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>天玑</a>
+    <a href="apple.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="3"/><circle cx="12" cy="18" r="1"/></svg>苹果</a>
+    <a href="samsung.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>三星</a>
+    <a href="xuanjie.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/></svg>玄戒</a>
+  </div>
+</nav>
+
+<div id="egg-popup"></div>
+
+<script>
+const scrollBar=document.getElementById('scrollBar');
+const chapterFill=document.getElementById('chapterFill');
+window.addEventListener('scroll',()=>{const h=document.documentElement;const pct=h.scrollTop/(h.scrollHeight-h.clientHeight);scrollBar.style.width=pct*100+'%';if(chapterFill)chapterFill.style.width=pct*100+'%'});
+
+const obs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){i.target.classList.add('visible');obs.unobserve(i.target)}})},{threshold:.08});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+const cacheObs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){const bars=i.target.querySelectorAll('.cache-bar-fill');bars.forEach(b=>{if(b.dataset.width)b.style.width=b.dataset.width});cacheObs.unobserve(i.target)}})},{threshold:.3});
+document.querySelectorAll('.cache-section').forEach(s=>cacheObs.observe(s));
+
+const sections=document.querySelectorAll('section[id]'),navDots=document.querySelectorAll('.nav-dot');
+window.addEventListener('scroll',()=>{let c='';sections.forEach(s=>{if(scrollY>=s.offsetTop-200)c=s.getAttribute('id')});navDots.forEach(d=>{d.classList.remove('active');if(d.dataset.section===c)d.classList.add('active')})});
+navDots.forEach(d=>{d.addEventListener('click',()=>{const s=document.getElementById(d.dataset.section);if(s)s.scrollIntoView({behavior:'smooth'})})});
+
+const fabTop=document.getElementById('fabTop');
+window.addEventListener('scroll',()=>{fabTop.classList.toggle('show',window.scrollY>500)});
+
+document.querySelectorAll('.chip-card').forEach(card=>{card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')})});
+
+(function(){const c=document.getElementById('heroParticles');if(!c)return;const isMobile=window.innerWidth<769;const count=isMobile?10:20;for(let i=0;i<count;i++){const p=document.createElement('div');p.className='hero-particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*8+'s';p.style.animationDuration=(6+Math.random()*6)+'s';p.style.width=p.style.height=(isMobile?'2':'3')+'px';p.style.background=['var(--accent)','var(--accent-light)','var(--accent-green)'][Math.floor(Math.random()*3)];c.appendChild(p)}})();
+
+const eggs=["小米造芯十年，换来了全球第四家 3nm","WiFi 战神，5G 焦虑制造机","砍掉 SLC 换来逆天续航——这买卖值吗？","135 亿研发投入，定价 5499 只为交个朋友","澎湃 S1 翻车 → 玄戒 O1 封神，十年磨一芯","外挂基带：薄不了的机身，焦虑不完的电量"];
+let eggT;function showEgg(){const el=document.getElementById('egg-popup');el.textContent=eggs[Math.floor(Math.random()*eggs.length)];el.classList.add('show');clearTimeout(eggT);eggT=setTimeout(()=>el.classList.remove('show'),5000)}
+setTimeout(showEgg,8000);setInterval(showEgg,45000+Math.random()*25000);
+</script>
+</body>
+</html>
