@@ -200,9 +200,6 @@ nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
 .disclaimer h4{font-family:'DM Mono',monospace;font-size:14px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
 .disclaimer p{font-size:15px;color:var(--text);line-height:1.8;max-width:640px;margin:0 auto;}
 .disclaimer p strong{color:var(--accent);}
-footer{padding:48px 0;text-align:center;border-top:1px solid transparent;margin-top:80px;background:#050505;}
-footer::before{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);margin-bottom:48px;}
-footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:.1em;}
 .divider{height:2px;background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,0.04) 50%,transparent 95%);margin:0;}
 .ripple{position:absolute;border-radius:50%;background:rgba(255,105,0,0.15);transform:scale(0);animation:rippleAnim 0.6s ease-out forwards;pointer-events:none;z-index:5;}
 @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
@@ -225,52 +222,62 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
 .section-toggle.open .toggle-arrow{transform:rotate(180deg);}
 .section-toggle span{font-family:'Noto Sans SC',sans-serif;font-weight:900;font-size:clamp(24px,6vw,36px);}
 @media(max-width:600px){
+  /* === 布局 === */
   .section-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 0;}
   .section h2.desktop-only{display:none;}
-  .section-collapsible{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s var(--spring),opacity .3s var(--spring);}
+  .section-collapsible{max-height:0;overflow:hidden;opacity:0;transition:max-height .3s ease,opacity .2s ease;}
   .section-collapsible.open{max-height:9999px;opacity:1;}
-  .hero{padding:120px 0 60px;}.hero h1{font-size:clamp(28px,8vw,44px);}
-  .section{padding:60px 0;}.section h2{font-size:clamp(24px,6vw,36px);}
+  .hero{padding:80px 0 48px;}.hero h1{font-size:clamp(28px,8vw,44px);}
+  .section{padding:48px 0;}.section h2{font-size:clamp(24px,6vw,36px);}
   .phone-card{padding:24px 20px 20px;}.phone-card .card-specs{grid-template-columns:1fr;}
   .verdict-banner{padding:20px;flex-direction:column;gap:12px;}
   .pc-card{padding:24px;}.cam-card{padding:20px 16px;}
   .final{padding:40px 24px;}.rec-card{padding:24px 20px;}
-  .section-desc{font-size:14px;}.hero-sub{font-size:15px;}
-  .back-top{bottom:72px;}
+  .section-desc{font-size:14px;margin-bottom:32px;}.hero-sub{font-size:15px;}
 
-  /* 隐藏顶部导航和进度条 */
+  /* === 隐藏导航和进度 === */
   nav{display:none !important;}
   #progress{display:none !important;}
   #progress-pill{display:none !important;}
 
-  /* 移除所有移动端视觉特效 */
-  body::before, body::after, .hero-glass{display:none !important;}
-  .hero-sidebar .s-char{animation:none !important;filter:none !important;text-shadow:none !important;-webkit-text-stroke:none !important;opacity:.35;}
-  .hero-sidebar .char-col::before{display:none !important;}
-  .hero-sidebar .char-col::after{animation:none !important;opacity:.15;}
+  /* === 移除全部 backdrop-filter（最大性能瓶颈） === */
+  .phone-card,.pc-card,.verdict-banner,.cam-compare-card,.cam-card,.rec-card,.back-top,.phone-card.best .card-badge{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
 
-  /* fade-in 强制可见 */
+  /* === 实体背景替换毛玻璃 === */
+  .phone-card,.pc-card,.cam-card,.rec-card,.cam-compare-card{background:var(--surface2) !important;}
+  .verdict-banner{background:rgba(20,20,24,0.95) !important;}
+
+  /* === 简化阴影为单层 === */
+  .phone-card,.pc-card,.cam-card,.rec-card{box-shadow:0 2px 12px rgba(0,0,0,0.3) !important;}
+
+  /* === 移除伪元素装饰 === */
+  body::before,body::after,.hero-glass,.phone-card::before,.phone-card::after,.pc-card::before,.pc-card::after,.verdict-banner::before,.rec-card::before,.final::before,.final::after,.disclaimer::before{display:none !important;}
+
+  /* === 移除 hero sidebar 动画 === */
+  .hero-sidebar .s-char{animation:none !important;filter:none !important;text-shadow:none !important;-webkit-text-stroke:none !important;opacity:.25;}
+  .hero-sidebar .char-col::before,.hero-sidebar .char-col::after{display:none !important;}
+
+  /* === 内容立即可见（不依赖 JS observer） === */
   .fade-in{opacity:1 !important;transform:none !important;transition:none !important;}
+  .phone-card,.pc-card,.cam-card,.rec-card{opacity:1 !important;transform:none !important;}
 
-  /* 移除所有 backdrop-filter */
-  .mobile-tabbar, .back-top,
-  .phone-card, .phone-card.best .card-badge,
-  .pc-card, .verdict-banner, .cam-compare-card,
-  .cam-card, .rec-card{
-    backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-  }
+  /* === 移除所有 hover 效果和复杂 transition === */
+  .phone-card,.pc-card,.cam-card,.rec-card,.verdict-banner,.cam-compare-card,.spec-item,.back-top{transition:none !important;}
+  .phone-card:hover,.rec-card:hover,.cam-card:hover,.pc-card:hover,.cam-compare-card:hover,.verdict-banner:hover,.spec-item:hover{transform:none !important;box-shadow:0 2px 12px rgba(0,0,0,0.3) !important;}
 
-  /* 移除 hover 变换 */
-  .phone-card:hover, .rec-card:hover, .cam-card:hover, .pc-card:hover,
-  .cam-compare-card:hover, .verdict-banner:hover{transform:none !important;}
+  /* === CSS :active 触摸反馈（零 JS 开销） === */
+  .phone-card:active,.rec-card:active,.cam-card:active,.pc-card:active{opacity:0.75 !important;}
 
-  /* 移除卡片入场动画 */
-  .phone-card, .pc-card, .cam-card, .rec-card{
-    opacity:1 !important;transform:none !important;
-  }
-
-  /* 移除 icon 浮动动画 */
+  /* === 移除装饰动画 === */
   .rec-icon{animation:none !important;}
+  .disclaimer{animation:none !important;}
+  .section.flash{animation:none !important;}
+
+  /* === 返回顶部按钮 === */
+  .back-top{background:var(--surface2) !important;border:1px solid var(--border);width:48px;height:48px;bottom:24px;font-size:20px;}
+
+  /* === 滚动优化 === */
+  html{overscroll-behavior-y:contain;}
 }
 </style>
 </head>
@@ -324,30 +331,10 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
     <h2 class="desktop-only section-collapsible open">小米的优势与短板</h2>
     <p class="section-desc section-collapsible open">不吹不黑，只看实际体验。</p>
     <div class="proscons-grid section-collapsible open">
-      <div class="pc-card pros">
-        <h3>优势</h3>
-        <ul class="pc-list">
-          <li><strong>生态联动强大</strong>，手机、平板、笔记本、智能家居跨设备协同无缝</li>
-          <li><strong>性价比极高</strong>，同价位配置领先对手一个身位</li>
-          <li><strong>影像能力出色</strong>，旗舰机型拍照表现优秀，色彩讨喜</li>
-          <li><strong>颜值和质感大幅提升</strong>，设计语言成熟，做工精致</li>
-          <li><strong>系统经过多年打磨</strong>，HyperOS 流畅性和审美已经非常好，不输任何对手</li>
-        </ul>
-      </div>
-      <div class="pc-card cons">
-        <h3>短板</h3>
-        <ul class="pc-list">
-          <li>小米系列<strong>性能调校偏保守</strong>，游戏持续输出不如红米同档</li>
-          <li>红米系列<strong>等级分明</strong>，不同定位差距大，选购需仔细辨别</li>
-          <li><strong>系统稳定性仍有提升空间</strong>，偶有小 bug 和适配问题</li>
-          <li>部分场景<strong>会断流</strong>，网络稳定性有待改善</li>
-        </ul>
-      </div>
+      <div class="pc-card pros"><h3>优势</h3><ul class="pc-list"><li><strong>生态联动强大</strong>，手机、平板、笔记本、智能家居跨设备协同无缝</li><li><strong>性价比极高</strong>，同价位配置领先对手一个身位</li><li><strong>影像能力出色</strong>，旗舰机型拍照表现优秀，色彩讨喜</li><li><strong>颜值和质感大幅提升</strong>，设计语言成熟，做工精致</li><li><strong>系统经过多年打磨</strong>，HyperOS 流畅性和审美已经非常好，不输任何对手</li></ul></div>
+      <div class="pc-card cons"><h3>短板</h3><ul class="pc-list"><li>小米系列<strong>性能调校偏保守</strong>，游戏持续输出不如红米同档</li><li>红米系列<strong>等级分明</strong>，不同定位差距大，选购需仔细辨别</li><li><strong>系统稳定性仍有提升空间</strong>，偶有小 bug 和适配问题</li><li>部分场景<strong>会断流</strong>，网络稳定性有待改善</li></ul></div>
     </div>
-    <div class="verdict-banner section-collapsible open">
-      <div class="verdict-icon">💡</div>
-      <div class="verdict-text"><strong>结论：小米卖的是生态和性价比。</strong><br>影像实力不俗，颜值质感在线，系统已经脱胎换骨。但不同系列定位差异很大，想清楚你到底需要什么，再做决定。</div>
-    </div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">💡</div><div class="verdict-text"><strong>结论：小米卖的是生态和性价比。</strong><br>影像实力不俗，颜值质感在线，系统已经脱胎换骨。但不同系列定位差异很大，想清楚你到底需要什么，再做决定。</div></div>
   </div>
 </section>
 
@@ -362,102 +349,11 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
     <p class="section-desc section-collapsible open">全系搭载第五代骁龙8至尊版，定位清晰，各有侧重。</p>
     <div class="warn-box section-collapsible open" style="margin-bottom:24px;max-width:600px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>小米 17 全系超广角很弱。</strong>标准版/Pro/Pro Max/Max 均为 1/2.88" 小底，变焦最多 0.7 倍且成像质量非常差。Ultra 为 1/2.76"，变焦最多 0.6 倍，依然偏弱。对超广角有需求请注意。</span></div>
     <div class="phone-grid section-collapsible open">
-
-      <div class="phone-card best">
-        <div class="card-badge">最推荐小屏</div>
-        <div class="card-rank">小屏旗舰 · 综合最好</div>
-        <h3>小米 17</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 1.5K</div>
-        <div class="card-desc">目前综合最好的小屏旗舰。主摄光影猎人950，<strong>1/1.31"大底</strong>，续航好，最均衡没有明显短板。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.3" · 1.5K</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">光影950 · 1/1.31"</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value">JN5 · 1/2.75" · 60mm f/2.0</div></div>
-          <div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">10cm</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7000mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="78"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-          <div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value">无</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card">
-        <div class="card-rank">小屏 · 背屏 · 影像升级</div>
-        <h3>小米 17 Pro</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 1.5K · 有背屏</div>
-        <div class="card-desc">核心卖点是<strong>背屏</strong>和<strong>LOFIC主摄</strong>。950L，1/1.28"超大底，16.5EV动态范围。首次在小直屏上搭载5倍潜望长焦。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.3" · 1.5K</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-accent">950L · 1/1.28" · LOFIC</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value">JN5 · 1/2.75" · 115mm f/3.0</div></div>
-          <div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">20cm</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-bad">6300mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="70"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-          <div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value td-good">有</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card best">
-        <div class="card-badge">小米完全体</div>
-        <div class="card-rank">旗舰版 · 全方位升级</div>
-        <h3>小米 17 Pro Max</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素 · 有背屏</div>
-        <div class="card-desc">Pro的全方位升级。主摄同Pro(1/1.28" 950L)，<strong>长焦底升级为1/2"(GN8)</strong>，f/2.6大光圈，进光量提升30%，30cm长焦微距。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-accent">950L · 1/1.28" · LOFIC</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-good">GN8 · 1/2" · 115mm f/2.6</div></div>
-          <div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">30cm</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7500mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="83"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-          <div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value td-good">有</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card">
-        <div class="card-rank">大屏无背屏 · 全焦段徕卡三摄</div>
-        <h3>小米 17 Max</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素 · 无背屏</div>
-        <div class="card-desc">适合<strong>喜欢大屏的用户</strong>。与Pro Max同款超级像素屏。首款徕卡2亿像素主摄，1/1.4"大底。1/2"大底潜望长焦，15cm微距。8000mAh小米系列最强续航。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">三星HP9 · 2亿 · 1/1.4" · f/1.65</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-good">IMX882 · 1/2" · 3x · 6x无损</div></div>
-          <div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">15cm</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value gold">8000mAh · 小米系列最强</div><div class="battery-bar"><div class="battery-fill" data-battery="100"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-          <div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value">无</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card best" style="grid-column:1/-1;">
-        <div class="card-badge">终极旗舰 · 最推荐徕卡版</div>
-        <div class="card-rank">Ultra · 真光学变焦 · 无损变焦</div>
-        <h3>小米 17 Ultra</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素</div>
-        <div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>3.2-4.3倍真光学变焦，真正的无损变焦。</strong>2亿像素1/1.4"超大底长焦，影像实力断层领先。</span></div>
-        <div class="info-box" style="background:rgba(255,105,0,0.08);border-color:rgba(255,105,0,0.2);color:var(--accent);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>最推荐徕卡版。</strong>拥有徕卡可乐标和物理变焦环，更好的徕卡算法和滤镜，非常出片，堪称当今顶级影像旗舰。</span></div>
-        <div class="card-desc">小米17系列的<strong>终极影像旗舰</strong>。主摄光影猎人1050L，<strong>1英寸超大底</strong>，f/1.67大光圈，<strong>LOFIC高动态技术</strong>。长焦是最大亮点：2亿像素，1/1.4"超大底传感器，f/2.39-2.96大光圈，<strong>3.2-4.3倍真光学变焦</strong>，做到真正的无损变焦。30cm长焦微距。<strong>徕卡版</strong>额外拥有徕卡可乐标、物理变焦环、更好的徕卡算法和滤镜，极其出片。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">光影1050L · 1英寸 · f/1.67 · LOFIC</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value gold">2亿 · 1/1.4" · f/2.39-2.96</div></div>
-          <div class="spec-item"><div class="spec-label">变焦</div><div class="spec-value gold">3.2-4.3x 真光学 · 无损</div></div>
-          <div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">30cm</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value">6800mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="76"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-        </div>
-        <div class="card-specs" style="margin-top:14px;grid-template-columns:1fr 1fr 1fr;">
-          <div class="spec-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="spec-label">徕卡可乐标</div><div class="spec-value td-accent">徕卡版有</div></div>
-          <div class="spec-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="spec-label">物理变焦环</div><div class="spec-value td-accent">徕卡版有</div></div>
-          <div class="spec-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="spec-label">徕卡算法滤镜</div><div class="spec-value td-accent">徕卡版更好</div></div>
-        </div>
-      </div>
-
+      <div class="phone-card best"><div class="card-badge">最推荐小屏</div><div class="card-rank">小屏旗舰 · 综合最好</div><h3>小米 17</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 1.5K</div><div class="card-desc">目前综合最好的小屏旗舰。主摄光影猎人950，<strong>1/1.31"大底</strong>，续航好，最均衡没有明显短板。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.3" · 1.5K</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">光影950 · 1/1.31"</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value">JN5 · 1/2.75" · 60mm f/2.0</div></div><div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">10cm</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7000mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="78"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div><div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value">无</div></div></div></div>
+      <div class="phone-card"><div class="card-rank">小屏 · 背屏 · 影像升级</div><h3>小米 17 Pro</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 1.5K · 有背屏</div><div class="card-desc">核心卖点是<strong>背屏</strong>和<strong>LOFIC主摄</strong>。950L，1/1.28"超大底，16.5EV动态范围。首次在小直屏上搭载5倍潜望长焦。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.3" · 1.5K</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-accent">950L · 1/1.28" · LOFIC</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value">JN5 · 1/2.75" · 115mm f/3.0</div></div><div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">20cm</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-bad">6300mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="70"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div><div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value td-good">有</div></div></div></div>
+      <div class="phone-card best"><div class="card-badge">小米完全体</div><div class="card-rank">旗舰版 · 全方位升级</div><h3>小米 17 Pro Max</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素 · 有背屏</div><div class="card-desc">Pro的全方位升级。主摄同Pro(1/1.28" 950L)，<strong>长焦底升级为1/2"(GN8)</strong>，f/2.6大光圈，进光量提升30%，30cm长焦微距。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-accent">950L · 1/1.28" · LOFIC</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-good">GN8 · 1/2" · 115mm f/2.6</div></div><div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">30cm</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7500mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="83"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div><div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value td-good">有</div></div></div></div>
+      <div class="phone-card"><div class="card-rank">大屏无背屏 · 全焦段徕卡三摄</div><h3>小米 17 Max</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素 · 无背屏</div><div class="card-desc">适合<strong>喜欢大屏的用户</strong>。与Pro Max同款超级像素屏。首款徕卡2亿像素主摄，1/1.4"大底。1/2"大底潜望长焦，15cm微距。8000mAh小米系列最强续航。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">三星HP9 · 2亿 · 1/1.4" · f/1.65</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-good">IMX882 · 1/2" · 3x · 6x无损</div></div><div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">15cm</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value gold">8000mAh · 小米系列最强</div><div class="battery-bar"><div class="battery-fill" data-battery="100"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div><div class="spec-item"><div class="spec-label">背屏</div><div class="spec-value">无</div></div></div></div>
+      <div class="phone-card best" style="grid-column:1/-1;"><div class="card-badge">终极旗舰 · 最推荐徕卡版</div><div class="card-rank">Ultra · 真光学变焦 · 无损变焦</div><h3>小米 17 Ultra</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素</div><div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>3.2-4.3倍真光学变焦，真正的无损变焦。</strong>2亿像素1/1.4"超大底长焦，影像实力断层领先。</span></div><div class="info-box" style="background:rgba(255,105,0,0.08);border-color:rgba(255,105,0,0.2);color:var(--accent);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>最推荐徕卡版。</strong>拥有徕卡可乐标和物理变焦环，更好的徕卡算法和滤镜，非常出片，堪称当今顶级影像旗舰。</span></div><div class="card-desc">小米17系列的<strong>终极影像旗舰</strong>。主摄光影猎人1050L，<strong>1英寸超大底</strong>，f/1.67大光圈，<strong>LOFIC高动态技术</strong>。长焦是最大亮点：2亿像素，1/1.4"超大底传感器，f/2.39-2.96大光圈，<strong>3.2-4.3倍真光学变焦</strong>，做到真正的无损变焦。30cm长焦微距。<strong>徕卡版</strong>额外拥有徕卡可乐标、物理变焦环、更好的徕卡算法和滤镜，极其出片。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">第五代骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">光影1050L · 1英寸 · f/1.67 · LOFIC</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value gold">2亿 · 1/1.4" · f/2.39-2.96</div></div><div class="spec-item"><div class="spec-label">变焦</div><div class="spec-value gold">3.2-4.3x 真光学 · 无损</div></div><div class="spec-item"><div class="spec-label">长焦微距</div><div class="spec-value">30cm</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value">6800mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="76"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div></div><div class="card-specs" style="margin-top:14px;grid-template-columns:1fr 1fr 1fr;"><div class="spec-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="spec-label">徕卡可乐标</div><div class="spec-value td-accent">徕卡版有</div></div><div class="spec-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="spec-label">物理变焦环</div><div class="spec-value td-accent">徕卡版有</div></div><div class="spec-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="spec-label">徕卡算法滤镜</div><div class="spec-value td-accent">徕卡版更好</div></div></div></div>
     </div>
   </div>
 </section>
@@ -471,120 +367,21 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
     <div class="section-toggle" onclick="toggleSection(this)"><span>小米 17 系列影像对比</span><span class="toggle-arrow">▼</span></div>
     <h2 class="desktop-only section-collapsible open">小米 17 系列影像对比</h2>
     <p class="section-desc section-collapsible open">纯影像角度，只看传感器、光圈、焦段、微距。</p>
-
-    <div class="cam-compare section-collapsible open">
-      <div class="cam-compare-grid">
-        <div class="cam-compare-card cc-best">
-          <div class="cc-head">01</div>
-          <h4>小米 17</h4>
-          <div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">光影950 · 1/1.31"</span></div>
-          <div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r">f/1.67</span></div>
-          <div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r">JN5 1/2.75" 60mm f/2.0</span></div>
-          <div class="cc-row"><span class="cc-l">微距</span><span class="cc-r">10cm</span></div>
-          <div class="cc-row"><span class="cc-l">动态范围</span><span class="cc-r good">13.5EV</span></div>
-          <div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div>
-        </div>
-        <div class="cam-compare-card cc-best">
-          <div class="cc-head">02</div>
-          <h4>小米 17 Pro</h4>
-          <div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">950L · 1/1.28" · LOFIC</span></div>
-          <div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.67</span></div>
-          <div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r good">JN5 1/2.75" 115mm f/3.0</span></div>
-          <div class="cc-row"><span class="cc-l">微距</span><span class="cc-r good">20cm</span></div>
-          <div class="cc-row"><span class="cc-l">动态范围</span><span class="cc-r good">16.5EV 逆光之王</span></div>
-          <div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div>
-        </div>
-        <div class="cam-compare-card cc-best">
-          <div class="cc-head">03</div>
-          <h4>17 Pro Max</h4>
-          <div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">950L · 1/1.28" · LOFIC</span></div>
-          <div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.67</span></div>
-          <div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r good">GN8 1/2" 115mm f/2.6</span></div>
-          <div class="cc-row"><span class="cc-l">微距</span><span class="cc-r good">30cm</span></div>
-          <div class="cc-row"><span class="cc-l">动态范围</span><span class="cc-r good">16.5EV 逆光之王</span></div>
-          <div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div>
-        </div>
-        <div class="cam-compare-card">
-          <div class="cc-head">04</div>
-          <h4>小米 17 Max</h4>
-          <div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">HP9 · 2亿 · 1/1.4"</span></div>
-          <div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.65</span></div>
-          <div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r good">IMX882 1/2" 3x 6x无损</span></div>
-          <div class="cc-row"><span class="cc-l">微距</span><span class="cc-r">15cm</span></div>
-          <div class="cc-row"><span class="cc-l">特色</span><span class="cc-r good">2亿多帧融合</span></div>
-          <div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div>
-        </div>
-        <div class="cam-compare-card cc-best">
-          <div class="cc-head">05</div>
-          <h4>小米 17 Ultra</h4>
-          <div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">1050L · 1英寸 · LOFIC</span></div>
-          <div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.67</span></div>
-          <div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r accent">2亿 1/1.4" 3.2-4.3x真光</span></div>
-          <div class="cc-row"><span class="cc-l">微距</span><span class="cc-r good">30cm</span></div>
-          <div class="cc-row"><span class="cc-l">徕卡版</span><span class="cc-r accent">可乐标+变焦环</span></div>
-          <div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.76" · 0.6x · 偏弱</span></div>
-        </div>
-      </div>
-    </div>
-
+    <div class="cam-compare section-collapsible open"><div class="cam-compare-grid">
+      <div class="cam-compare-card cc-best"><div class="cc-head">01</div><h4>小米 17</h4><div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">光影950 · 1/1.31"</span></div><div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r">f/1.67</span></div><div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r">JN5 1/2.75" 60mm f/2.0</span></div><div class="cc-row"><span class="cc-l">微距</span><span class="cc-r">10cm</span></div><div class="cc-row"><span class="cc-l">动态范围</span><span class="cc-r good">13.5EV</span></div><div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div></div>
+      <div class="cam-compare-card cc-best"><div class="cc-head">02</div><h4>小米 17 Pro</h4><div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">950L · 1/1.28" · LOFIC</span></div><div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.67</span></div><div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r good">JN5 1/2.75" 115mm f/3.0</span></div><div class="cc-row"><span class="cc-l">微距</span><span class="cc-r good">20cm</span></div><div class="cc-row"><span class="cc-l">动态范围</span><span class="cc-r good">16.5EV 逆光之王</span></div><div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div></div>
+      <div class="cam-compare-card cc-best"><div class="cc-head">03</div><h4>17 Pro Max</h4><div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">950L · 1/1.28" · LOFIC</span></div><div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.67</span></div><div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r good">GN8 1/2" 115mm f/2.6</span></div><div class="cc-row"><span class="cc-l">微距</span><span class="cc-r good">30cm</span></div><div class="cc-row"><span class="cc-l">动态范围</span><span class="cc-r good">16.5EV 逆光之王</span></div><div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div></div>
+      <div class="cam-compare-card"><div class="cc-head">04</div><h4>小米 17 Max</h4><div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">HP9 · 2亿 · 1/1.4"</span></div><div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.65</span></div><div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r good">IMX882 1/2" 3x 6x无损</span></div><div class="cc-row"><span class="cc-l">微距</span><span class="cc-r">15cm</span></div><div class="cc-row"><span class="cc-l">特色</span><span class="cc-r good">2亿多帧融合</span></div><div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.88" · 0.7x · 很差</span></div></div>
+      <div class="cam-compare-card cc-best"><div class="cc-head">05</div><h4>小米 17 Ultra</h4><div class="cc-row"><span class="cc-l">主摄</span><span class="cc-r good">1050L · 1英寸 · LOFIC</span></div><div class="cc-row"><span class="cc-l">光圈</span><span class="cc-r good">f/1.67</span></div><div class="cc-row"><span class="cc-l">长焦</span><span class="cc-r accent">2亿 1/1.4" 3.2-4.3x真光</span></div><div class="cc-row"><span class="cc-l">微距</span><span class="cc-r good">30cm</span></div><div class="cc-row"><span class="cc-l">徕卡版</span><span class="cc-r accent">可乐标+变焦环</span></div><div class="cc-row"><span class="cc-l">超广角</span><span class="cc-r bad">1/2.76" · 0.6x · 偏弱</span></div></div>
+    </div></div>
     <div class="cam-grid section-collapsible open">
-      <div class="cam-card">
-        <h4>小米 17</h4>
-        <div class="cam-sub">主摄光影950 · 1/1.31" · 长焦60mm · 10cm微距</div>
-        <div class="cam-lens">
-          <div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人950 · 1/1.31" · f/1.67</div><p><strong>1/1.31"大底</strong>，13.5EV动态范围。逐片镀膜1G+6P镜组，白天暗光都好。综合最均衡的影像方案。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">长焦 · JN5 · 1/2.75" · 60mm · f/2.0 · 10cm微距</div><p>60mm <strong>日常更实用</strong>，街拍人像美食都能覆盖。f/2.0大光圈，10cm长焦微距近拍能力强。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div>
-        </div>
-        <div class="cam-verdict good">主摄1/1.31" + 60mm日常焦段 + 10cm微距 —— 影像综合最均衡。</div>
-      </div>
-      <div class="cam-card">
-        <h4>小米 17 Pro</h4>
-        <div class="cam-sub">主摄光影950L · 1/1.28" · LOFIC · 长焦115mm · 20cm微距</div>
-        <div class="cam-lens">
-          <div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人950L · 1/1.28" · LOFIC</div><p>1/1.28"超大底，<strong>LOFIC第三代高动态技术</strong>，单帧直出16.5EV。逆光场景是"逆光之王"。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">长焦 · JN5 · 1/2.75" · 115mm · f/3.0 · 20cm微距</div><p>首次在小直屏上搭载<strong>5倍潜望长焦</strong>。115mm拍得远，远处抓拍月亮建筑。20cm微距可用。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div>
-        </div>
-        <div class="cam-verdict good">LOFIC 16.5EV逆光之王 + 1/1.28"最大底 + 5x潜望 —— 影像实力强劲。</div>
-      </div>
-      <div class="cam-card">
-        <h4>小米 17 Pro Max</h4>
-        <div class="cam-sub">主摄光影950L · 1/1.28" · LOFIC · 长焦GN8 · 1/2" · 30cm微距</div>
-        <div class="cam-lens">
-          <div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人950L · 1/1.28" · 与Pro完全相同</div><p>主摄与Pro<strong>完全相同</strong>。16.5EV动态范围，"逆光之王"。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">长焦 · GN8 · 1/2" · 115mm · f/2.6 · 30cm微距</div><p>长焦底升级为<strong>1/2"(GN8)</strong>，f/2.6大光圈，进光量比Pro高30%。30cm微距可拍花蕊昆虫。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div>
-        </div>
-        <div class="cam-verdict good">主摄同Pro + 长焦底1/2"更大进光量+30% + f/2.6 + 30cm微距 —— 影像天花板（非Ultra）。</div>
-      </div>
-      <div class="cam-card">
-        <h4>小米 17 Max</h4>
-        <div class="cam-sub">主摄HP9 · 2亿 · 1/1.4" · 长焦IMX882 · 1/2" · 15cm微距</div>
-        <div class="cam-lens">
-          <div class="cam-lens-item"><div class="lens-name">主摄 · 三星HP9 · 2亿像素 · 1/1.4" · f/1.65 · 金字塔镀膜</div><p>小米首款徕卡2亿像素主摄，<strong>1/1.4"大底</strong>。2亿模式多帧融合计算，保留超高解析力的同时大幅降噪。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">长焦 · IMX882 · 1/2" · 3x光学 · 6x无损 · 15cm微距</div><p>与Pro Max同款<strong>1/2"大底潜望长焦</strong>，3倍光学变焦，6倍光学级无损变焦。15cm微距特写，一镜多能。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div>
-        </div>
-        <div class="cam-verdict good">1/1.4"大底2亿主摄 + 1/2"大底潜望长焦 —— 全焦段徕卡，解析力强。</div>
-      </div>
-      <div class="cam-card" style="grid-column:1/-1;">
-        <h4>小米 17 Ultra · 终极影像旗舰</h4>
-        <div class="cam-sub">主摄光影1050L · 1英寸 · LOFIC · 长焦2亿 · 1/1.4" · 3.2-4.3x真光学变焦 · 30cm微距</div>
-        <div class="cam-lens">
-          <div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人1050L · 1英寸 · f/1.67 · LOFIC</div><p><strong>1英寸超大底传感器</strong>，f/1.67大光圈，<strong>LOFIC高动态技术</strong>。1050L是光影系列顶级传感器，进光量和动态范围全面领先。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">长焦 · 2亿像素 · 1/1.4"超大底 · f/2.39-2.96 · 3.2-4.3x真光学 · 30cm微距</div><p>长焦是Ultra的<strong>最大亮点</strong>。2亿像素，1/1.4"超大底传感器，f/2.39-2.96大光圈。<strong>3.2-4.3倍真光学变焦</strong>，做到真正的无损变焦，不是数码裁切。30cm长焦微距。</p></div>
-          <div class="cam-lens-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="lens-name">徕卡版专属 · 可乐标 · 物理变焦环 · 徕卡算法</div><p><strong>最推荐徕卡版。</strong>拥有徕卡可乐标和物理变焦环，手感极佳。更好的徕卡算法和滤镜加持，非常出片，堪称当今顶级影像旗舰。</p></div>
-          <div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.76" · 0.6x</div><p>Ultra超广角虽然底略大于其他型号，但<strong>1/2.76"依然偏弱</strong>，变焦最多0.6倍。超广角是全系共同短板。</p></div>
-        </div>
-        <div class="cam-verdict good">1英寸主摄 + LOFIC + 2亿1/1.4"长焦 + 真光学变焦无损 + 徕卡版可乐标/物理变焦环/徕卡算法 —— 影像断层领先，全系之王，最推荐徕卡版。</div>
-      </div>
+      <div class="cam-card"><h4>小米 17</h4><div class="cam-sub">主摄光影950 · 1/1.31" · 长焦60mm · 10cm微距</div><div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人950 · 1/1.31" · f/1.67</div><p><strong>1/1.31"大底</strong>，13.5EV动态范围。逐片镀膜1G+6P镜组，白天暗光都好。综合最均衡的影像方案。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · JN5 · 1/2.75" · 60mm · f/2.0 · 10cm微距</div><p>60mm <strong>日常更实用</strong>，街拍人像美食都能覆盖。f/2.0大光圈，10cm长焦微距近拍能力强。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div></div><div class="cam-verdict good">主摄1/1.31" + 60mm日常焦段 + 10cm微距 —— 影像综合最均衡。</div></div>
+      <div class="cam-card"><h4>小米 17 Pro</h4><div class="cam-sub">主摄光影950L · 1/1.28" · LOFIC · 长焦115mm · 20cm微距</div><div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人950L · 1/1.28" · LOFIC</div><p>1/1.28"超大底，<strong>LOFIC第三代高动态技术</strong>，单帧直出16.5EV。逆光场景是"逆光之王"。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · JN5 · 1/2.75" · 115mm · f/3.0 · 20cm微距</div><p>首次在小直屏上搭载<strong>5倍潜望长焦</strong>。115mm拍得远，远处抓拍月亮建筑。20cm微距可用。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div></div><div class="cam-verdict good">LOFIC 16.5EV逆光之王 + 1/1.28"最大底 + 5x潜望 —— 影像实力强劲。</div></div>
+      <div class="cam-card"><h4>小米 17 Pro Max</h4><div class="cam-sub">主摄光影950L · 1/1.28" · LOFIC · 长焦GN8 · 1/2" · 30cm微距</div><div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人950L · 1/1.28" · 与Pro完全相同</div><p>主摄与Pro<strong>完全相同</strong>。16.5EV动态范围，"逆光之王"。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · GN8 · 1/2" · 115mm · f/2.6 · 30cm微距</div><p>长焦底升级为<strong>1/2"(GN8)</strong>，f/2.6大光圈，进光量比Pro高30%。30cm微距可拍花蕊昆虫。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div></div><div class="cam-verdict good">主摄同Pro + 长焦底1/2"更大进光量+30% + f/2.6 + 30cm微距 —— 影像天花板（非Ultra）。</div></div>
+      <div class="cam-card"><h4>小米 17 Max</h4><div class="cam-sub">主摄HP9 · 2亿 · 1/1.4" · 长焦IMX882 · 1/2" · 15cm微距</div><div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 · 三星HP9 · 2亿像素 · 1/1.4" · f/1.65 · 金字塔镀膜</div><p>小米首款徕卡2亿像素主摄，<strong>1/1.4"大底</strong>。2亿模式多帧融合计算，保留超高解析力的同时大幅降噪。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · IMX882 · 1/2" · 3x光学 · 6x无损 · 15cm微距</div><p>与Pro Max同款<strong>1/2"大底潜望长焦</strong>，3倍光学变焦，6倍光学级无损变焦。15cm微距特写，一镜多能。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.88" · 0.7x</div><p><strong>超广角是全系短板。</strong>1/2.88"小底，变焦最多0.7倍，成像质量非常差，暗光下更明显。</p></div></div><div class="cam-verdict good">1/1.4"大底2亿主摄 + 1/2"大底潜望长焦 —— 全焦段徕卡，解析力强。</div></div>
+      <div class="cam-card" style="grid-column:1/-1;"><h4>小米 17 Ultra · 终极影像旗舰</h4><div class="cam-sub">主摄光影1050L · 1英寸 · LOFIC · 长焦2亿 · 1/1.4" · 3.2-4.3x真光学变焦 · 30cm微距</div><div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 · 光影猎人1050L · 1英寸 · f/1.67 · LOFIC</div><p><strong>1英寸超大底传感器</strong>，f/1.67大光圈，<strong>LOFIC高动态技术</strong>。1050L是光影系列顶级传感器，进光量和动态范围全面领先。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · 2亿像素 · 1/1.4"超大底 · f/2.39-2.96 · 3.2-4.3x真光学 · 30cm微距</div><p>长焦是Ultra的<strong>最大亮点</strong>。2亿像素，1/1.4"超大底传感器，f/2.39-2.96大光圈。<strong>3.2-4.3倍真光学变焦</strong>，做到真正的无损变焦，不是数码裁切。30cm长焦微距。</p></div><div class="cam-lens-item" style="border-color:rgba(255,105,0,0.12);background:rgba(255,105,0,0.04);"><div class="lens-name">徕卡版专属 · 可乐标 · 物理变焦环 · 徕卡算法</div><p><strong>最推荐徕卡版。</strong>拥有徕卡可乐标和物理变焦环，手感极佳。更好的徕卡算法和滤镜加持，非常出片，堪称当今顶级影像旗舰。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 · 1/2.76" · 0.6x</div><p>Ultra超广角虽然底略大于其他型号，但<strong>1/2.76"依然偏弱</strong>，变焦最多0.6倍。超广角是全系共同短板。</p></div></div><div class="cam-verdict good">1英寸主摄 + LOFIC + 2亿1/1.4"长焦 + 真光学变焦无损 + 徕卡版可乐标/物理变焦环/徕卡算法 —— 影像断层领先，全系之王，最推荐徕卡版。</div></div>
     </div>
-
-    <div class="verdict-banner section-collapsible open">
-      <div class="verdict-icon">📷</div>
-      <div class="verdict-text"><strong>影像选购建议：底面积是硬道理，焦段看需求。</strong><br>17主摄光影950·1/1.31"影像均衡；Pro的950L·1/1.28" + 16.5EV + 5x影像强劲；PM主摄同Pro + 长焦底1/2"更大f/2.6 + 30cm微距是天花板；Max首发徕卡2亿1/1.4" + 1/2"大底潜望，解析力强；<strong>Ultra是终极形态：1英寸主摄 + LOFIC + 2亿1/1.4"长焦 + 真光学变焦无损 + 徕卡版可乐标/物理变焦环/徕卡算法，影像断层领先，最推荐徕卡版。</strong><br><span style="color:var(--redmi);font-weight:600;">注意：小米 17 全系超广角很弱。标准版/Pro/Pro Max/Max 均为 1/2.88" 小底、最多 0.7 倍且成像质量非常差；Ultra 为 1/2.76"、最多 0.6 倍，依然偏弱。对超广角有需求请留意。</span></div>
-    </div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">📷</div><div class="verdict-text"><strong>影像选购建议：底面积是硬道理，焦段看需求。</strong><br>17主摄光影950·1/1.31"影像均衡；Pro的950L·1/1.28" + 16.5EV + 5x影像强劲；PM主摄同Pro + 长焦底1/2"更大f/2.6 + 30cm微距是天花板；Max首发徕卡2亿1/1.4" + 1/2"大底潜望，解析力强；<strong>Ultra是终极形态：1英寸主摄 + LOFIC + 2亿1/1.4"长焦 + 真光学变焦无损 + 徕卡版可乐标/物理变焦环/徕卡算法，影像断层领先，最推荐徕卡版。</strong><br><span style="color:var(--redmi);font-weight:600;">注意：小米 17 全系超广角很弱。标准版/Pro/Pro Max/Max 均为 1/2.88" 小底、最多 0.7 倍且成像质量非常差；Ultra 为 1/2.76"、最多 0.6 倍，依然偏弱。对超广角有需求请留意。</span></div></div>
   </div>
 </section>
 
@@ -598,92 +395,13 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
     <h2 class="desktop-only section-collapsible open">红米 K 系列四款机型</h2>
     <p class="section-desc section-collapsible open">红米 K 系列定位从综合旗舰到游戏性能机，跨度很大。</p>
     <div class="phone-grid section-collapsible open">
-
-      <div class="phone-card redmi-card best">
-        <div class="card-badge">最推荐</div>
-        <div class="card-rank">综合最强 · 当前最顶级</div>
-        <h3>K90 Pro Max</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素</div>
-        <div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>外放音质断层领先所有手机。</strong>BOSE 2.1声道三扬声器，影音体验目前最顶级。</span></div>
-        <div class="card-desc"><strong>目前所有手机中最顶级的一列。</strong>主摄与小米17同款光影猎人950，1/1.31"大底。K系列首款5倍潜望长焦。7560mAh金沙江电池。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value gold">第五代骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">光影950 · 1/1.31"</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-good">JN5 · 1/2.75" · 115mm · 5x</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7560mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="84"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-          <div class="spec-item"><div class="spec-label">外放</div><div class="spec-value gold">BOSE 2.1声道 断层领先</div></div>
-          <div class="spec-item"><div class="spec-label">推荐度</div><div class="spec-value gold">★★★★★ 最推荐</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card redmi-card">
-        <div class="card-rank">中屏质感 · 日用体验强</div>
-        <h3>K90</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.59 英寸 · 1.5K 超级像素</div>
-        <div class="warn-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>有长焦但无光学防抖，实际不好用。</strong>长焦端拍摄容易糊片。</span></div>
-        <div class="card-desc">6.59寸中屏质感手感强。1.5K超级像素。但<strong>游戏性能偏弱</strong>，长焦无OIS。<strong>日用需求高、游戏需求不高的用户也可以考虑。</strong></div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.59" · 1.5K 超级像素</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.55"</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">OV50M · 1/2.88" · 无OIS</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7100mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="79"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card redmi-card">
-        <div class="card-rank">游戏性能机 · 天玑 9500</div>
-        <h3>K90 Max</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 1.5K</div>
-        <div class="card-desc">定位比至尊版高，用<strong>天玑9500</strong>，比至尊版贵。有内置风扇。<strong>但天玑实际表现不如骁龙</strong>，很多情况下反而不如至尊版，不推荐优先选择。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.9" · 1.5K</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">天玑9500</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.55"</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">无</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">8550mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="95"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵 + 内置风扇</div></div>
-        </div>
-      </div>
-
-      <div class="phone-card redmi-card best">
-        <div class="card-badge">更推荐</div>
-        <div class="card-rank">游戏性能机 · 骁龙8至尊版</div>
-        <h3>K90 至尊版</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 1.5K</div>
-        <div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>虽是上一代处理器，但骁龙还是比天玑强太多。</strong>实际很多场景都优于Max，价格也更便宜。</span></div>
-        <div class="card-desc">骁龙8至尊版虽是上一代，但<strong>骁龙还是比天玑强太多</strong>，实际在游戏性能、能效比、发热控制等很多场景都优于Max。<strong>当前更推荐。</strong></div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.9" · 1.5K</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value td-good">骁龙8至尊版</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.55"</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">无</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">8550mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="95"></div></div></div>
-          <div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵 + 内置风扇</div></div>
-        </div>
-      </div>
-
+      <div class="phone-card redmi-card best"><div class="card-badge">最推荐</div><div class="card-rank">综合最强 · 当前最顶级</div><h3>K90 Pro Max</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 超级像素</div><div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>外放音质断层领先所有手机。</strong>BOSE 2.1声道三扬声器，影音体验目前最顶级。</span></div><div class="card-desc"><strong>目前所有手机中最顶级的一列。</strong>主摄与小米17同款光影猎人950，1/1.31"大底。K系列首款5倍潜望长焦。7560mAh金沙江电池。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value gold">6.9" · 超级像素</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value gold">第五代骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value td-good">光影950 · 1/1.31"</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-good">JN5 · 1/2.75" · 115mm · 5x</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7560mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="84"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div><div class="spec-item"><div class="spec-label">外放</div><div class="spec-value gold">BOSE 2.1声道 断层领先</div></div><div class="spec-item"><div class="spec-label">推荐度</div><div class="spec-value gold">★★★★★ 最推荐</div></div></div></div>
+      <div class="phone-card redmi-card"><div class="card-rank">中屏质感 · 日用体验强</div><h3>K90</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.59 英寸 · 1.5K 超级像素</div><div class="warn-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>有长焦但无光学防抖，实际不好用。</strong>长焦端拍摄容易糊片。</span></div><div class="card-desc">6.59寸中屏质感手感强。1.5K超级像素。但<strong>游戏性能偏弱</strong>，长焦无OIS。<strong>日用需求高、游戏需求不高的用户也可以考虑。</strong></div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.59" · 1.5K 超级像素</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.55"</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">OV50M · 1/2.88" · 无OIS</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">7100mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="79"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵</div></div></div></div>
+      <div class="phone-card redmi-card"><div class="card-rank">游戏性能机 · 天玑 9500</div><h3>K90 Max</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 1.5K</div><div class="card-desc">定位比至尊版高，用<strong>天玑9500</strong>，比至尊版贵。有内置风扇。<strong>但天玑实际表现不如骁龙</strong>，很多情况下反而不如至尊版，不推荐优先选择。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.9" · 1.5K</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">天玑9500</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.55"</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">无</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">8550mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="95"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵 + 内置风扇</div></div></div></div>
+      <div class="phone-card redmi-card best"><div class="card-badge">更推荐</div><div class="card-rank">游戏性能机 · 骁龙8至尊版</div><h3>K90 至尊版</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 1.5K</div><div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span><strong>虽是上一代处理器，但骁龙还是比天玑强太多。</strong>实际很多场景都优于Max，价格也更便宜。</span></div><div class="card-desc">骁龙8至尊版虽是上一代，但<strong>骁龙还是比天玑强太多</strong>，实际在游戏性能、能效比、发热控制等很多场景都优于Max。<strong>当前更推荐。</strong></div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.9" · 1.5K</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value td-good">骁龙8至尊版</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.55"</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">无</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value td-good">8550mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="95"></div></div></div><div class="spec-item"><div class="spec-label">散热</div><div class="spec-value">3D循环冷泵 + 内置风扇</div></div></div></div>
     </div>
-
-    <div class="vs-banner section-collapsible open">
-      <div class="vs-side recommended">
-        <h5>✓ 更推荐 · K90 至尊版</h5>
-        <p>骁龙8至尊版还是比天玑强太多。实际很多场景都优于Max，价格也更便宜。8550mAh电池。</p>
-      </div>
-      <div class="vs-divider">VS</div>
-      <div class="vs-side not-rec">
-        <h5>✕ 暂不优先 · K90 Max</h5>
-        <p>天玑9500虽是新一代，但实际表现不如上一代骁龙。同样8550mAh，体验反而不如至尊版。</p>
-      </div>
-    </div>
-
-    <div class="verdict-banner section-collapsible open">
-      <div class="verdict-icon">🎮</div>
-      <div class="verdict-text"><strong>K系列选购建议：综合最强选K90 Pro Max，游戏性价比选K90至尊版。</strong><br>K90 Pro Max是当前最顶级综合旗舰，7560mAh，外放音质断层领先。K90至尊版骁龙+内置风扇+8550mAh，很多场景都优于更贵的Max。</div>
-    </div>
+    <div class="vs-banner section-collapsible open"><div class="vs-side recommended"><h5>✓ 更推荐 · K90 至尊版</h5><p>骁龙8至尊版还是比天玑强太多。实际很多场景都优于Max，价格也更便宜。8550mAh电池。</p></div><div class="vs-divider">VS</div><div class="vs-side not-rec"><h5>✕ 暂不优先 · K90 Max</h5><p>天玑9500虽是新一代，但实际表现不如上一代骁龙。同样8550mAh，体验反而不如至尊版。</p></div></div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">🎮</div><div class="verdict-text"><strong>K系列选购建议：综合最强选K90 Pro Max，游戏性价比选K90至尊版。</strong><br>K90 Pro Max是当前最顶级综合旗舰，7560mAh，外放音质断层领先。K90至尊版骁龙+内置风扇+8550mAh，很多场景都优于更贵的Max。</div></div>
   </div>
 </section>
 
@@ -696,27 +414,8 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
     <div class="section-toggle" onclick="toggleSection(this)"><span>红米 Turbo 系列</span><span class="toggle-arrow">▼</span></div>
     <h2 class="desktop-only section-collapsible open">红米 Turbo 系列</h2>
     <p class="section-desc section-collapsible open">Turbo 5 和 Turbo 5 Max 现在价格差不了多少，只推荐 Turbo 5 Max。</p>
-    <div class="phone-grid section-collapsible open" style="grid-template-columns:1fr;">
-      <div class="phone-card redmi-card best">
-        <div class="card-badge">只推荐这款</div>
-        <div class="card-rank">Turbo 系列 · 性价比之选</div>
-        <h3>红米 Turbo 5 Max</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.83 英寸 · 1.5K</div>
-        <div class="card-desc">Turbo 5 和 Turbo 5 Max 价格差不了多少，<strong>只推荐 Turbo 5 Max</strong>。日常使用体验好，性能够用，续航扎实，是预算有限时的最佳选择。</div>
-        <div class="card-specs">
-          <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.83" · 1.5K</div></div>
-          <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">天玑9500s</div></div>
-          <div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.95"</div></div>
-          <div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">无</div></div>
-          <div class="spec-item"><div class="spec-label">电池</div><div class="spec-value gold">9000mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="100"></div></div></div>
-          <div class="spec-item"><div class="spec-label">对比Turbo 5</div><div class="spec-value td-accent">价格差不多选Max</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="verdict-banner section-collapsible open">
-      <div class="verdict-icon">💡</div>
-      <div class="verdict-text"><strong>Turbo系列选购建议：Turbo 5和Turbo 5 Max价格差不多，直接选Turbo 5 Max。</strong><br>6.83" 1.5K屏，天玑9500s，1/1.95"主摄，9000mAh电池，日常够用，预算有限的最佳选择。</div>
-    </div>
+    <div class="phone-grid section-collapsible open" style="grid-template-columns:1fr;"><div class="phone-card redmi-card best"><div class="card-badge">只推荐这款</div><div class="card-rank">Turbo 系列 · 性价比之选</div><h3>红米 Turbo 5 Max</h3><div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.83 英寸 · 1.5K</div><div class="card-desc">Turbo 5 和 Turbo 5 Max 价格差不了多少，<strong>只推荐 Turbo 5 Max</strong>。日常使用体验好，性能够用，续航扎实，是预算有限时的最佳选择。</div><div class="card-specs"><div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.83" · 1.5K</div></div><div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">天玑9500s</div></div><div class="spec-item"><div class="spec-label">主摄</div><div class="spec-value">1/1.95"</div></div><div class="spec-item"><div class="spec-label">长焦</div><div class="spec-value td-bad">无</div></div><div class="spec-item"><div class="spec-label">电池</div><div class="spec-value gold">9000mAh</div><div class="battery-bar"><div class="battery-fill" data-battery="100"></div></div></div><div class="spec-item"><div class="spec-label">对比Turbo 5</div><div class="spec-value td-accent">价格差不多选Max</div></div></div></div></div>
+    <div class="verdict-banner section-collapsible open"><div class="verdict-icon">💡</div><div class="verdict-text"><strong>Turbo系列选购建议：Turbo 5和Turbo 5 Max价格差不多，直接选Turbo 5 Max。</strong><br>6.83" 1.5K屏，天玑9500s，1/1.95"主摄，9000mAh电池，日常够用，预算有限的最佳选择。</div></div>
   </div>
 </section>
 
@@ -730,55 +429,16 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
     <h2 class="desktop-only section-collapsible open">你该怎么选？</h2>
     <p class="section-desc section-collapsible open">记住：小米卖的是生态和性价比。选对型号很重要。</p>
     <div class="rec-grid section-collapsible open">
-      <div class="rec-card">
-        <div class="rec-icon">📱</div>
-        <h4>小屏综合首选</h4>
-        <div class="rec-pick">→ 小米 17</div>
-        <p>6.3" 1.5K · 光影950·1/1.31" · 60mm · 10cm微距 · 7000mAh。综合最均衡。</p>
-      </div>
-      <div class="rec-card">
-        <div class="rec-icon">📱</div>
-        <h4>想要小屏和背屏体验</h4>
-        <div class="rec-pick">→ 小米 17 Pro</div>
-        <p>6.3" 1.5K · 950L·1/1.28"·LOFIC · 115mm 5x · 20cm微距 · 背屏 · 6300mAh。</p>
-      </div>
-      <div class="rec-card">
-        <div class="rec-icon">👑</div>
-        <h4>追求极致体验</h4>
-        <div class="rec-pick">→ 小米 17 Pro Max</div>
-        <p>6.9"超级像素 · 950L·1/1.28" + GN8·1/2" 5x + 30cm微距 + 背屏 · 7500mAh。</p>
-      </div>
-      <div class="rec-card">
-        <div class="rec-icon">🖥️</div>
-        <h4>大屏全能旗舰</h4>
-        <div class="rec-pick">→ 小米 17 Max</div>
-        <p>6.9"超级像素 · HP9·2亿·1/1.4" + IMX882·1/2"·3x + 15cm微距 · 8000mAh。</p>
-      </div>
-      <div class="rec-card">
-        <div class="rec-icon">📷</div>
-        <h4>影像终极之选（最推荐徕卡版）</h4>
-        <div class="rec-pick">→ 小米 17 Ultra</div>
-        <p>1英寸主摄·LOFIC + 2亿1/1.4"长焦 · 3.2-4.3x真光学无损变焦 · 6800mAh。徕卡版有可乐标、物理变焦环、徕卡算法滤镜，非常出片。</p>
-      </div>
-      <div class="rec-card">
-        <div class="rec-icon">🏆</div>
-        <h4>不限预算，综合最强</h4>
-        <div class="rec-pick">→ K90 Pro Max</div>
-        <p>6.9"超级像素 · 光影950·1/1.31" · 5x · 8e5 · 7560mAh · BOSE外放断层领先。</p>
-      </div>
+      <div class="rec-card"><div class="rec-icon">📱</div><h4>小屏综合首选</h4><div class="rec-pick">→ 小米 17</div><p>6.3" 1.5K · 光影950·1/1.31" · 60mm · 10cm微距 · 7000mAh。综合最均衡。</p></div>
+      <div class="rec-card"><div class="rec-icon">📱</div><h4>想要小屏和背屏体验</h4><div class="rec-pick">→ 小米 17 Pro</div><p>6.3" 1.5K · 950L·1/1.28"·LOFIC · 115mm 5x · 20cm微距 · 背屏 · 6300mAh。</p></div>
+      <div class="rec-card"><div class="rec-icon">👑</div><h4>追求极致体验</h4><div class="rec-pick">→ 小米 17 Pro Max</div><p>6.9"超级像素 · 950L·1/1.28" + GN8·1/2" 5x + 30cm微距 + 背屏 · 7500mAh。</p></div>
+      <div class="rec-card"><div class="rec-icon">🖥️</div><h4>大屏全能旗舰</h4><div class="rec-pick">→ 小米 17 Max</div><p>6.9"超级像素 · HP9·2亿·1/1.4" + IMX882·1/2"·3x + 15cm微距 · 8000mAh。</p></div>
+      <div class="rec-card"><div class="rec-icon">📷</div><h4>影像终极之选（最推荐徕卡版）</h4><div class="rec-pick">→ 小米 17 Ultra</div><p>1英寸主摄·LOFIC + 2亿1/1.4"长焦 · 3.2-4.3x真光学无损变焦 · 6800mAh。徕卡版有可乐标、物理变焦环、徕卡算法滤镜，非常出片。</p></div>
+      <div class="rec-card"><div class="rec-icon">🏆</div><h4>不限预算，综合最强</h4><div class="rec-pick">→ K90 Pro Max</div><p>6.9"超级像素 · 光影950·1/1.31" · 5x · 8e5 · 7560mAh · BOSE外放断层领先。</p></div>
     </div>
     <div class="rec-grid section-collapsible open" style="margin-top:20px;">
-      <div class="rec-card">
-        <div class="rec-icon">🎮</div>
-        <h4>游戏党性价比之选</h4>
-        <div class="rec-pick">→ K90 至尊版</div>
-        <p>6.9" 1.5K · 骁龙8至尊版 · 内置风扇 · 8550mAh。很多场景优于更贵的Max。</p>
-      </div>
-      <div class="rec-card" style="grid-column:1/-1;">
-        <div class="verdict-icon" style="font-size:20px;margin-bottom:12px;">💡</div>
-        <h4>K90：日用体验好，特定需求可以考虑</h4>
-        <p style="margin-top:8px;">6.59" 1.5K超级像素屏，1/1.55"主摄，质感手感强。有长焦但无OIS，7100mAh。日用需求高、游戏需求不高的用户也可以考虑。</p>
-      </div>
+      <div class="rec-card"><div class="rec-icon">🎮</div><h4>游戏党性价比之选</h4><div class="rec-pick">→ K90 至尊版</div><p>6.9" 1.5K · 骁龙8至尊版 · 内置风扇 · 8550mAh。很多场景优于更贵的Max。</p></div>
+      <div class="rec-card" style="grid-column:1/-1;"><div class="verdict-icon" style="font-size:20px;margin-bottom:12px;">💡</div><h4>K90：日用体验好，特定需求可以考虑</h4><p style="margin-top:8px;">6.59" 1.5K超级像素屏，1/1.55"主摄，质感手感强。有长焦但无OIS，7100mAh。日用需求高、游戏需求不高的用户也可以考虑。</p></div>
     </div>
   </div>
 </section>
@@ -803,33 +463,34 @@ footer p{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0
   </div>
 </div>
 
-<footer>
-  <div class="container"><p>小米 & 红米 选购指南 · 2025 · 仅供参考 · 以实际产品为准</p></div>
-</footer>
-
 <script>
-window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').classList.add('done');},600);});
-const progressBar=document.getElementById('progress');const pillFill=document.querySelector('#progress-pill .fill');const pillPct=document.querySelector('#progress-pill .pct');
-function updateProgress(){const scrollTop=window.scrollY;const docHeight=document.documentElement.scrollHeight-window.innerHeight;const pct=docHeight>0?Math.min(100,Math.round(scrollTop/docHeight*100)):0;progressBar.style.width=pct+'%';if(pillFill){pillFill.style.width=pct+'%';pillPct.textContent=pct+'%';}}
-const navEl=document.getElementById('mainNav');const backTop=document.getElementById('backTop');const sections=document.querySelectorAll('.section[id]');const navLinks=document.querySelectorAll('nav a[data-section]');let currentSection='';
-function updateNav(){const sy=window.scrollY;navEl.classList.toggle('shrink',sy>80);backTop.classList.toggle('show',sy>500);let cur='';sections.forEach(s=>{if(sy>=s.offsetTop-200)cur=s.id;});if(cur!==currentSection){currentSection=cur;navLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===cur));}}
 const isMobile=window.innerWidth<=600;
-const cardObserver=isMobile?null:new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>{e.target.classList.add('card-visible');},i*60);cardObserver.unobserve(e.target);}});},{threshold:0.1});
-if(cardObserver)document.querySelectorAll('.phone-card,.pc-card,.cam-card,.rec-card').forEach(el=>cardObserver.observe(el));
-const fadeObserver=isMobile?null:new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.01});
-if(fadeObserver)document.querySelectorAll('.fade-in').forEach(el=>fadeObserver.observe(el));
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').classList.add('done');},600);});
+const backTop=document.getElementById('backTop');
+if(!isMobile){
+  const progressBar=document.getElementById('progress');const pillFill=document.querySelector('#progress-pill .fill');const pillPct=document.querySelector('#progress-pill .pct');
+  function updateProgress(){const scrollTop=window.scrollY;const docHeight=document.documentElement.scrollHeight-window.innerHeight;const pct=docHeight>0?Math.min(100,Math.round(scrollTop/docHeight*100)):0;progressBar.style.width=pct+'%';if(pillFill){pillFill.style.width=pct+'%';pillPct.textContent=pct+'%';}}
+  const navEl=document.getElementById('mainNav');const sections=document.querySelectorAll('.section[id]');const navLinks=document.querySelectorAll('nav a[data-section]');let currentSection='';
+  function updateNav(){const sy=window.scrollY;navEl.classList.toggle('shrink',sy>80);backTop.classList.toggle('show',sy>500);let cur='';sections.forEach(s=>{if(sy>=s.offsetTop-200)cur=s.id;});if(cur!==currentSection){currentSection=cur;navLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===cur));}}
+  const cardObserver=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>{e.target.classList.add('card-visible');},i*60);cardObserver.unobserve(e.target);}});},{threshold:0.1});
+  document.querySelectorAll('.phone-card,.pc-card,.cam-card,.rec-card').forEach(el=>cardObserver.observe(el));
+  const fadeObserver=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.01});
+  document.querySelectorAll('.fade-in').forEach(el=>fadeObserver.observe(el));
+  function addRipple(el,x,y){const rect=el.getBoundingClientRect();const ripple=document.createElement('div');ripple.className='ripple';const size=Math.max(rect.width,rect.height)*2;ripple.style.width=ripple.style.height=size+'px';ripple.style.left=(x-rect.left-size/2)+'px';ripple.style.top=(y-rect.top-size/2)+'px';el.appendChild(ripple);ripple.addEventListener('animationend',()=>ripple.remove());}
+  document.querySelectorAll('.phone-card,.rec-card,.cam-card,.pc-card').forEach(card=>{card.addEventListener('touchstart',function(e){const t=e.touches[0];addRipple(this,t.clientX,t.clientY);this.classList.add('pressed');},{passive:true});card.addEventListener('touchend',function(){this.classList.remove('pressed');},{passive:true});card.addEventListener('touchcancel',function(){this.classList.remove('pressed');},{passive:true});});
+  let gyroBeta=0,gyroGamma=0;
+  function handleOrientation(e){gyroBeta=Math.max(-15,Math.min(15,e.beta||0));gyroGamma=Math.max(-15,Math.min(15,e.gamma||0));const heroGlass=document.getElementById('heroGlass');if(heroGlass){heroGlass.style.transform=`translate(calc(-50% + ${gyroGamma*1.5}px), calc(-50% + ${gyroBeta*1}px))`;}const sidebar=document.getElementById('heroSidebar');if(sidebar){sidebar.style.transform=`translateY(-50%) translate(${gyroGamma*0.8}px, ${gyroBeta*0.5}px)`;}document.documentElement.style.setProperty('--gyro-x',gyroGamma/15);document.documentElement.style.setProperty('--gyro-y',gyroBeta/15);document.querySelectorAll('[data-parallax]').forEach(el=>{const rect=el.getBoundingClientRect();if(rect.top<window.innerHeight&&rect.bottom>0){el.style.transform=`translate(${-gyroGamma*0.5}px, ${-gyroBeta*0.3}px)`;}});}
+  function requestGyroPermission(){if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){DeviceOrientationEvent.requestPermission().then(state=>{if(state==='granted')window.addEventListener('deviceorientation',handleOrientation,true);}).catch(()=>{});}else{window.addEventListener('deviceorientation',handleOrientation,true);}}
+  requestGyroPermission();
+  document.querySelectorAll('nav a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');}});});
+  let ticking=false;window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{updateProgress();updateNav();ticking=false;});ticking=true;}},{passive:true});
+  setTimeout(()=>{document.querySelectorAll('.fade-in:not(.visible)').forEach(el=>el.classList.add('visible'));},2500);
+}else{
+  window.addEventListener('scroll',()=>{backTop.classList.toggle('show',window.scrollY>500);},{passive:true});
+}
 const batteryObserver=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const fill=e.target;const pct=fill.dataset.battery||50;setTimeout(()=>{fill.style.width=pct+'%';},300);batteryObserver.unobserve(fill);}});},{threshold:0.5});
 document.querySelectorAll('.battery-fill').forEach(el=>batteryObserver.observe(el));
-function addRipple(el,x,y){const rect=el.getBoundingClientRect();const ripple=document.createElement('div');ripple.className='ripple';const size=Math.max(rect.width,rect.height)*2;ripple.style.width=ripple.style.height=size+'px';ripple.style.left=(x-rect.left-size/2)+'px';ripple.style.top=(y-rect.top-size/2)+'px';el.appendChild(ripple);ripple.addEventListener('animationend',()=>ripple.remove());}
-document.querySelectorAll('.phone-card,.rec-card,.cam-card,.pc-card').forEach(card=>{card.addEventListener('touchstart',function(e){const t=e.touches[0];addRipple(this,t.clientX,t.clientY);this.classList.add('pressed');},{passive:true});card.addEventListener('touchend',function(){this.classList.remove('pressed');},{passive:true});card.addEventListener('touchcancel',function(){this.classList.remove('pressed');},{passive:true});});
-let gyroBeta=0,gyroGamma=0;
-function handleOrientation(e){if(window.innerWidth<=600)return;gyroBeta=Math.max(-15,Math.min(15,e.beta||0));gyroGamma=Math.max(-15,Math.min(15,e.gamma||0));const heroGlass=document.getElementById('heroGlass');if(heroGlass){heroGlass.style.transform=`translate(calc(-50% + ${gyroGamma*1.5}px), calc(-50% + ${gyroBeta*1}px))`;}const sidebar=document.getElementById('heroSidebar');if(sidebar){sidebar.style.transform=`translateY(-50%) translate(${gyroGamma*0.8}px, ${gyroBeta*0.5}px)`;}document.documentElement.style.setProperty('--gyro-x',gyroGamma/15);document.documentElement.style.setProperty('--gyro-y',gyroBeta/15);document.querySelectorAll('[data-parallax]').forEach(el=>{const rect=el.getBoundingClientRect();if(rect.top<window.innerHeight&&rect.bottom>0){el.style.transform=`translate(${-gyroGamma*0.5}px, ${-gyroBeta*0.3}px)`;}});}
-function requestGyroPermission(){if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){DeviceOrientationEvent.requestPermission().then(state=>{if(state==='granted')window.addEventListener('deviceorientation',handleOrientation,true);}).catch(()=>{});}else{window.addEventListener('deviceorientation',handleOrientation,true);}}
-requestGyroPermission();
-document.querySelectorAll('nav a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');}});});
-let ticking=false;window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{updateProgress();updateNav();ticking=false;});ticking=true;}},{passive:true});
 function toggleSection(el){el.classList.toggle('open');el.parentElement.querySelectorAll('.section-collapsible').forEach(c=>c.classList.toggle('open'));}
-setTimeout(()=>{document.querySelectorAll('.fade-in:not(.visible)').forEach(el=>el.classList.add('visible'));},2500);
 </script>
 </body>
 </html>
