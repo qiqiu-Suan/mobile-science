@@ -14,8 +14,8 @@
   --text:#f0ece4;--text-muted:#7a7570;
   --radius:18px;--radius-sm:12px;
 }
-html{scroll-behavior:smooth}
-body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;touch-action:manipulation}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
 
 body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
@@ -49,9 +49,7 @@ nav .nav-links a:hover{color:var(--accent5)}
 nav .nav-links a:hover::after{width:100%}
 nav .nav-links a.active{color:var(--accent5)}
 nav .nav-links a.active::after{width:100%}
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,12,11,.95);backdrop-filter:blur(16px);border-top:1px solid rgba(240,236,228,.06);padding:.5rem .8rem;overflow-x:auto;white-space:nowrap;gap:.6rem;transition:transform .3s ease}
-.mobile-nav a{display:inline-block;color:var(--text-muted);text-decoration:none;font-size:.65rem;padding:.4rem .6rem;border-radius:8px;transition:color .3s,background .3s}
-.mobile-nav a.active{color:var(--accent5);background:rgba(0,229,255,.08)}
+.mobile-nav{display:none}
 
 @keyframes gradFlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 @keyframes gradFlowSlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
@@ -78,7 +76,7 @@ nav .nav-links a.active::after{width:100%}
 .ch-tt em,.crown-card h3 em{animation:gradFlowSlow 5s linear infinite,breatheGlow 4s ease infinite}
 @keyframes breatheGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(0,229,255,.15))}50%{filter:drop-shadow(0 0 20px rgba(0,229,255,.4))}}
 
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden;contain:layout style}
 .hero-bg{position:absolute;inset:0;pointer-events:none}
 .hero-bg .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0;animation:bIn 2s ease forwards}
 .hero-bg .b1{width:500px;height:500px;top:-15%;left:10%;background:rgba(0,229,255,.08);animation-delay:.2s}
@@ -94,7 +92,7 @@ nav .nav-links a.active::after{width:100%}
 .btn-p{display:inline-block;padding:.8rem 2rem;border:none;border-radius:999px;background:linear-gradient(90deg,#00e5ff,#0090b0,#00e5ff,#0090b0,#00e5ff);background-size:200% 100%;animation:gradFlow 3s linear infinite;color:#0d0c0b;font-weight:700;font-size:.88rem;cursor:pointer;text-decoration:none;transition:transform .3s,box-shadow .3s}
 .btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,229,255,.35)}
 
-.ch{position:relative;z-index:1;padding:6rem 2rem}
+.ch{position:relative;z-index:1;padding:6rem 2rem;contain:layout style}
 .ch-in{max-width:1100px;margin:0 auto}
 .ch-lb{font-family:'Instrument Serif',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;opacity:.8}
 .ch-lb::before{content:'';width:8px;height:8px;border-radius:2px;flex-shrink:0}
@@ -313,7 +311,6 @@ nav .nav-links a.active::after{width:100%}
 .crown-card .crown-list{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-top:1.5rem;position:relative}
 .crown-card .crown-list span{padding:.35rem .9rem;border-radius:999px;font-size:.74rem;font-weight:700;background:rgba(0,229,255,.08);color:var(--accent5)}
 
-.afterimage-active{animation:afterimage .4s ease-out}
 .ch-close-anim{transform-origin:top;transition:transform .8s cubic-bezier(.22,1,.36,1),opacity .8s}
 .ch-close-anim.closed{transform:scaleY(0);opacity:0}
 .counter-num{display:inline-block;min-width:1.5em;text-align:right}
@@ -331,34 +328,47 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
 .rv-r.show{opacity:1;transform:translateX(0)}
 
 @media(max-width:768px){
-  nav .nav-links{display:none}
-  .mobile-nav{display:flex;align-items:center}
-  body{padding-bottom:48px}
-}
-@media(max-width:600px){
-  .ch{padding:4rem 1.2rem}
-  .card{padding:1.6rem 1.3rem}
-  .pc-grid{grid-template-columns:1fr!important}
-  .dim-4col{grid-template-columns:1fr}
+  nav{display:none!important}
+  .mobile-nav{display:none!important}
+  .duo-grid{grid-template-columns:1fr}
+  .ref-duo{grid-template-columns:1fr}
   .wave-row{grid-template-columns:1fr}
-  .mouse-glow,.floating-particles,.crown-particles{display:none!important}
-  .ch-close-anim{transition:none}
-  .px-diagram .dot{animation:none}
+  nav.scrolled{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(13,12,11,.97)}
+  .rv,.rv-l,.rv-r{opacity:1!important;transform:none!important;transition:none!important;animation:none!important}
+  body::after{display:none}
+  .progress{display:none!important}
+  .hero-chip,.hero h1,.hero .lead,.hero .actions{opacity:1!important;animation:none!important}
+  .tw-cursor{display:none}
+  .hero-bg .blob{filter:blur(40px);animation:none;opacity:.5}
+  .btn-p{animation:none!important;background-size:100% 100%}
+  .ch-tt em,.hero h1 em,.sp-hero h3 em,.crown-card h3 em{animation:none!important;-webkit-text-fill-color:var(--accent5);filter:none}
+  .card:hover{transform:none!important;box-shadow:none!important;animation:none!important}
+  .card:hover .card-glow{opacity:0!important}
+  .card{transition:none}
+  .px-card:hover,.dim-sm:hover,.info-b:hover,.eye-tip:hover,.sp-card:hover,.res-rung:hover{transform:none!important}
+  .duo-card .flow-bar::after{animation:none;opacity:0}
+  .px-diagram .dot{animation:none!important}
+  .ch-hr .px-block{animation:none}
+  .signal-light{animation:none!important;opacity:.7}
+  .rgb-indicator .ri-dot{animation:none!important}
+  .bar-fl .glow-dot{display:none}
+  .freq-r .ff.filled{animation:none}
+  .res-rung.best .rr-tag{animation:none}
+  .crown-particles{display:none}
+  .ch-close-anim{transition:none!important}
+  .ch-close-anim.closed{transform:none;opacity:1}
+  .ch{padding:3rem 1.2rem}
+  .px-card.best{box-shadow:none}
+  .ref-box .runner::after{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- MOUSE GLOW -->
 <div class="mouse-glow" id="mouseGlow"></div>
-
-<!-- FLOATING PARTICLES -->
 <div class="floating-particles" id="floatingParticles"></div>
-
-<!-- PIXEL PROGRESS -->
 <div class="progress" id="progress"></div>
 
-<!-- NAV -->
 <nav id="nav">
   <div class="inner">
     <div class="logo">屏幕的史诗</div>
@@ -373,15 +383,7 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
     </ul>
   </div>
 </nav>
-<div class="mobile-nav" id="mobileNav">
-  <a href="#ch-manu">屏幕厂商</a>
-  <a href="#ch1">LCD/OLED</a>
-  <a href="#ch2">像素排列</a>
-  <a href="#ch3">刷新率</a>
-  <a href="#ch4">分辨率</a>
-  <a href="#ch5">护眼调光</a>
-  <a href="#ch6">超级像素</a>
-</div>
+<div class="mobile-nav" id="mobileNav"></div>
 
 <!-- ========== HERO ========== -->
 <section class="hero">
@@ -394,23 +396,20 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- ========== CH-MANU · 屏幕厂商 ========== -->
+<!-- ========== CH-MANU ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim" id="ch-manu">
   <div class="ch-in">
     <div class="ch-lb lb-cyan rv">CHAPTER 00</div>
     <h2 class="ch-tt rv">谁在造你的屏？<br><em>五大屏幕厂商真相</em></h2>
     <p class="ch-ds rv">手机屏幕好不好，很大程度取决于谁造的。同样是 OLED，厂商之间的差距非常大——选错厂商，参数再好看也白搭。</p>
-
     <div class="alert alert-gold rv">
       <strong>📌 先记住结论：</strong><br>
       <span style="color:var(--accent4)">✅ 优选：华星光电、京东方</span><br>
       <span style="color:var(--accent)">⚠️ 可选：三星（但护眼很差）</span><br>
       <span style="color:var(--accent2)">❌ 避开：天马、维信诺</span>
     </div>
-
     <div class="manu-grid">
-      <!-- 华星光电 -->
       <div class="card manu-card rv">
         <div class="manu-tier-bar bar-green"></div>
         <span class="mc-tier tier-s">S 级 · 当前最佳</span>
@@ -419,8 +418,6 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
         <p>目前<strong style="color:var(--accent4)">最顶级的屏幕厂商之一</strong>。和小米深度绑定，共同研发"超级像素"等前沿技术。显示素质一流，护眼也做得出色。<strong>唯一缺点是产能有限</strong>，目前主要供给小米。</p>
         <div class="mc-users"><span>🏠 小米深度合作</span><span>产能有限优先供应小米</span></div>
       </div>
-
-      <!-- 京东方 -->
       <div class="card manu-card rv">
         <div class="manu-tier-bar bar-green"></div>
         <span class="mc-tier tier-s">S 级 · 当前最佳</span>
@@ -429,8 +426,6 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
         <p>和华星光电并列<strong style="color:var(--accent4)">当前最顶级的屏幕厂商</strong>。过去 OPPO 大量采用京东方，那时候 OPPO 的屏幕素质在国产中算最好的。显示效果和护眼<strong>都属于第一梯队</strong>。</p>
         <div class="mc-users"><span>OPPO过去大量使用</span><span>技术实力雄厚</span></div>
       </div>
-
-      <!-- 三星 -->
       <div class="card manu-card rv">
         <div class="manu-tier-bar bar-orange"></div>
         <span class="mc-tier tier-a">A 级 · 曾经的王，正在掉队</span>
@@ -439,8 +434,6 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
         <p>曾经是<strong style="color:var(--accent)">无可争议的屏幕之王</strong>，但现在已被国产厂商追上甚至超越。更要命的是，<strong>三星屏的护眼表现非常差</strong>。比如最新的 iQOO 15 虽然用了三星"最好"的屏，但对部分人群来说<strong style="color:var(--accent2)">非常刺眼</strong>。别再迷信三星屏了。</p>
         <div class="mc-users"><span>曾经最强</span><span style="color:var(--accent2)">护眼很差</span><span>已被国产超越</span></div>
       </div>
-
-      <!-- 天马 -->
       <div class="card manu-card rv">
         <div class="manu-tier-bar bar-red"></div>
         <span class="mc-tier tier-c">C 级 · 能用，但别指望</span>
@@ -449,8 +442,6 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
         <p><strong style="color:var(--accent2)">显示效果差，护眼更差</strong>，圈内有"瞎眼屏"的称号。目前主要给<strong>低端机型和部分中端机型</strong>用。更离谱的是，OPPO 为了省成本，开始在高端机上也塞天马屏降配。<strong style="color:var(--accent2)">看到天马屏，谨慎考虑。</strong></p>
         <div class="mc-users"><span style="color:var(--accent2)">"瞎眼屏"</span><span>低端为主</span><span>OPPO高端降配用</span></div>
       </div>
-
-      <!-- 维信诺 -->
       <div class="card manu-card rv" style="border-color:rgba(232,96,96,.12)">
         <div class="manu-tier-bar bar-dark-red"></div>
         <span class="mc-tier tier-f">F 级 · 直接避雷</span>
@@ -463,16 +454,14 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- ========== CH1 · LCD vs OLED ========== -->
+<!-- ========== CH1 ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim" id="ch1">
   <div class="ch-in">
     <div class="ch-lb lb-blue rv">CHAPTER 01</div>
     <h2 class="ch-tt rv">LCD 与 OLED：<br><em>两个老冤家的恩怨情仇</em></h2>
     <p class="ch-ds rv">屏幕江湖只有两大门派。一个稳重如老干部，一个灵活如街舞少年——选谁取决于你更在意什么。</p>
-    <div class="alert alert-gold rv">
-      <strong>📌 现在主流屏幕已经全面转向 OLED。</strong>2025年绝大多数中高端新机都采用 OLED 屏幕，LCD 基本只剩在入门机型上了。不过 LCD 并没有"死了"——它在护眼和耐用性上，依然有独到的优势。
-    </div>
+    <div class="alert alert-gold rv"><strong>📌 现在主流屏幕已经全面转向 OLED。</strong>2025年绝大多数中高端新机都采用 OLED 屏幕，LCD 基本只剩在入门机型上了。不过 LCD 并没有"死了"——它在护眼和耐用性上，依然有独到的优势。</div>
     <div class="duo-grid">
       <div class="card duo-card rv-l" style="border-top:3px solid #50b8e8">
         <div class="flow-bar" style="background:rgba(80,184,232,.15)"></div>
@@ -511,17 +500,14 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- ========== CH2 · 像素排列 ========== -->
+<!-- ========== CH2 ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim" id="ch2">
   <div class="ch-in">
     <div class="ch-lb lb-orange rv">CHAPTER 02</div>
     <h2 class="ch-tt rv">像素的排列门道：<br><em>RGB、钻石、周冬雨和超级像素</em></h2>
     <p class="ch-ds rv">每个像素由红绿蓝三个子像素"拼"出来。但怎么拼，直接决定了画面够不够细腻。</p>
-    <div class="alert alert-gold rv">
-      <span class="rgb-indicator"><span class="ri-dot ri-r"></span><span class="ri-dot ri-g"></span><span class="ri-dot ri-b"></span></span>
-      <strong>显示色彩的原理很简单：</strong>屏幕上每个像素点都是由<strong>红(R)、绿(G)、蓝(B)</strong>三种颜色的微型灯珠排列在一起组成的。通过控制每个灯珠的明暗程度，就能混合出千变万化的色彩。整个屏幕就是由<strong>几百万个这样的"三色灯珠组"</strong>拼成的。不同屏幕的区别，主要就在于这些灯珠怎么排列。
-    </div>
+    <div class="alert alert-gold rv"><span class="rgb-indicator"><span class="ri-dot ri-r"></span><span class="ri-dot ri-g"></span><span class="ri-dot ri-b"></span></span><strong>显示色彩的原理很简单：</strong>屏幕上每个像素点都是由<strong>红(R)、绿(G)、蓝(B)</strong>三种颜色的微型灯珠排列在一起组成的。通过控制每个灯珠的明暗程度，就能混合出千变万化的色彩。整个屏幕就是由<strong>几百万个这样的"三色灯珠组"</strong>拼成的。不同屏幕的区别，主要就在于这些灯珠怎么排列。</div>
     <div class="px-grid">
       <div class="px-card rv"><div class="px-diagram-wrap"><div class="px-diagram" id="pxd-rgb"></div></div><h4>标准 RGB 排列</h4><div class="px-nk">LCD 的模范生</div><p>每个像素独享红绿蓝三子像素，一人一坑，绝不合租。<br><strong>结果：</strong>显示最精细，没有"公摊"。LCD 标配。</p></div>
       <div class="px-card rv"><div class="px-diagram-wrap"><div class="px-diagram" id="pxd-dia"></div></div><h4>钻石排列</h4><div class="px-nk">Diamond Pentile · 三星专利</div><p>子像素排成菱形，两个像素"搭伙"共享红蓝。<br><strong>好处：</strong>OLED 里效果最好。<br><strong>代价：</strong>精细度打八折。</p></div>
@@ -531,7 +517,7 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- ========== CH3 · 刷新率 ========== -->
+<!-- ========== CH3 ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim" id="ch3">
   <div class="ch-in">
@@ -545,7 +531,7 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
     <div class="alert alert-red rv">
       <span class="big-text" style="color:var(--accent2)">🔴 120Hz 就是最好的选择！</span>
       <strong>更高的 144Hz、240Hz 对手机屏幕来说基本是厂家的噱头。</strong>人眼对 120Hz 以上的流畅度提升感知已经极弱，但功耗会明显增加。手机不是电竞显示器，超过 120Hz 的刷新率在手机上几乎没有实际意义。<br><br>
-      <a href="超高刷屏幕的真相.html" style="color:var(--accent2);font-weight:700;text-decoration:underline">👉 详情见：超高刷屏幕的真相（点击跳转）</a>
+      <a href="超高刷屏幕.html" style="color:var(--accent2);font-weight:700;text-decoration:underline">👉 详情见：超高刷屏幕的真相（点击跳转）</a>
     </div>
     <div class="info-row rv">
       <div class="info-b"><div class="ib-ic">🖥️</div><h5>刷新率</h5><p>屏幕每秒<strong>刷新画面</strong>的次数。60Hz 每秒翻 60 页，120Hz 翻 120 页——<strong>翻得越快越丝滑</strong>。</p></div>
@@ -556,14 +542,12 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
       <h4>🧠 <strong>LTPO 自适应刷新率——真正的聪明方案</strong></h4>
       <p><strong>LTPO 是什么？</strong>简单说，就是屏幕会<strong>根据你正在做的事情自动调整刷新率</strong>。看静态文字？降到 1Hz 省电。刷短视频？飙到 120Hz 丝滑。<br><br><strong>为什么重要？</strong>没有 LTPO 的 120Hz 屏幕就像一辆车——不管高速还是停车场，发动机都一直轰鸣。有了 LTPO，<strong>续航差距可以达到 20% 以上</strong>。<br><br><strong>谁在用？</strong>目前 LTPO 基本是<strong>各家母品牌旗舰的标配</strong>，子品牌/性价比机型通常不会给到。</p>
       <div class="ltpo-demo"><div class="ltpo-hz" id="ltpoHz">120Hz</div><div class="ltpo-label" id="ltpoLabel">刷短视频中...</div></div>
-      <div class="brands">
-        <span class="brand-tag">小米数字系列</span><span class="brand-tag">iPhone Pro 系列</span><span class="brand-tag">三星 Galaxy S/Note</span><span class="brand-tag">华为 Mate/P 系列</span><span class="brand-tag">OPPO Find 系列</span><span class="brand-tag">vivo X 系列</span><span class="brand-tag">一加数字系列</span>
-      </div>
+      <div class="brands"><span class="brand-tag">小米数字系列</span><span class="brand-tag">iPhone Pro 系列</span><span class="brand-tag">三星 Galaxy S/Note</span><span class="brand-tag">华为 Mate/P 系列</span><span class="brand-tag">OPPO Find 系列</span><span class="brand-tag">vivo X 系列</span><span class="brand-tag">一加数字系列</span></div>
     </div>
   </div>
 </section>
 
-<!-- ========== CH4 · 分辨率 ========== -->
+<!-- ========== CH4 ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim" id="ch4">
   <div class="ch-in">
@@ -580,7 +564,7 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- ========== CH5 · 护眼调光 ========== -->
+<!-- ========== CH5 ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim" id="ch5">
   <div class="ch-in">
@@ -616,7 +600,7 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- ========== CH6 · 超级像素 ========== -->
+<!-- ========== CH6 ========== -->
 <div class="ch-hr"><div class="px-block"></div></div>
 <section class="ch ch-close-anim xm-section" id="ch6">
   <div class="ch-in">
@@ -641,7 +625,6 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="ft-ic">📱</div>
   <p>看到这里的都是真爱</p>
@@ -651,177 +634,79 @@ footer .ft-w{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;backgroun
 </footer>
 
 <script>
-// ============ MOUSE GLOW ============
-const glow=document.getElementById('mouseGlow');
-document.addEventListener('mousemove',e=>{
-  if(window.innerWidth<769)return;
-  glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px';
-  glow.classList.add('visible');
-});
-document.addEventListener('mouseleave',()=>glow.classList.remove('visible'));
+(function(){
+'use strict';
+const isMobile=window.innerWidth<769;
 
-// ============ FLOATING PARTICLES ============
-const fpContainer=document.getElementById('floatingParticles');
-const fpColors=['#e05555','#55b855','#5588dd'];
-for(let i=0;i<20;i++){
-  const d=document.createElement('div');d.className='fp-dot';
-  const c=fpColors[i%3];const sz=2+Math.random()*3;
-  d.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${c};animation-duration:${15+Math.random()*20}s;animation-delay:${-Math.random()*20}s`;
-  fpContainer.appendChild(d);
+if(!isMobile){
+  const glow=document.getElementById('mouseGlow');
+  document.addEventListener('mousemove',e=>{glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px';glow.classList.add('visible')});
+  document.addEventListener('mouseleave',()=>glow.classList.remove('visible'));
 }
 
-// ============ PIXEL PROGRESS BAR ============
-const progEl=document.getElementById('progress');
-const totalPx=60;
-for(let i=0;i<totalPx;i++){const b=document.createElement('div');b.className='px-bar';progEl.appendChild(b)}
-const bars=progEl.querySelectorAll('.px-bar');
-window.addEventListener('scroll',()=>{
-  const pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
-  const cnt=Math.floor(pct*totalPx);
-  bars.forEach((b,i)=>{b.classList.toggle('on',i<cnt)});
-},{passive:true});
+if(!isMobile){
+  const fpC=document.getElementById('floatingParticles');
+  const fpCols=['#e05555','#55b855','#5588dd'];
+  for(let i=0;i<20;i++){const d=document.createElement('div');d.className='fp-dot';const c=fpCols[i%3],sz=2+Math.random()*3;d.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${c};animation-duration:${15+Math.random()*20}s;animation-delay:${-Math.random()*20}s`;fpC.appendChild(d)}
+}
 
-// ============ NAV ============
+if(!isMobile){
+  const progEl=document.getElementById('progress');
+  const totalPx=60;
+  for(let i=0;i<totalPx;i++){const b=document.createElement('div');b.className='px-bar';progEl.appendChild(b)}
+  const bars=progEl.querySelectorAll('.px-bar');
+  let ticking=false;
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{const pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);const cnt=Math.floor(pct*totalPx);bars.forEach((b,i)=>{b.classList.toggle('on',i<cnt)});ticking=false});ticking=true}},{passive:true});
+}
+
 const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+let navTicking=false;
+window.addEventListener('scroll',()=>{if(!navTicking){requestAnimationFrame(()=>{nav.classList.toggle('scrolled',window.scrollY>60);navTicking=false});navTicking=true}},{passive:true});
 
-// ============ NAV ACTIVE SECTION ============
 const sections=document.querySelectorAll('.ch[id]');
-const navAnchors=document.querySelectorAll('#navLinks a,#mobileNav a');
-const secObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      navAnchors.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id)});
-    }
-  });
-},{threshold:.3});
+const navAnchors=document.querySelectorAll('#navLinks a');
+const secObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){navAnchors.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id)})}})},{threshold:isMobile?.15:.3});
 sections.forEach(s=>secObs.observe(s));
 
-// ============ TYPEWRITER ============
-const twTarget=document.getElementById('tw-target');
-const twCursor=document.getElementById('tw-cursor');
-const twText='那块屏';
-let twIndex=0;
-twTarget.innerHTML='';
-setTimeout(()=>{
-  const twInterval=setInterval(()=>{
-    if(twIndex<twText.length){
-      twTarget.innerHTML='<em>'+twText.slice(0,twIndex+1)+'</em>';twIndex++;
-    }else{clearInterval(twInterval);setTimeout(()=>{twCursor.style.display='none'},1500)}
-  },120);
-},1800);
+const twTarget=document.getElementById('tw-target'),twCursor=document.getElementById('tw-cursor');
+const twText='那块屏';let twIdx=0;twTarget.innerHTML='';
+setTimeout(()=>{const twInt=setInterval(()=>{if(twIdx<twText.length){twTarget.innerHTML='<em>'+twText.slice(0,twIdx+1)+'</em>';twIdx++}else{clearInterval(twInt);if(twCursor)twCursor.style.display='none'}},120)},isMobile?1200:1800);
 
-// ============ BAR GLOW DOTS ============
-document.querySelectorAll('.bar-fl').forEach(b=>{
-  const dot=document.createElement('div');dot.className='glow-dot';b.appendChild(dot);
-});
+if(!isMobile){document.querySelectorAll('.bar-fl').forEach(b=>{const dot=document.createElement('div');dot.className='glow-dot';b.appendChild(dot)})}
 
-// ============ BAR FILL OBSERVER ============
-const barObs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      entry.target.querySelectorAll('.bar-fl,.ff').forEach((b,i)=>setTimeout(()=>{b.style.width=b.dataset.w;if(b.classList.contains('ff'))b.classList.add('filled')},i*80));
-      barObs.unobserve(entry.target);
-    }
-  });
-},{threshold:.2});
+const barObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.querySelectorAll('.bar-fl,.ff').forEach((b,i)=>setTimeout(()=>{b.style.width=b.dataset.w;if(b.classList.contains('ff'))b.classList.add('filled')},isMobile?0:i*80));barObs.unobserve(entry.target)}})},{threshold:isMobile?.1:.2});
 document.querySelectorAll('.bar-g,.freq-m').forEach(el=>barObs.observe(el));
 
-// ============ REVEAL ============
-const allRv=document.querySelectorAll('.rv,.rv-l,.rv-r');
-const rvObs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const sibs=[...entry.target.parentElement.children].filter(c=>c.classList.contains('rv')||c.classList.contains('rv-l')||c.classList.contains('rv-r'));
-      setTimeout(()=>entry.target.classList.add('show'),sibs.indexOf(entry.target)*80);
-      rvObs.unobserve(entry.target);
-    }
-  });
-},{threshold:.1,rootMargin:'0px 0px -20px 0px'});
-allRv.forEach(el=>rvObs.observe(el));
+if(!isMobile){
+  const allRv=document.querySelectorAll('.rv,.rv-l,.rv-r');
+  const rvObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const sibs=[...entry.target.parentElement.children].filter(c=>c.classList.contains('rv')||c.classList.contains('rv-l')||c.classList.contains('rv-r'));setTimeout(()=>entry.target.classList.add('show'),sibs.indexOf(entry.target)*80);rvObs.unobserve(entry.target)}})},{threshold:.1,rootMargin:'0px 0px -20px 0px'});
+  allRv.forEach(el=>rvObs.observe(el));
+}
 
-// ============ PIXEL DIAGRAMS ============
 function mkPx(id,arr){const c=document.getElementById(id);if(!c)return;arr.forEach(cl=>{const d=document.createElement('div');d.className='dot '+cl;d.style.cssText='width:9px;height:9px';c.appendChild(d)})}
 mkPx('pxd-rgb','r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b'.split(','));
 mkPx('pxd-dia','g,r,g,b,g,r,g,b,g,r,r,g,b,g,r,g,b,g,r,g,g,b,g,r,g,b,g,r,g,b'.split(','));
 mkPx('pxd-zdy','g,r,g,b,g,r,g,b,g,r,b,g,r,g,b,g,r,g,b,g,g,b,g,r,g,b,g,r,g,b'.split(','));
 mkPx('pxd-sp','r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b,r,g,b'.split(','));
 
-// ============ LTPO CYCLING ============
 const ltpoHz=document.getElementById('ltpoHz'),ltpoLabel=document.getElementById('ltpoLabel');
 const ltpoStates=[{hz:'1Hz',label:'静态文字阅读中',color:'#7a7570'},{hz:'30Hz',label:'查看照片中',color:'#50b8e8'},{hz:'60Hz',label:'浏览网页中',color:'#50e8a0'},{hz:'120Hz',label:'刷短视频中',color:'#00e5ff'}];
 let ltpoIdx=0;
 setInterval(()=>{ltpoIdx=(ltpoIdx+1)%ltpoStates.length;const s=ltpoStates[ltpoIdx];ltpoHz.textContent=s.hz;ltpoHz.style.color=s.color;ltpoLabel.textContent=s.label},2500);
 
-// ============ NUMBER COUNTER ============
 const counterNums=document.querySelectorAll('.counter-num');
-const counterObs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const el=entry.target,target=parseInt(el.dataset.target),duration=1200,start=performance.now();
-      const animate=now=>{
-        const p=Math.min((now-start)/duration,1);
-        el.textContent=Math.floor(p*target);
-        if(p<1)requestAnimationFrame(animate);else el.textContent=target;
-      };
-      requestAnimationFrame(animate);
-      counterObs.unobserve(el);
-    }
-  });
-},{threshold:.5});
+const counterObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const el=entry.target,target=parseInt(el.dataset.target),dur=isMobile?600:1200,start=performance.now();const anim=now=>{const p=Math.min((now-start)/dur,1);el.textContent=Math.floor(p*target);if(p<1)requestAnimationFrame(anim);else el.textContent=target};requestAnimationFrame(anim);counterObs.unobserve(el)}})},{threshold:.5});
 counterNums.forEach(el=>counterObs.observe(el));
 
-// ============ CROWN PARTICLES ============
-const crownP=document.getElementById('crownParticles');
-const cpColors=['rgba(0,229,255,.4)','rgba(229,85,85,.3)','rgba(85,184,85,.3)'];
-for(let i=0;i<12;i++){const d=document.createElement('div');d.className='cp';d.style.cssText=`left:${5+Math.random()*90}%;background:${cpColors[i%3]};animation-delay:${-Math.random()*6}s`;crownP.appendChild(d)}
+if(!isMobile){const crownP=document.getElementById('crownParticles');const cpCols=['rgba(0,229,255,.4)','rgba(229,85,85,.3)','rgba(85,184,85,.3)'];for(let i=0;i<12;i++){const d=document.createElement('div');d.className='cp';d.style.cssText=`left:${5+Math.random()*90}%;background:${cpCols[i%3]};animation-delay:${-Math.random()*6}s`;crownP.appendChild(d)}}
 
-// ============ NAV FLASH ============
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    e.preventDefault();
-    const flash=document.createElement('div');flash.style.cssText='position:fixed;inset:0;background:#fff;opacity:.06;z-index:9998;pointer-events:none;transition:opacity .15s';
-    document.body.appendChild(flash);
-    setTimeout(()=>{flash.style.opacity='0';setTimeout(()=>flash.remove(),200)},50);
-    const t=document.querySelector(a.getAttribute('href'));
-    if(t)setTimeout(()=>t.scrollIntoView({behavior:'smooth',block:'start'}),80);
-  });
-});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();if(!isMobile){const flash=document.createElement('div');flash.style.cssText='position:fixed;inset:0;background:#fff;opacity:.06;z-index:9998;pointer-events:none;transition:opacity .15s';document.body.appendChild(flash);setTimeout(()=>{flash.style.opacity='0';setTimeout(()=>flash.remove(),200)},50)}const t=document.querySelector(a.getAttribute('href'));if(t)setTimeout(()=>t.scrollIntoView({behavior:'smooth',block:'start'}),isMobile?0:80)})});
 
-// ============ FOOTER CLOSE ANIMATION ============
-const lastCh=document.querySelectorAll('.ch-close-anim');
-const lastSection=lastCh[lastCh.length-1];
-const footerEl=document.querySelector('footer');
-const closeObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting&&lastSection){lastSection.classList.add('closed');closeObs.unobserve(e.target)}
-  });
-},{threshold:.3});
-if(footerEl)closeObs.observe(footerEl);
+if(!isMobile){const lastCh=document.querySelectorAll('.ch-close-anim'),lastSection=lastCh[lastCh.length-1],footerEl=document.querySelector('footer');const closeObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting&&lastSection){lastSection.classList.add('closed');closeObs.unobserve(e.target)}})},{threshold:.3});if(footerEl)closeObs.observe(footerEl)}
 
-// ============ AFTERIMAGE ON SCROLL ============
-let lastScrollY=0;
-const afterimageEls=document.querySelectorAll('.ch-tt em,.crown-card h3 em');
-window.addEventListener('scroll',()=>{
-  const dy=Math.abs(window.scrollY-lastScrollY);
-  if(dy>15){
-    afterimageEls.forEach(el=>{el.classList.add('afterimage-active');setTimeout(()=>el.classList.remove('afterimage-active'),400)});
-    lastScrollY=window.scrollY;
-  }
-},{passive:true});
+if(!isMobile){let lastSY=0;const aiEls=document.querySelectorAll('.ch-tt em,.crown-card h3 em');let aiTicking=false;window.addEventListener('scroll',()=>{if(!aiTicking){requestAnimationFrame(()=>{const dy=Math.abs(window.scrollY-lastSY);if(dy>15){aiEls.forEach(el=>{el.classList.add('afterimage-active');setTimeout(()=>el.classList.remove('afterimage-active'),400)});lastSY=window.scrollY}aiTicking=false});aiTicking=true}},{passive:true})}
 
-// ============ MOBILE NAV SCROLL ============
-const mobileNav=document.getElementById('mobileNav');
-let mnTimeout;
-if(mobileNav){
-  mobileNav.style.transition='transform .3s ease';
-  window.addEventListener('scroll',()=>{
-    if(window.innerWidth>768)return;
-    mobileNav.style.transform='translateY(0)';
-    clearTimeout(mnTimeout);
-    mnTimeout=setTimeout(()=>{mobileNav.style.transform='translateY(100%)'},2000);
-  },{passive:true});
-}
+})();
 </script>
 </body>
 </html>
