@@ -84,7 +84,7 @@ section{padding:100px 0;position:relative}
 
 /* SOC PARTS */
 .parts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
-.part-card{background:rgba(255,255,255,.02);backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 22px 20px;transition:all .35s ease;position:relative;overflow:hidden}
+.part-card{background:rgba(255,255,255,.02);backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 22px 20px;transition:border-color .35s,background .35s,transform .35s,box-shadow .35s;position:relative;overflow:hidden}
 .part-card::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
 .part-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--card-color);border-radius:2px 0 0 2px;opacity:.6}
 .part-card:hover{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);transform:translateY(-5px);box-shadow:0 24px 60px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06)}
@@ -117,7 +117,6 @@ section{padding:100px 0;position:relative}
 @keyframes fromB{from{opacity:0;transform:perspective(800px) rotateX(-20deg) translateY(80px)}to{opacity:1;transform:perspective(800px) rotateX(0) translateY(0)}}
 .brand-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;z-index:10;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);transition:all .4s}
 /* [17] 频谱条替代呼吸条 */
-.brand-card::after{content:'';position:absolute;bottom:8px;left:20%;right:20%;height:12px;z-index:10;display:flex;gap:3px;justify-content:center;background:none;border-radius:0;animation:none}
 .brand-card .bc-spec{position:absolute;bottom:8px;width:4px;border-radius:2px;z-index:10;animation:specBounce 1.2s ease-in-out infinite}
 .brand-card .bc-spec:nth-child(1){left:calc(50% - 14px);animation-delay:0s;height:6px}
 .brand-card .bc-spec:nth-child(2){left:calc(50% - 4px);animation-delay:.15s;height:10px}
@@ -489,17 +488,89 @@ section{padding:100px 0;position:relative}
 .fade-in{opacity:0;transform:translateY(28px);transition:all .6s ease}
 .fade-in.visible{opacity:1;transform:translateY(0)}
 
-/* ========== 响应式 ========== */
+/* ====================================================
+   移动端性能优化
+   ==================================================== */
 @media(max-width:1024px){
   .parts-grid{grid-template-columns:repeat(2,1fr);gap:14px}
   .nm-chips-grid{grid-template-columns:repeat(3,1fr)}
   .core-types{grid-template-columns:1fr;gap:12px;max-width:400px}
-  /* [3] 手机端品牌卡片横向滑动 */
   .brand-nav-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;padding:8px 4px 16px;scrollbar-width:none}
   .brand-nav-grid::-webkit-scrollbar{display:none}
   .brand-card{min-width:140px;scroll-snap-align:center;flex-shrink:0}
 }
 @media(max-width:640px){
+  /* — 性能核心优化 — */
+
+  /* 1. 隐藏昂贵的固定层叠元素 */
+  .light-spot{display:none!important}
+  .noise-overlay{opacity:0!important}
+  .vignette{box-shadow:inset 0 0 50px 8px rgba(0,0,0,.2)!important}
+
+  /* 2. 移除全部 backdrop-filter，用更高不透明度补偿 */
+  *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .site-nav{background:rgba(8,8,16,.96)!important}
+  .hero-badge{background:rgba(255,105,0,.16)!important}
+  .part-card{background:rgba(255,255,255,.045)!important}
+  .brand-card{background:rgba(255,255,255,.035)!important}
+  .brand-rec{background:rgba(255,255,255,.04)!important}
+  .nm-intro,.nm-chip{background:rgba(255,255,255,.04)!important}
+  .nm-bar-wrap{background:rgba(255,255,255,.05)!important}
+  .cache-intro,.cache-tier{background:rgba(255,255,255,.04)!important}
+  .cpu-intro,.core-type,.core-config{background:rgba(255,255,255,.04)!important}
+  .cpu-cache-note{background:rgba(245,166,35,.06)!important}
+  .gpu-card{background:rgba(255,255,255,.04)!important}
+  .oc{background:rgba(255,255,255,.04)!important}
+  .diff-card{background:rgba(255,105,0,.05)!important}
+  .rec-bar{background:rgba(231,76,60,.06)!important}
+  .ram-intro-card{background:rgba(255,255,255,.04)!important}
+  .ram-bar-card{background:rgba(255,255,255,.04)!important}
+  .ram-ext{background:rgba(171,71,188,.05)!important}
+  .ram-ext-rec{background:rgba(171,71,188,.06)!important}
+  .ram-storage{background:rgba(255,255,255,.04)!important}
+  .ram-verdict{background:rgba(255,255,255,.04)!important}
+  .ram-reality{background:rgba(231,76,60,.04)!important}
+  .back-top{background:rgba(255,255,255,.1)!important}
+  .cache-warn{background:rgba(231,76,60,.06)!important}
+  .section-tag{background:rgba(255,105,0,.14)!important}
+  .rb-bar-wrap{background:rgba(255,255,255,.05)!important}
+
+  /* 3. 淡入动画：纯 opacity，移除 translateY 避免 layout 重排 */
+  .fade-in{transform:none!important;opacity:0;transition:opacity .35s ease!important}
+  .fade-in.visible{transform:none!important;opacity:1}
+
+  /* 4. 品牌卡片：简单淡入替代 3D 透视进入 */
+  .brand-card,.brand-card:nth-child(1),.brand-card:nth-child(2),.brand-card:nth-child(3),.brand-card:nth-child(4),.brand-card:nth-child(5),.brand-card:nth-child(6){animation:mobFade .4s ease both!important}
+  .brand-card:nth-child(1){animation-delay:0s!important}
+  .brand-card:nth-child(2){animation-delay:.05s!important}
+  .brand-card:nth-child(3){animation-delay:.1s!important}
+  .brand-card:nth-child(4){animation-delay:.15s!important}
+  .brand-card:nth-child(5){animation-delay:.2s!important}
+  .brand-card:nth-child(6){animation-delay:.2s!important}
+  @keyframes mobFade{from{opacity:0}to{opacity:1}}
+
+  /* 5. 隐藏移动端昂贵伪元素动画 */
+  .brand-card .bc-spec{display:none!important}
+  .brand-card .bc-glow{display:none!important}
+  .brand-card .bc-scan{display:none!important}
+  .brand-card .bc-mlight,.brand-card .bc-streak{display:none!important}
+  .brand-card .bc-badge{animation:none!important;opacity:.15!important}
+  .rb-bar-fill::after{display:none!important}
+  .core-block-prime::after{display:none!important}
+
+  /* 6. 简化渐变文字为纯色 */
+  .gradient-text{background:none!important;-webkit-text-fill-color:var(--accent)!important;color:var(--accent)!important}
+
+  /* 7. 移除不必要的 will-change */
+  .brand-card,.bc-ic,.bc-mlight,.nm-bar-dot,.bc-wm{will-change:auto!important}
+
+  /* 8. 减少过度阴影 */
+  .part-card:hover,.brand-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.25)!important}
+
+  /* 9. 节区布局隔离 */
+  section{contain:layout style}
+
+  /* — 原有移动端布局样式 — */
   .site-nav .links{display:none}
   .site-nav .inner{padding:0 14px}
   .hero{padding:80px 16px 48px;min-height:auto;min-height:90vh}
@@ -552,7 +623,6 @@ section{padding:100px 0;position:relative}
   .brand-card:hover{transform:none}
   .bc-ic{width:48px;height:48px;border-radius:14px;font-size:18px}
   .bc-nm{font-size:14px}
-  .bc-mlight,.bc-streak{display:none}
   .bc-wm{font-size:100px}
   .gpu-card{padding:22px 18px}
   .gpu-card:hover{transform:none}
@@ -597,21 +667,9 @@ section{padding:100px 0;position:relative}
   .ram-summary-bar{grid-template-columns:1fr}
   .ram-sum-item:hover{transform:none}
   .back-top{bottom:16px;right:16px;width:40px;height:40px;font-size:14px}
-  /* 手机端品牌卡片修复：改回2列网格 */
-  .brand-nav-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    overflow:visible;
-    padding:8px 4px 16px;
-    scroll-snap-type:none;
-  }
+  .brand-nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;overflow:visible;padding:8px 4px 16px;scroll-snap-type:none}
   .brand-nav-grid::-webkit-scrollbar{display:auto}
-  .brand-card{
-    min-width:0;
-    scroll-snap-align:none;
-    flex-shrink:0;
-  }
+  .brand-card{min-width:0;scroll-snap-align:none;flex-shrink:0}
 }
 </style>
 </head>
@@ -868,19 +926,87 @@ section{padding:100px 0;position:relative}
 </section>
 
 <script>
+/* ========== 环境检测 ========== */
+const isMobile=matchMedia('(hover:none)').matches;
+
 /* ========== 品牌卡片 ========== */
 const brandCards=document.querySelectorAll('.brand-card');
 let gyroTilt=null,activeBrandCard=null,gyroRequested=false;
-brandCards.forEach(card=>{card.addEventListener('animationend',e=>{if(e.animationName.startsWith('from')){card.style.opacity='1';card.style.transform='perspective(800px) rotateX(0) translateY(0)';card.style.animation='none';card.dataset.ready='true';requestAnimationFrame(()=>card.classList.add('glow-ready'))}})});
-if(matchMedia('(hover:hover)').matches){brandCards.forEach(card=>{const light=card.querySelector('.bc-mlight');card.addEventListener('mousemove',e=>{if(!card.dataset.ready||gyroTilt)return;const r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,px=(x/r.width-.5)*2,py=(y/r.height-.5)*2;card.style.transition='transform .08s ease-out';card.style.transform=`perspective(800px) rotateX(${-py*8}deg) rotateY(${px*8}deg) translateY(-6px)`;light.style.left=x+'px';light.style.top=y+'px'});card.addEventListener('mouseleave',()=>{if(!card.dataset.ready||gyroTilt)return;card.style.transition='transform .4s ease';card.style.transform='perspective(800px) rotateX(0) translateY(0)'})})}
-brandCards.forEach(card=>{let longTimer=null;card.addEventListener('touchstart',e=>{if(!card.dataset.ready)return;activeBrandCard=card;card.classList.add('is-touched');card.style.transition='transform .12s ease';card.style.transform='perspective(800px) scale(.96) translateY(3px)';longTimer=setTimeout(()=>card.classList.add('long-press'),500);const t=e.touches[0],r=card.getBoundingClientRect();const ring=document.createElement('div');ring.className='ripple-ring';ring.style.left=(t.clientX-r.left)+'px';ring.style.top=(t.clientY-r.top)+'px';card.appendChild(ring);ring.addEventListener('animationend',()=>ring.remove())},{passive:true});const end=()=>{if(!card.dataset.ready)return;activeBrandCard=null;card.classList.remove('is-touched','long-press');clearTimeout(longTimer);card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1)';card.style.transform=gyroTilt?`perspective(800px) rotateX(${gyroTilt.y}deg) rotateY(${gyroTilt.x}deg)`:'perspective(800px) rotateX(0) translateY(0)'};card.addEventListener('touchend',end,{passive:true});card.addEventListener('touchcancel',end,{passive:true})});
-function startGyro(){let raf=null;window.addEventListener('deviceorientation',e=>{if(e.gamma===null)return;const x=Math.max(-8,Math.min(8,e.gamma*.4)),y=Math.max(-8,Math.min(8,(e.beta-40)*.4));gyroTilt={x,y};if(!raf)raf=requestAnimationFrame(()=>{raf=null;brandCards.forEach(c=>{if(c.dataset.ready&&c!==activeBrandCard&&!c.matches(':hover')){c.style.transition='transform .12s ease-out';c.style.transform=`perspective(800px) rotateX(${y}deg) rotateY(${x}deg)`}})})},{passive:true})}
-async function initGyro(){if(typeof DeviceOrientationEvent==='undefined')return;if(typeof DeviceOrientationEvent.requestPermission==='function'){document.addEventListener('touchstart',async()=>{if(gyroRequested)return;gyroRequested=true;try{const p=await DeviceOrientationEvent.requestPermission();if(p==='granted')startGyro()}catch(e){}},{once:true})}else startGyro()}
-initGyro();
+
+/* 入口动画结束：设置 ready 状态（兼容桌面 3D 入场和移动端简单淡入） */
+brandCards.forEach(card=>{
+  card.addEventListener('animationend',e=>{
+    card.style.opacity='1';
+    card.style.animation='none';
+    card.dataset.ready='true';
+    /* 仅桌面端：设置最终 transform 并启用光效 */
+    if(e.animationName.startsWith('from')){
+      card.style.transform='perspective(800px) rotateX(0) translateY(0)';
+      requestAnimationFrame(()=>card.classList.add('glow-ready'));
+    }
+  })
+});
+
+/* 桌面端：鼠标跟随 3D 倾斜 */
+if(!isMobile&&matchMedia('(hover:hover)').matches){
+  brandCards.forEach(card=>{
+    const light=card.querySelector('.bc-mlight');
+    card.addEventListener('mousemove',e=>{
+      if(!card.dataset.ready||gyroTilt)return;
+      const r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+      const px=(x/r.width-.5)*2,py=(y/r.height-.5)*2;
+      card.style.transition='transform .08s ease-out';
+      card.style.transform=`perspective(800px) rotateX(${-py*8}deg) rotateY(${px*8}deg) translateY(-6px)`;
+      if(light){light.style.left=x+'px';light.style.top=y+'px'}
+    });
+    card.addEventListener('mouseleave',()=>{
+      if(!card.dataset.ready||gyroTilt)return;
+      card.style.transition='transform .4s ease';
+      card.style.transform='perspective(800px) rotateX(0) translateY(0)';
+    })
+  })
+}
+
+/* 触摸交互：移动端仅缩放，桌面端 3D + 涟漪 */
+brandCards.forEach(card=>{
+  let longTimer=null;
+  card.addEventListener('touchstart',e=>{
+    if(!card.dataset.ready)return;
+    activeBrandCard=card;
+    card.classList.add('is-touched');
+    card.style.transition='transform .12s ease';
+    card.style.transform=isMobile?'scale(.97)':'perspective(800px) scale(.96) translateY(3px)';
+    longTimer=setTimeout(()=>card.classList.add('long-press'),500);
+    const t=e.touches[0],r=card.getBoundingClientRect();
+    const ring=document.createElement('div');
+    ring.className='ripple-ring';
+    ring.style.left=(t.clientX-r.left)+'px';
+    ring.style.top=(t.clientY-r.top)+'px';
+    card.appendChild(ring);
+    ring.addEventListener('animationend',()=>ring.remove())
+  },{passive:true});
+  const end=()=>{
+    if(!card.dataset.ready)return;
+    activeBrandCard=null;
+    card.classList.remove('is-touched','long-press');
+    clearTimeout(longTimer);
+    card.style.transition='transform .3s cubic-bezier(.34,1.56,.64,1)';
+    card.style.transform=isMobile?'none':gyroTilt?`perspective(800px) rotateX(${gyroTilt.y}deg) rotateY(${gyroTilt.x}deg)`:'perspective(800px) rotateX(0) translateY(0)';
+  };
+  card.addEventListener('touchend',end,{passive:true});
+  card.addEventListener('touchcancel',end,{passive:true})
+});
+
+/* 桌面端陀螺仪（品牌卡片） */
+if(!isMobile){
+  function startGyro(){let raf=null;window.addEventListener('deviceorientation',e=>{if(e.gamma===null)return;const x=Math.max(-8,Math.min(8,e.gamma*.4)),y=Math.max(-8,Math.min(8,(e.beta-40)*.4));gyroTilt={x,y};if(!raf)raf=requestAnimationFrame(()=>{raf=null;brandCards.forEach(c=>{if(c.dataset.ready&&c!==activeBrandCard&&!c.matches(':hover')){c.style.transition='transform .12s ease-out';c.style.transform=`perspective(800px) rotateX(${y}deg) rotateY(${x}deg)`}})})},{passive:true})}
+  async function initGyro(){if(typeof DeviceOrientationEvent==='undefined')return;if(typeof DeviceOrientationEvent.requestPermission==='function'){document.addEventListener('touchstart',async()=>{if(gyroRequested)return;gyroRequested=true;try{const p=await DeviceOrientationEvent.requestPermission();if(p==='granted')startGyro()}catch(e){}},{once:true})}else startGyro()}
+  initGyro()
+}
 
 /* ========== [2] 阅读进度条 ========== */
 const readingBar=document.getElementById('readingBar');
-window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;readingBar.style.width=h>0?(window.scrollY/h*100)+'%':'0%';},{passive:true});
+window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;readingBar.style.width=h>0?(window.scrollY/h*100)+'%':'0%'},{passive:true});
 
 /* ========== [9] 回到顶部 ========== */
 const backTop=document.getElementById('backTop');
@@ -892,30 +1018,24 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 
 /* ========== [4] 进度条填充动画 + [11] 数字计数器 ========== */
 const barObs=new IntersectionObserver(entries=>{entries.forEach(i=>{if(!i.isIntersecting)return;
-  // 进度条填充
   const fill=i.target.querySelector('.rb-bar-fill');
   if(fill&&!fill.dataset.animated){fill.dataset.animated='1';const w=fill.dataset.width;requestAnimationFrame(()=>{fill.classList.add('animate');fill.style.width=w+'%'})}
-  // 数字计数器
   const counters=i.target.querySelectorAll('.counter-num');
   counters.forEach(c=>{if(c.dataset.done)return;c.dataset.done='1';const target=+c.dataset.target;const dur=800;const start=performance.now();
   (function tick(now){const p=Math.min((now-start)/dur,1);c.textContent=Math.round(p*target);if(p<1)requestAnimationFrame(tick)})(start)})})},{threshold:.2});
 document.querySelectorAll('.ram-bar-card').forEach(el=>barObs.observe(el));
 
-/* ========== [6] 卡片触摸涟漪 ========== */
+/* ========== [6] 卡片触摸涟漪（轻量级） ========== */
 document.querySelectorAll('.part-card,.oc,.ram-bar-card,.ram-ext-col,.ram-sc,.dt-col,.cmp-card,.spec,.cache-tier,.core-type,.nm-chip,.ram-cmp').forEach(el=>{
   el.style.position='relative';el.style.overflow='hidden';
   el.addEventListener('touchstart',e=>{const t=e.touches[0],r=el.getBoundingClientRect();const rip=document.createElement('div');rip.className='card-ripple';const size=Math.max(r.width,r.height);rip.style.width=rip.style.height=size+'px';rip.style.left=(t.clientX-r.left-size/2)+'px';rip.style.top=(t.clientY-r.top-size/2)+'px';el.appendChild(rip);rip.addEventListener('animationend',()=>rip.remove())},{passive:true})});
 
-/* ========== [18] 屏幕边缘闪光 ========== */
-const edgeL=document.getElementById('edgeLeft'),edgeR=document.getElementById('edgeRight');
-let edgeTimer;
-document.addEventListener('touchstart',e=>{const x=e.touches[0].clientX;const w=window.innerWidth;clearTimeout(edgeTimer);if(x<w*.15){edgeL.style.background='linear-gradient(to bottom,transparent,rgba(245,166,35,.25),transparent)';edgeL.classList.add('active')}else if(x>w*.85){edgeR.style.background='linear-gradient(to bottom,transparent,rgba(51,170,255,.25),transparent)';edgeR.classList.add('active')}edgeTimer=setTimeout(()=>{edgeL.classList.remove('active');edgeR.classList.remove('active')},300)},{passive:true});
-
-/* ========== [19] 滚动微倾斜 ========== */
-if(matchMedia('(hover:none)').matches){let tiltRaf=null;window.addEventListener('scroll',()=>{if(tiltRaf)return;tiltRaf=requestAnimationFrame(()=>{tiltRaf=null;document.querySelectorAll('.ram-bar-card,.ram-ext,.ram-storage,.ram-verdict,.ram-reality,.diff-card,.ram-intro-card').forEach(el=>{const r=el.getBoundingClientRect();const center=(r.top+r.height/2)/window.innerHeight;const tilt=(.5-center)*1.5;el.style.transform=`perspective(1000px) rotateX(${tilt}deg)`})})},{passive:true})}
-
-/* ========== 品牌卡片滚动视差 ========== */
-let sRaf=null;window.addEventListener('scroll',()=>{if(sRaf)return;sRaf=requestAnimationFrame(()=>{sRaf=null;brandCards.forEach(c=>{const r=c.getBoundingClientRect(),o=(r.top+r.height/2-window.innerHeight/2)/window.innerHeight,w=c.querySelector('.bc-wm');if(w)w.style.transform=`translateY(${o*25}px)`})})},{passive:true});
+/* ========== [18] 屏幕边缘闪光（仅桌面端） ========== */
+if(!isMobile){
+  const edgeL=document.getElementById('edgeLeft'),edgeR=document.getElementById('edgeRight');
+  let edgeTimer;
+  document.addEventListener('touchstart',e=>{const x=e.touches[0].clientX;const w=window.innerWidth;clearTimeout(edgeTimer);if(x<w*.15){edgeL.style.background='linear-gradient(to bottom,transparent,rgba(245,166,35,.25),transparent)';edgeL.classList.add('active')}else if(x>w*.85){edgeR.style.background='linear-gradient(to bottom,transparent,rgba(51,170,255,.25),transparent)';edgeR.classList.add('active')}edgeTimer=setTimeout(()=>{edgeL.classList.remove('active');edgeR.classList.remove('active')},300)},{passive:true});
+}
 </script>
 </body>
 </html>
