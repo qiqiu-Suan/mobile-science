@@ -14,18 +14,16 @@
   --accent:#d4a843;--accent-dim:#a07d2e;--accent-light:#f0d78c;
   --red:#FF3B30;--red-dim:rgba(255,59,48,0.12);
   --green:#34C759;--green-dim:rgba(52,199,89,0.12);
-  --orange:#FF9500;
   --text:#e8e4dc;--text-muted:#7a7670;--text-dim:#4a4744;
   --border:rgba(255,255,255,0.06);
   --glass-bg:rgba(20,19,18,0.55);
   --glass-border:rgba(255,255,255,0.07);
-  --glass-highlight:rgba(255,255,255,0.04);
   --spring:cubic-bezier(0.2,0.8,0.2,1);
   --gold-grad:linear-gradient(90deg,var(--accent),var(--accent-light));
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:'Noto Sans SC',sans-serif;font-weight:400;background:var(--bg);color:var(--text);line-height:1.75;overflow-x:hidden;font-size:15.5px;}
+html{scroll-behavior:smooth;overscroll-behavior-y:contain;}
+body{font-family:'Noto Sans SC',sans-serif;font-weight:400;background:var(--bg);color:var(--text);line-height:1.75;overflow-x:hidden;font-size:15.5px;touch-action:manipulation;}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.025;pointer-events:none;z-index:9999;}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(212,168,67,0.035) 0%,transparent 55%),radial-gradient(ellipse at 70% 80%,rgba(255,59,48,0.02) 0%,transparent 45%);pointer-events:none;z-index:9998;}
 .container{max-width:1080px;margin:0 auto;padding:0 24px;}
@@ -50,7 +48,7 @@ nav .nav-links a.active{color:var(--accent);background:rgba(255,255,255,0.06);}
 nav .nav-links a::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--accent);border-radius:980px;transition:width .3s var(--spring);}
 nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
 
-.back-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:980px;background:rgba(20,19,18,0.8);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--glass-border);color:var(--accent);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(20px);transition:all .35s var(--spring);z-index:99;pointer-events:none;}
+.back-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:980px;background:rgba(20,19,18,0.85);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--glass-border);color:var(--accent);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(20px);transition:all .35s var(--spring);z-index:99;pointer-events:none;}
 .back-top.show{opacity:1;transform:translateY(0);pointer-events:auto;}
 .back-top:hover{background:rgba(212,168,67,0.15);transform:translateY(-2px);}
 
@@ -86,7 +84,7 @@ nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
 .pc-list li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:980px;}
 .pc-card.pros .pc-list li::before{background:var(--green);}
 .pc-card.cons .pc-list li::before{background:var(--red);}
-.pc-list li strong{color:var(--accent);font-weight:500;text-shadow:0 0 20px rgba(212,168,67,0.12);}
+.pc-list li strong{color:var(--accent);font-weight:500;}
 
 .verdict-banner{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(1.8);-webkit-backdrop-filter:blur(40px) saturate(1.8);border:1px solid rgba(255,59,48,0.12);border-radius:18px;padding:28px 32px;margin-top:40px;display:flex;align-items:flex-start;gap:16px;position:relative;overflow:hidden;transition:border-color .4s var(--spring);}
 .verdict-banner::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 40%);pointer-events:none;}
@@ -106,8 +104,7 @@ nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
 .phone-card h3{font-family:'Noto Serif SC',serif;font-weight:800;font-size:22px;margin-bottom:6px;letter-spacing:-.03em;}
 .phone-card .card-desc{font-size:14.5px;color:var(--text-muted);line-height:1.75;margin-bottom:20px;}
 .card-specs{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.spec-item{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:10px 12px;transition:background .3s var(--spring);}
-.spec-item:hover{background:rgba(255,255,255,0.04);}
+.spec-item{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:10px 12px;}
 .spec-item .spec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;}
 .spec-item .spec-value{font-size:13px;font-weight:500;color:var(--text);font-feature-settings:"tnum";}
 .spec-item .spec-value.gold-grad{background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -132,7 +129,7 @@ nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
 .stars .star.empty{color:var(--text-dim);}
 
 .lens-mobile{display:none;margin-top:24px;}
-.lens-mobile-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.lens-mobile-card{background:rgba(20,19,18,0.85);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:16px;}
 .lens-mobile-card h4{font-family:'Noto Serif SC',serif;font-weight:700;font-size:16px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--glass-border);}
 .lens-mobile-card .lm-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;}
 .lens-mobile-card .lm-row:last-child{border:none;}
@@ -156,16 +153,14 @@ nav .nav-links a:hover::after,nav .nav-links a.active::after{width:16px;}
 .cam-verdict.mid{background:rgba(212,168,67,0.08);color:var(--accent);border:1px solid rgba(212,168,67,0.1);}
 
 .table-wrap{overflow-x:auto;border:1px solid var(--glass-border);border-radius:18px;background:var(--glass-bg);backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);-webkit-overflow-scrolling:touch;position:relative;}
-.table-wrap::after{content:'← 横滑 →';position:absolute;bottom:8px;right:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);opacity:0.4;pointer-events:none;}
 table{width:100%;border-collapse:collapse;min-width:700px;}
 thead th{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:16px 18px;text-align:left;border-bottom:1px solid var(--glass-border);background:rgba(255,255,255,0.03);}
 thead th:first-child{border-radius:18px 0 0 0;}thead th:last-child{border-radius:0 18px 0 0;}
 tbody td{padding:14px 18px;font-size:13px;border-bottom:1px solid var(--glass-border);vertical-align:top;font-feature-settings:"tnum";}
 tbody tr:last-child td{border-bottom:none;}
-tbody tr{position:relative;transition:background .2s;}
+tbody tr{position:relative;}
 tbody tr:hover{background:rgba(212,168,67,.03);}
 tbody tr:nth-child(even){background:rgba(255,255,255,0.012);}
-tbody tr:nth-child(even):hover{background:rgba(212,168,67,.04);}
 tbody tr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:0 2px 2px 0;opacity:0;transition:opacity .3s var(--spring);}
 tbody tr:hover::before{opacity:1;}
 .td-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.05em;}
@@ -204,8 +199,6 @@ tbody tr.group-sep td{padding-top:10px;border-top:8px solid var(--bg);}
 .final h3::after{content:'';display:block;width:40px;height:4px;background:var(--accent);border-radius:2px;margin:16px auto 0;}
 .final p{font-size:15.5px;color:var(--text-muted);max-width:560px;margin:16px auto 0;line-height:1.8;position:relative;z-index:1;}
 
-footer{padding:48px 0;text-align:center;border-top:1px solid var(--glass-border);margin-top:80px;}
-footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:.1em;}
 .divider{height:2px;background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,0.05) 50%,transparent 95%);margin:0;}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
@@ -220,71 +213,98 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
 .section-toggle.open .toggle-arrow{transform:rotate(180deg);}
 .section-toggle span{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(24px,6vw,36px);}
 
-/* ===== 手机端：去掉所有 blur，去掉噪声纹理，去掉圆点导航 ===== */
+/* ============================================
+   手机端深度性能优化
+   ============================================ */
 @media(max-width:800px){
   .phone-grid{grid-template-columns:1fr;}
   .cam-detail-grid{grid-template-columns:1fr;}
   .rec-grid{grid-template-columns:1fr;}
   .proscons-grid{grid-template-columns:1fr;}
 }
+
 @media(max-width:600px){
-  /* 去掉噪声纹理 — 两项 */
-  body::before{display:none;}
-  body::after{display:none;}
+  /* 1. 关闭 smooth scroll — 移动端原生惯性滚动更流畅 */
+  html{scroll-behavior:auto;}
 
-  /* 去掉所有 backdrop-filter（GPU 杀手） */
-  nav{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(10,9,8,0.96);}
-  .back-top{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(20,19,18,0.95);}
-  .pc-card{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .verdict-banner{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .phone-card{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .phone-card.air .card-badge{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .screen-badge{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .air-warning{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .lens-grid{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .lens-mobile-card{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .cam-detail{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .table-wrap{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .rec-card{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .spec-item{backdrop-filter:none;-webkit-backdrop-filter:none;}
-  .hero h1 .glass-text::before{backdrop-filter:none;-webkit-backdrop-filter:none;}
+  /* 2. 去掉噪声纹理和环境光 */
+  body::before, body::after{display:none;}
 
-  /* 隐藏桌面端镜头表 */
+  /* 3. 杀掉全部 backdrop-filter（GPU 头号杀手） */
+  nav, .back-top, .pc-card, .verdict-banner, .phone-card,
+  .phone-card.air .card-badge, .screen-badge, .air-warning,
+  .lens-grid, .lens-mobile-card, .cam-detail, .table-wrap,
+  .rec-card, .spec-item, .hero h1 .glass-text::before{
+    backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  }
+
+  /* 4. 不透明背景替代 blur */
+  nav{background:rgba(10,9,8,0.97);}
+  .back-top{background:rgba(20,19,18,0.95);}
+  .table-wrap{background:rgba(20,19,18,0.9);}
+  thead th:first-child,tbody td:first-child{background:rgba(20,19,18,0.95);}
+
+  /* 5. 杀掉全部多层阴影 — 用单层轻阴影 */
+  .pc-card, .phone-card, .cam-detail, .rec-card, .final{
+    box-shadow:0 2px 8px rgba(0,0,0,0.3) !important;
+  }
+
+  /* 6. 杀掉伪元素装饰层（减少 paint 区域） */
+  .pc-card::before, .phone-card::before, .phone-card::after,
+  .verdict-banner::before, .rec-card::before, .final::before,
+  .final::after, nav::after, .hero::before{display:none;}
+
+  /* 7. fade-in 直接显示 — 不做入场动画 */
+  .fade-in{opacity:1 !important;transform:none !important;transition:none !important;}
+  .hero h1, .hero-tag, .hero-sub{opacity:1 !important;animation:none !important;}
+
+  /* 8. 杀掉全部 hover/transition */
+  *,*::before,*::after{transition:none !important;animation:none !important;}
+
+  /* 9. 隐藏桌面镜头表，显示纵向卡 */
   .lens-grid{display:none;}
   .lens-mobile{display:block;}
 
+  /* 10. 隐藏 hero 装饰 */
+  .hero-glass{display:none;}
+
+  /* 11. content-visibility — 浏览器跳过屏外渲染（巨大性能提升） */
+  .section{content-visibility:auto;contain-intrinsic-size:auto 600px;}
+
+  /* 12. CSS containment */
+  .phone-card,.pc-card,.cam-detail,.rec-card{contain:layout style;}
+
+  /* 13. 布局 */
   nav .nav-links{display:none;}
-  .hero{padding:120px 0 60px;}
-  .hero h1{font-size:clamp(30px,8vw,48px);}
-  .section{padding:60px 0;}
-  .section h2{font-size:clamp(24px,6vw,36px);}
-  .phone-card{padding:24px 20px 20px;}
-  .phone-card .card-specs{grid-template-columns:1fr;}
-  .verdict-banner{padding:20px;flex-direction:column;gap:12px;}
-  .pc-card{padding:24px;}
-  .cam-detail{padding:20px 16px;}
-  .final{padding:40px 24px;}
-  .rec-card{padding:24px 20px;}
-  .table-wrap::after{content:none;}
-  .section-desc{font-size:14px;}
+  .hero{padding:100px 0 48px;}
+  .hero h1{font-size:clamp(28px,8vw,44px);}
+  .section{padding:48px 0;}
+  .section h2{font-size:clamp(22px,6vw,32px);}
+  .section-desc{font-size:14px;margin-bottom:32px;}
   .hero-sub{font-size:15px;}
-  .fade-in{transition-duration:.35s;}
-  .phone-card:hover,.rec-card:hover,.cam-detail:hover{transform:none;}
-  .battery-row{flex-wrap:wrap;}
-  .battery-label{width:100%;text-align:left;margin-bottom:4px;}
+  .phone-card{padding:20px 16px 16px;}
+  .phone-card .card-specs{grid-template-columns:1fr;}
+  .verdict-banner{padding:16px;flex-direction:column;gap:10px;}
+  .pc-card{padding:20px 16px;}
+  .cam-detail{padding:20px 16px;}
+  .final{padding:36px 20px;}
+  .rec-card{padding:24px 20px;}
+  .section-tag{font-size:10px;margin-bottom:10px;}
+  .battery-row{flex-wrap:wrap;gap:8px;}
+  .battery-label{width:100%;text-align:left;font-size:12px;margin-bottom:2px;}
   .battery-note{padding-left:0;font-size:11px;}
 
-  /* 隐藏桌面 h2，用折叠按钮标题 */
-  .section-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 0;}
+  /* 14. 折叠展开 */
+  .section-toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
   .section h2.desktop-only{display:none;}
-  .section-collapsible{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s var(--spring),opacity .3s var(--spring);}
+  .section-collapsible{max-height:0;overflow:hidden;opacity:0;}
   .section-collapsible.open{max-height:9999px;opacity:1;}
 
-  /* 表格 sticky 首列 */
-  thead th:first-child,tbody td:first-child{position:sticky;left:0;z-index:2;background:rgba(20,19,18,0.95);}
+  /* 15. 表格 sticky 首列 */
+  thead th:first-child,tbody td:first-child{position:sticky;left:0;z-index:2;}
 
-  /* 触摸按压反馈 */
-  .phone-card:active,.rec-card:active,.cam-detail:active,.pc-card:active{transform:scale(0.97) !important;transition-duration:.1s;}
+  /* 16. 回到顶部按钮位置 */
+  .back-top{bottom:16px;right:16px;width:40px;height:40px;}
 }
 </style>
 </head>
@@ -350,7 +370,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
     </div>
     <div class="verdict-banner section-collapsible open">
       <div class="verdict-icon">⚠</div>
-      <div class="verdict-text"><strong>结论：追求实用性、性价比、拍照画质、续航，不建议买苹果。</strong><br>苹果卖的是品牌、生态和视频能力，不是硬件堆料。想清楚你到底需要什么，再决定。</div>
+      <div class="verdict-text"><strong>结论：追求实用性、性价比、拍照画质、续航，不建议买苹果。</strong><br>苹果卖的是品牌、生态和视频能力，不是硬件堆料。</div>
     </div>
   </div>
 </section>
@@ -362,13 +382,13 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
     <div class="section-tag">02 / 全系解析</div>
     <div class="section-toggle" onclick="toggleSection(this)"><span>iPhone 17 四款机型</span><span class="toggle-arrow">▼</span></div>
     <h2 class="desktop-only section-collapsible open">iPhone 17 四款机型</h2>
-    <p class="section-desc section-collapsible open">从标准版到 Pro Max，定位不同，短板各异。注意：17 和 17 Pro 是小屏，小屏爱好者的好消息。</p>
+    <p class="section-desc section-collapsible open">从标准版到 Pro Max，定位不同，短板各异。17 和 17 Pro 是小屏。</p>
     <div class="phone-grid section-collapsible open">
       <div class="phone-card">
         <div class="card-rank">标准版 · 入门之选</div>
         <h3>iPhone 17</h3>
-        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 小屏友好</div>
-        <div class="card-desc">补齐高刷屏和大存储，日常够用。6.3寸小屏单手操控好，保留双实体 SIM 卡槽。但影像缩水严重，散热一般，续航弱。</div>
+        <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 小屏</div>
+        <div class="card-desc">补齐高刷和大存储，日常够用。双实体 SIM 卡槽。但影像缩水，散热一般，续航弱。</div>
         <div class="card-specs">
           <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value">A19</div></div>
           <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.3" 120Hz</div></div>
@@ -383,8 +403,8 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
         <div class="card-badge">不推荐</div>
         <h3>iPhone 17 Air</h3>
         <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.5 英寸</div>
-        <div class="air-warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>无实体 SIM 卡槽，仅支持 eSIM。</strong>国行目前仅支持中国联通，移动和电信用户需先转网；首次办理必须带身份证去线下营业厅。</span></div>
-        <div class="card-desc">为薄牺牲一切。单摄像头、电池最小、续航全系最差、仅支持 eSIM、处理器残血、单扬声器。同价位买任何安卓都更值。</div>
+        <div class="air-warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>无实体 SIM 卡槽，仅支持 eSIM。</strong>国行仅联通，移动电信需转网；首次办理需线下。</span></div>
+        <div class="card-desc">为薄牺牲一切。单摄、最小电池、最差续航、仅 eSIM、残血处理器、单扬声器。</div>
         <div class="card-specs">
           <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value td-bad">A19 Pro (残血)</div></div>
           <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.5" 120Hz</div></div>
@@ -398,7 +418,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
         <div class="card-rank">专业版 · 苹果内最均衡</div>
         <h3>iPhone 17 Pro</h3>
         <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.3 英寸 · 小屏旗舰</div>
-        <div class="card-desc">满血芯片 + VC 散热 + 三摄系统，6.3寸小屏党能买到的最强 iPhone。保留双实体 SIM 卡槽。但拍照和续航对比同价位安卓仍有差距。</div>
+        <div class="card-desc">满血芯片 + VC 散热 + 三摄。6.3寸小屏党最强 iPhone。双实体 SIM。</div>
         <div class="card-specs">
           <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value td-good">A19 Pro (满血)</div></div>
           <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.3" 120Hz</div></div>
@@ -412,7 +432,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
         <div class="card-rank">旗舰版 · 苹果完全体</div>
         <h3>iPhone 17 Pro Max</h3>
         <div class="screen-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>6.9 英寸 · 大屏</div>
-        <div class="card-desc">最大屏、最大电池——苹果的天花板。又重又贵，拍照依然打不过同价位安卓。保留双实体 SIM 卡槽。适合追求极致大屏的用户。</div>
+        <div class="card-desc">最大屏、最大电池——苹果天花板。又重又贵，拍照依然不如安卓。</div>
         <div class="card-specs">
           <div class="spec-item"><div class="spec-label">处理器</div><div class="spec-value gold-grad">A19 Pro (满血)</div></div>
           <div class="spec-item"><div class="spec-label">屏幕</div><div class="spec-value">6.9" 120Hz</div></div>
@@ -433,7 +453,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
     <div class="section-tag">03 / 影像深度对比</div>
     <div class="section-toggle" onclick="toggleSection(this)"><span>影像能力全景图</span><span class="toggle-arrow">▼</span></div>
     <h2 class="desktop-only section-collapsible open">影像能力全景图</h2>
-    <p class="section-desc section-collapsible open">苹果全系拍照不如同价位安卓。Pro / Pro Max 的主摄底和安卓旗舰同为 1/1.28" 级别，差距主要在长焦、算法和镜头组上。</p>
+    <p class="section-desc section-collapsible open">苹果全系拍照不如同价位安卓。差距主要在长焦、算法和镜头组上。</p>
 
     <div class="lens-grid section-collapsible open">
       <div class="lg-head">镜头</div><div class="lg-head lg-model">iPhone 17</div><div class="lg-head lg-model">17 Air</div><div class="lg-head lg-model">17 Pro</div><div class="lg-head lg-model">17 Pro Max</div>
@@ -467,7 +487,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
       <div class="lens-mobile-card"><h4>iPhone 17</h4>
         <div class="lm-row"><span class="lm-label">📷 主摄</span><span class="lm-value yes">4800万 · 1/1.56"</span></div>
         <div class="lm-row"><span class="lm-label">🔭 长焦</span><span class="lm-value no">无</span></div>
-        <div class="lm-row"><span class="lm-label">🌐 超广角</span><span class="lm-value yes">1200万 · 小底</span></div>
+        <div class="lm-row"><span class="lm-label">🌐 超广角</span><span class="lm-value yes">1200万</span></div>
         <div class="lm-row"><span class="lm-label">📊 拍照</span><span class="lm-value" style="color:var(--red);">弱</span></div>
       </div>
       <div class="lens-mobile-card"><h4>iPhone 17 Air</h4>
@@ -492,19 +512,19 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
 
     <div class="cam-detail-grid section-collapsible open">
       <div class="cam-detail"><h4>iPhone 17</h4><div class="cam-subtitle">双摄 · 无长焦 · 1/1.56"</div>
-        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 4800万 · 1/1.56"</div><p><strong>小底传感器</strong>，安卓中端机级别。白天尚可，<strong>暗光噪点明显</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 1200万</div><p>画质一般，<strong>远摄全靠裁切</strong>。</p></div></div>
-        <div class="cam-verdict bad">影像配置不如同价位安卓千元机。</div>
+        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 4800万 · 1/1.56"</div><p><strong>小底</strong>，安卓中端级。白天尚可，<strong>暗光噪点明显</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 1200万</div><p>画质一般，<strong>远摄靠裁切</strong>。</p></div></div>
+        <div class="cam-verdict bad">影像不如同价位安卓千元机。</div>
       </div>
       <div class="cam-detail"><h4>iPhone 17 Air</h4><div class="cam-subtitle">单摄 · 最弱 · 1/1.56"</div>
-        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">唯一：主摄 4800万</div><p><strong>仅此一颗镜头</strong>，没有超广角、没有长焦。<strong>等于放弃了手机摄影。</strong></p></div></div>
-        <div class="cam-verdict bad">全系列最差，同价位安卓全面碾压。</div>
+        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">唯一：主摄 4800万</div><p><strong>仅此一颗</strong>，无超广角无长焦。<strong>等于放弃手机摄影。</strong></p></div></div>
+        <div class="cam-verdict bad">全系列最差，安卓全面碾压。</div>
       </div>
-      <div class="cam-detail"><h4>iPhone 17 Pro</h4><div class="cam-subtitle">三摄 · 1/1.28" · 与安卓旗舰同级</div>
-        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 4800万 · 1/1.28"</div><p>和安卓旗舰<strong>同级</strong>，但<strong>算法不如安卓细腻</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · 4倍 · 1/2.55"</div><p><strong>底仅 1/2.55"</strong>，安卓用 1/1.4"，<strong>面积差约5倍</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 4800万</div><p>像素升级，<strong>底依然偏小</strong>。</p></div></div>
-        <div class="cam-verdict mid">主摄同级，但长焦底差距大。</div>
+      <div class="cam-detail"><h4>iPhone 17 Pro</h4><div class="cam-subtitle">三摄 · 1/1.28" · 安卓旗舰同级</div>
+        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 4800万 · 1/1.28"</div><p>和安卓旗舰<strong>同级</strong>，<strong>算法不如安卓细腻</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · 4倍 · 1/2.55"</div><p><strong>底仅 1/2.55"</strong>，安卓用 1/1.4"，<strong>面积差约5倍</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 4800万</div><p>像素升级，<strong>底偏小</strong>。</p></div></div>
+        <div class="cam-verdict mid">主摄同级，长焦底差距大。</div>
       </div>
       <div class="cam-detail"><h4>iPhone 17 Pro Max</h4><div class="cam-subtitle">三摄 · 1/1.28" · 苹果天花板</div>
-        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 4800万 · 1/1.28"</div><p>同 Pro，<strong>散热更好，连拍更稳</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · 4倍 · 1/2.55"</div><p><strong>最大短板</strong>，面积仅为安卓的约 1/5。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 4800万</div><p>同 Pro，底偏小。</p></div></div>
+        <div class="cam-lens"><div class="cam-lens-item"><div class="lens-name">主摄 4800万 · 1/1.28"</div><p>同 Pro，<strong>散热更好连拍更稳</strong>。</p></div><div class="cam-lens-item"><div class="lens-name">长焦 · 4倍 · 1/2.55"</div><p><strong>最大短板</strong>，面积仅为安卓 1/5。</p></div><div class="cam-lens-item"><div class="lens-name">超广角 4800万</div><p>同 Pro。</p></div></div>
         <div class="cam-verdict mid">苹果天花板，长焦底差距巨大。</div>
       </div>
     </div>
@@ -533,9 +553,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
             <text x="310" y="350" text-anchor="start">续航</text><text x="90" y="350" text-anchor="end">性能</text>
             <text x="24" y="150" text-anchor="end">性价比</text>
           </g>
-          <!-- 安卓: 4.5 / 3 / 4.2 / 4.8 / 4.5 -->
           <polygon points="200,61 288,171 277,305 113,320 67,157" fill="rgba(52,199,89,0.1)" stroke="rgba(52,199,89,0.5)" stroke-width="2"/>
-          <!-- 苹果: 3.2 / 2.2 / 2.5 / 4.2 / 2 -->
           <polygon points="200,101 265,179 246,263 123,305 141,181" fill="rgba(255,59,48,0.12)" stroke="rgba(255,59,48,0.6)" stroke-width="2"/>
           <circle cx="200" cy="61" r="4" fill="#34C759"/><text x="210" y="58" fill="#34C759" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600">4.5</text>
           <circle cx="288" cy="171" r="4" fill="#34C759"/><text x="298" y="168" fill="#34C759" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600">3.0</text>
@@ -557,7 +575,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
 
     <div class="verdict-banner section-collapsible open">
       <div class="verdict-icon">📷</div>
-      <div class="verdict-text"><strong>主摄底已不是核心差距，差距在长焦和算法。</strong><br>Pro / Pro Max 主摄 1/1.28" 和安卓同级。但苹果长焦底仅 1/2.55"，安卓用 1/1.4"，<strong>面积差约 5 倍</strong>。</div>
+      <div class="verdict-text"><strong>差距在长焦和算法。</strong>苹果长焦底仅 1/2.55"，安卓用 1/1.4"，<strong>面积差约 5 倍</strong>。</div>
     </div>
   </div>
 </section>
@@ -579,9 +597,9 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
           <tr class="group-sep"><td class="td-label">内存</td><td>8GB</td><td>12GB</td><td class="td-good">12GB</td><td class="td-good">12GB</td></tr>
           <tr><td class="td-label">屏幕</td><td>6.3" 120Hz</td><td>6.5" 120Hz</td><td>6.3" 120Hz</td><td>6.9" 120Hz</td></tr>
           <tr class="group-sep"><td class="td-label">主摄底</td><td class="td-bad">1/1.56"</td><td class="td-bad">1/1.56"</td><td>1/1.28"</td><td>1/1.28"</td></tr>
-          <tr><td class="td-label">长焦</td><td class="td-bad">无</td><td class="td-bad">无（单摄）</td><td>4倍光学 · 1/2.55"</td><td>4倍光学 · 1/2.55"</td></tr>
-          <tr><td class="td-label">超广角</td><td>1200万 小底</td><td class="td-bad">无</td><td>4800万 1/2.55"</td><td>4800万 1/2.55"</td></tr>
-          <tr class="group-sep"><td class="td-label">SIM 卡</td><td class="td-good">双实体 nano-SIM</td><td class="td-bad">仅 eSIM</td><td class="td-good">双实体 nano-SIM</td><td class="td-good">双实体 nano-SIM</td></tr>
+          <tr><td class="td-label">长焦</td><td class="td-bad">无</td><td class="td-bad">无（单摄）</td><td>4倍 · 1/2.55"</td><td>4倍 · 1/2.55"</td></tr>
+          <tr><td class="td-label">超广角</td><td>1200万</td><td class="td-bad">无</td><td>4800万 1/2.55"</td><td>4800万 1/2.55"</td></tr>
+          <tr class="group-sep"><td class="td-label">SIM 卡</td><td class="td-good">双实体</td><td class="td-bad">仅 eSIM</td><td class="td-good">双实体</td><td class="td-good">双实体</td></tr>
           <tr><td class="td-label">电池（国行）</td><td>3,692mAh</td><td class="td-bad">3,149mAh</td><td>3,988mAh</td><td class="td-good">4,823mAh</td></tr>
           <tr><td class="td-label">电池（美版）</td><td>3,692mAh</td><td class="td-bad">3,149mAh</td><td class="td-good">4,252mAh</td><td class="td-good">5,088mAh</td></tr>
           <tr class="group-sep"><td class="td-label">扬声器</td><td>双扬声器</td><td class="td-bad">单扬声器</td><td>双扬声器</td><td>双扬声器</td></tr>
@@ -620,7 +638,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
     </div>
     <div class="verdict-banner section-collapsible open">
       <div class="verdict-icon">⚠</div>
-      <div class="verdict-text"><strong>全系续航都弱。</strong> Air 最差，Pro Max 是苹果里最好的，但依然不如同价位安卓。<strong>充电速度也慢</strong>，远落后安卓百瓦快充。</div>
+      <div class="verdict-text"><strong>全系续航都弱。</strong> Air 最差，Pro Max 苹果最好但仍不如安卓。<strong>充电也慢</strong>，远落后安卓百瓦快充。</div>
     </div>
   </div>
 </section>
@@ -634,17 +652,17 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
     <h2 class="desktop-only section-collapsible open">你该怎么选？</h2>
     <p class="section-desc section-collapsible open">苹果卖的是品牌和生态，不是性价比。</p>
     <div class="rec-grid section-collapsible open">
-      <div class="rec-card"><div class="rec-icon">📱</div><h4>小屏入门</h4><div class="rec-pick">→ iPhone 17</div><p>6.3 寸 + 170g，双实体 SIM。但拍照弱、续航弱。</p></div>
-      <div class="rec-card"><div class="rec-icon">📱✨</div><h4>小屏进阶</h4><div class="rec-pick">→ iPhone 17 Pro</div><p>满血芯片 + VC + 三摄。小屏党最强 iPhone。</p></div>
-      <div class="rec-card"><div class="rec-icon">🔋</div><h4>大屏大电池</h4><div class="rec-pick">→ iPhone 17 Pro Max</div><p>6.9 寸 + 苹果最大电池。230g 很重。</p></div>
+      <div class="rec-card"><div class="rec-icon">📱</div><h4>小屏入门</h4><div class="rec-pick">→ iPhone 17</div><p>6.3寸 + 170g，双实体 SIM。拍照弱、续航弱。</p></div>
+      <div class="rec-card"><div class="rec-icon">📱✨</div><h4>小屏进阶</h4><div class="rec-pick">→ iPhone 17 Pro</div><p>满血 + VC + 三摄。小屏党最强 iPhone。</p></div>
+      <div class="rec-card"><div class="rec-icon">🔋</div><h4>大屏大电池</h4><div class="rec-pick">→ iPhone 17 Pro Max</div><p>6.9寸 + 最大电池。230g 很重。</p></div>
     </div>
     <div class="verdict-banner section-collapsible open">
       <div class="verdict-icon">🚫</div>
-      <div class="verdict-text"><strong>iPhone 17 Air：任何情况都不建议。</strong>无实体 SIM 卡槽，国行仅联通 eSIM。续航最差，单摄，单扬声器，残血处理器。</div>
+      <div class="verdict-text"><strong>iPhone 17 Air：任何情况都不建议。</strong>无实体 SIM，仅联通 eSIM。续航最差，单摄，单扬声器，残血处理器。</div>
     </div>
     <div class="verdict-banner section-collapsible open">
       <div class="verdict-icon">📷</div>
-      <div class="verdict-text"><strong>在意拍照？别买苹果。</strong>长焦底差距巨大，夜景算法全面落后。苹果唯一优势只剩视频。</div>
+      <div class="verdict-text"><strong>在意拍照？别买苹果。</strong>长焦底差距巨大，夜景算法全面落后。唯一优势只剩视频。</div>
     </div>
   </div>
 </section>
@@ -660,33 +678,53 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-
   </div>
 </section>
 
-<footer>
-  <div class="container"><p>iPhone 17 选购指南 · 数据截至 2025 年 · 仅供参考</p></div>
-</footer>
-
 <script>
-window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').classList.add('done');},400);});
-const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
-document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+// 加载动画 — 移动端立即消失
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('loader').classList.add('done');},
+    /Mobi|Android/i.test(navigator.userAgent)?0:400);
+});
+
+// fade-in：桌面端用 IntersectionObserver，移动端直接显示
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+if (!isMobile) {
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+  },{threshold:0.15});
+  document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+}
+
+// 导航链接平滑滚动
 document.querySelectorAll('nav a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
     e.preventDefault();
     const t=document.querySelector(a.getAttribute('href'));
-    if(t){t.scrollIntoView({behavior:'smooth',block:'start'});t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');}
+    if(t)t.scrollIntoView({behavior:isMobile?'auto':'smooth',block:'start'});
   });
 });
+
+// rAF 节流滚动监听
 const nav=document.getElementById('mainNav');
 const backTop=document.getElementById('backTop');
 const sections=document.querySelectorAll('.section[id]');
 const navLinks=document.querySelectorAll('nav a[data-section]');
-window.addEventListener('scroll',()=>{
+let ticking=false;
+
+function updateNav(){
   const sy=window.scrollY;
   nav.classList.toggle('shrink',sy>80);
   backTop.classList.toggle('show',sy>500);
   let current='';
   sections.forEach(s=>{if(sy>=s.offsetTop-200)current=s.id;});
   navLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===current));
+  ticking=false;
+}
+window.addEventListener('scroll',()=>{
+  if(!ticking){requestAnimationFrame(updateNav);ticking=true;}
 },{passive:true});
+
+// 电池条动画
 const batteryChart=document.getElementById('batteryChart');
 let batteryAnimated=false;
 const batteryObserver=new IntersectionObserver((entries)=>{
@@ -694,12 +732,14 @@ const batteryObserver=new IntersectionObserver((entries)=>{
     if(e.isIntersecting&&!batteryAnimated){
       batteryAnimated=true;
       document.querySelectorAll('.battery-fill').forEach((bar,i)=>{
-        setTimeout(()=>{bar.style.width=bar.dataset.width+'%';},i*100);
+        setTimeout(()=>{bar.style.width=bar.dataset.width+'%';},i*80);
       });
     }
   });
 },{threshold:0.15});
 batteryObserver.observe(batteryChart);
+
+// 折叠展开
 function toggleSection(el){
   el.classList.toggle('open');
   el.parentElement.querySelectorAll('.section-collapsible').forEach(c=>c.classList.toggle('open'));
