@@ -142,7 +142,7 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
 .bs-dot.vi{left:76%}.bs-dot.vi .bs-dot-circle{background:rgba(100,170,255,.6);box-shadow:0 0 10px rgba(100,170,255,.15)}.bs-dot.vi .bs-dot-circle::after{border-color:rgba(100,170,255,.25)}.bs-dot.vi .bs-dot-label{color:rgba(100,170,255,.5)}
 .bs-dot.ap{left:50%}.bs-dot.ap .bs-dot-circle{background:rgba(160,160,165,.35);box-shadow:0 0 8px rgba(160,160,165,.08)}.bs-dot.ap .bs-dot-circle::after{border-color:rgba(160,160,165,.15)}.bs-dot.ap .bs-dot-label{color:rgba(160,160,165,.35)}
 .bs-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.18);margin-top:.3rem;letter-spacing:.04em}
-.bs-note .gold{color:rgba(212,168,83,.5);font-weight:600}
+.bs-note .gold{color:rgba(212,168,83,.52);font-weight:600}
 
 .brand-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(.6rem,1.2vw,1.1rem);max-width:950px;width:100%}
 .brand-card{padding:clamp(1.1rem,1.6vw,1.4rem) clamp(.9rem,1.3vw,1.2rem);border-radius:16px;position:relative;overflow:hidden;opacity:0;transform:translateY(14px);transition:all .7s ease;background:linear-gradient(165deg,rgba(255,255,255,.03),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.06)}
@@ -264,8 +264,7 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
 .sensor-col,.px-col,.zm-col{display:flex;flex-direction:column;gap:1.5rem}
 .s-block,.px-block,.zm-block{opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
 .s-block.on,.px-block.on,.zm-block.on{opacity:1;transform:none}
-.s-block:nth-child(1).on,.px-block:nth-child(1).on,.zm-block:nth-child(1).on{transition-delay:.1s}
-.s-block:nth-child(2).on,.px-block:nth-child(2).on,.zm-block:nth-child(2).on{transition-delay:.2s}
+.s-block:nth-child(1).on{transition-delay:.1s}.s-block:nth-child(2).on{transition-delay:.2s}.px-block:nth-child(1).on{transition-delay:.1s}.px-block:nth-child(2).on{transition-delay:.2s}.zm-block:nth-child(1).on{transition-delay:.1s}.zm-block:nth-child(2).on{transition-delay:.2s}
 .s-label,.px-label,.zm-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.18em;color:rgba(212,168,83,.5);text-transform:uppercase;margin-bottom:.5rem}
 .s-body,.px-body,.zm-body{font-size:clamp(1rem,1.25vw,1.12rem);font-weight:400;color:rgba(255,255,255,.58);line-height:1.95}
 .s-body+.s-body,.px-body+.px-body,.zm-body+.zm-body{margin-top:.4rem}
@@ -399,7 +398,6 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
 .d-lbl-amber{color:rgba(255,230,140,.32)}.d-lbl-blue{color:rgba(100,150,255,.28)}.d-lbl-gold{color:rgba(212,168,83,.28)}.d-lbl-white{color:rgba(255,255,255,.2)}.d-lbl-dim{color:rgba(255,255,255,.13);font-size:.6rem}
 .dia-foot{margin-top:.7rem;font-size:clamp(.9rem,1.05vw,.98rem);color:rgba(255,255,255,.24);line-height:1.85;text-align:center;opacity:0;transition:opacity .6s ease .35s}
 .dia-foot.on{opacity:1}.dia-foot b{color:rgba(255,255,255,.42);font-weight:600}.dia-foot .gold{color:rgba(212,168,83,.52)}
-
 .lofic-body{max-width:600px;width:100%;margin-bottom:2.5rem;opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
 .lofic-body.on{opacity:1;transform:none}
 .lofic-q{font-size:clamp(1.2rem,1.8vw,1.5rem);font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.08em;margin-bottom:1rem}
@@ -490,53 +488,157 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
 .cn-br{bottom:1.3rem;right:1.3rem}.cn-br::before{bottom:0;right:0;width:14px;height:1px}.cn-br::after{bottom:0;right:0;width:1px;height:14px}
 .bottom-pad{height:5rem;position:relative;z-index:10}
 
+/* ============================================================
+   MOBILE PERFORMANCE OPTIMIZATIONS
+   ============================================================ */
 @media(max-width:800px){
-  .module{padding:3.5rem 1.5rem}
+  /* --- Foundation: kill all heavy rendering --- */
+  body::after{display:none}
+  .vig{display:none}
+  .go1,.go2,.go3{display:none}
+  #lensBox{display:none}
+  #sky{opacity:.2}
+  .cn{display:none}
+  .pt{display:none}
+  html{scroll-behavior:auto}
+  body{overscroll-behavior-y:contain;-webkit-font-smoothing:auto}
+
+  a,.hero-nav-card,.topnav-link{touch-action:manipulation}
+
+  /* --- Kill ALL backdrop-filter --- */
+  .topnav,.insight,.card,.cam-card,.tele-box{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .topnav{background:rgba(5,8,16,.92);will-change:transform}
+
+  /* --- Hero title: single layer, no blur, no shimmer --- */
+  .tl2,.tl3,.tl4,.ts,.tsp{display:none!important}
+  .tl1{
+    filter:none!important;
+    text-shadow:0 1px 2px rgba(0,0,0,.25)!important;
+    animation:mobileTIn .55s ease 1.8s both!important;
+  }
+  @keyframes mobileTIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .eye{animation:mobileUp .45s ease 1.3s both!important}
+  .eye-l,.eye-r{display:none}
+  .divider{animation:mobileUp .35s ease 1.5s both!important}
+  .sub{animation:mobileUp .45s ease 1.6s both!important}
+  .hero-nav{animation:mobileUp .45s ease 1.7s both!important}
+  .scroll-hint{animation:mobileUp .35s ease 1.85s both!important}
+  .scroll-hint .sc-dot{animation:none;opacity:.4}
+  .scroll-hint .sc-ln::after{animation:none}
+  @keyframes mobileUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* --- Insight: no pseudo-anim, no blur, no shadow --- */
+  .insight{
+    animation:mobileInsight .5s ease 2.1s both!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    box-shadow:none;
+    background:linear-gradient(165deg,rgba(255,255,255,.035),rgba(255,255,255,.008));
+  }
+  @keyframes mobileInsight{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .insight::before,.insight::after,.insight-shimmer,.insight-glow,.insight-corner{display:none!important}
+  .insight-line1{
+    animation:mobileLineIn .4s ease 2.4s both!important;
+    text-shadow:0 0 8px rgba(255,50,50,.1)!important;
+  }
+  .insight-line2{
+    animation:mobileLineIn .4s ease 2.55s both!important;
+    text-shadow:0 0 10px rgba(255,50,50,.12),0 1px 2px rgba(0,0,0,.2)!important;
+  }
+  .insight-line1::after{animation:none}
+  .insight-line2 .cross{animation:none!important;transform:none!important;text-shadow:none!important}
+  @keyframes mobileLineIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* --- UNIVERSAL REVEAL: instant, no stagger --- */
+  .card,.cam-card,.brand-card,.tele-box,
+  .s-block,.px-block,.zm-block,
+  .s-full,.px-full,.zm-full,
+  .info-item,.dia-box,.dia-foot,
+  .lofic-body,.lofic-demo,.lofic-benefits,.lofic-xm,
+  .coat-intro,.coat-1g6p,.coat-elems,.coat-table,
+  .coat-note,.coat-why,.coat-loss,.coat-how,
+  .brand-spectrum,.brand-note,
+  .cam-note-s,.mod-summary{
+    opacity:0!important;
+    transform:translateY(5px)!important;
+    transition:opacity .22s ease,transform .22s ease!important;
+    transition-delay:0s!important;
+  }
+  .card.on,.cam-card.on,.brand-card.on,.tele-box.on,
+  .s-block.on,.px-block.on,.zm-block.on,
+  .s-full.on,.px-full.on,.zm-full.on,
+  .info-item.on,.dia-box.on,.dia-foot.on,
+  .lofic-body.on,.lofic-demo.on,.lofic-benefits.on,.lofic-xm.on,
+  .coat-intro.on,.coat-1g6p.on,.coat-elems.on,.coat-table.on,
+  .coat-note.on,.coat-why.on,.coat-loss.on,.coat-how.on,
+  .brand-spectrum.on,.brand-note.on,
+  .cam-note-s.on,.mod-summary.on{
+    opacity:1!important;
+    transform:none!important;
+    transition-delay:0s!important;
+  }
+
+  /* Rating bars: instant */
+  .brand-card.on .bc-rating-fill{transition:none!important;transform:scaleX(1)!important}
+
+  /* Float frames/rows/foot: all at once */
+  .fl-wrap.on .fl-frm,
+  .fl-wrap.on .fl-frm .fl-tag,
+  .fl-wrap.on .fl-row,
+  .fl-wrap.on .fl-foot{
+    opacity:1!important;
+    transition:opacity .22s ease!important;
+    transition-delay:0s!important;
+  }
+  .fl-frm,.fl-frm .fl-tag,.fl-row,.fl-foot{transition-delay:0s!important}
+
+  /* Spectrum dots: instant */
+  .brand-spectrum.on .bs-dot{opacity:1!important;transform:translateX(-50%)!important;transition-delay:0s!important}
+
+  /* Info items: no slide */
+  .info-item,.info-item.on{transform:none!important;transition-delay:0s!important}
+
+  /* --- Disable hover transforms --- */
+  .card:hover,.cam-card:hover,.brand-card:hover,.tele-box:hover,.hero-nav-card:hover{
+    transform:none!important;
+  }
+
+  /* --- Simplify components --- */
+  .lens-wrap{transform:none!important}
+  .lens-beam{display:none}
+  .fl-moon{animation:none}
+  .lofic-dp{animation:none!important;opacity:.25}
+  .lofic-ov{display:none}
+
+  /* --- Layout --- */
+  .module{padding:2.5rem 1rem}
+  .mod-title{font-size:clamp(1.3rem,5vw,1.8rem)}
   .cards,.cam-cards{flex-direction:column;max-width:400px}
-  .card,.cam-card{padding:1.3rem 1.2rem}
+  .card,.cam-card{padding:1.2rem 1rem}
   .tele-grid{grid-template-columns:1fr;max-width:400px}
   .sensor-grid,.px-grid,.zm-grid{grid-template-columns:1fr;max-width:500px}
-  .lens-layout{flex-direction:column;gap:2rem}
-  .lens-wrap{transform:rotateY(5deg) rotateX(4deg) scale(.6)!important}
+  .lens-layout{flex-direction:column;gap:1.5rem}
   .lens-info{width:auto;max-width:400px}
   .dia-wrap{flex-direction:column;align-items:center}
   .dia-col{max-width:400px;width:100%}
-  .crop-diagram{flex-direction:column;gap:1.2rem}
-  .crop-chip{width:220px;height:155px}
+  .crop-diagram{flex-direction:column;gap:1rem}
+  .crop-chip{width:200px;height:140px}
   .fl-stage{aspect-ratio:4/3}
   .fl-f1x{inset:8%}.fl-f3x{inset:24%}.fl-f5x{inset:38%}
-  .fl-info{gap:.35rem 1rem}
-  .mod-title{font-size:clamp(1.4rem,5vw,2rem)}
-  .hero{padding:0 1.5rem}
-  .lofic-demo{flex-direction:column;gap:1.2rem}
+  .fl-info{gap:.3rem .8rem}
+  .hero{padding:0 1rem}
+  .lofic-demo{flex-direction:column;gap:1rem}
   .lofic-benefits{flex-direction:column;max-width:400px}
-  .hero-nav{grid-template-columns:repeat(2,1fr);gap:.4rem;max-width:340px}
-  .topnav{padding:.5rem .8rem}
-  .topnav-logo{margin-right:.8rem;font-size:.72rem}
-  .topnav-link{font-size:.6rem;padding:.35rem .45rem}
-  .brand-cards{grid-template-columns:repeat(2,1fr);max-width:500px}
-  .bs-dots{height:60px}
-
-  /* === 手机端抗闪烁修复 === */
-  @keyframes tIn{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:none}}
-  .tl2,.tl3,.tl4{text-shadow:none!important;animation:tIn .9s cubic-bezier(.2,.6,.3,1) 2.2s forwards!important}
-  .tl1{animation:tIn .9s cubic-bezier(.2,.6,.3,1) 2.2s forwards!important}
-  .ts{display:none!important}
-  .tsp{display:none!important}
-  .insight::before,.insight::after{animation:none!important;opacity:0}
-  .insight-shimmer,.insight-glow{display:none!important}
-  .insight-corner{animation:none!important;opacity:0}
-  .insight-line1{animation:lineIn .6s ease 1.8s forwards!important}
-  .insight-line2{animation:lineIn .6s ease 2s forwards!important}
-  .insight-line2 .cross{animation:none!important;transform:none!important;opacity:1!important;text-shadow:none!important}
-  .insight-line1::after{animation:none!important}
-  .pt{display:none!important}
-  .eye{animation:up .7s ease 1.5s forwards!important}
-  .sub{animation:up .8s ease 1.8s forwards!important}
-  .divider{animation:up .6s ease 1.7s forwards!important}
-  .hero-nav{animation:up .8s ease 2s forwards!important}
-  .scroll-hint{animation:up .7s ease 2.2s forwards!important}
-  .cn{animation:up .4s ease 1.6s forwards!important}
+  .hero-nav{grid-template-columns:repeat(2,1fr);gap:.35rem;max-width:320px}
+  .topnav{padding:.45rem .6rem}
+  .topnav-logo{margin-right:.6rem;font-size:.7rem}
+  .topnav-link{font-size:.58rem;padding:.3rem .4rem}
+  .brand-cards{grid-template-columns:1fr;max-width:400px}
+  .bs-dots{height:50px}
+  .card,.cam-card,.brand-card,.tele-box,.insight{border-radius:12px}
 }
 </style>
 </head>
@@ -629,87 +731,32 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
   </div>
   <div class="brand-cards">
     <div class="brand-card xm" data-reveal>
-      <div class="bc-header">
-        <div class="bc-brand">
-          <div class="bc-name">小米</div>
-          <div class="bc-partner">× 徕卡 LEICA · 相机界的奔驰</div>
-        </div>
-        <div class="bc-school">色彩派</div>
-      </div>
+      <div class="bc-header"><div class="bc-brand"><div class="bc-name">小米</div><div class="bc-partner">× 徕卡 LEICA · 相机界的奔驰</div></div><div class="bc-school">色彩派</div></div>
       <p class="bc-body">和<span class="orange">徕卡</span>深度合作，对色彩出片极度重视，拍照<span class="orange">色彩讨喜、出片率极高</span>。最超标的滤镜「<span class="orange">繁花如梦</span>」让每张照片都自带电影感。</p>
       <p class="bc-body"><b>主摄基本是各家最强</b>，但超广角是三颗里最拉胯的。</p>
-      <div class="bc-ratings">
-        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:80%"></div></div><span class="bc-rating-val">8.0</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:52%"></div></div><span class="bc-rating-val">5.2</span></div>
-      </div>
-      <div class="bc-tags">
-        <span class="bc-tag pro">最强主摄</span>
-        <span class="bc-tag sp">繁花如梦</span>
-        <span class="bc-tag con">超广角拉胯</span>
-      </div>
+      <div class="bc-ratings"><div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div><div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:80%"></div></div><span class="bc-rating-val">8.0</span></div><div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:52%"></div></div><span class="bc-rating-val">5.2</span></div></div>
+      <div class="bc-tags"><span class="bc-tag pro">最强主摄</span><span class="bc-tag sp">繁花如梦</span><span class="bc-tag con">超广角拉胯</span></div>
     </div>
     <div class="brand-card op" data-reveal>
-      <div class="bc-header">
-        <div class="bc-brand">
-          <div class="bc-name">OPPO</div>
-          <div class="bc-partner">× 哈苏 HASSELBLAD</div>
-        </div>
-        <div class="bc-school">色彩派</div>
-      </div>
+      <div class="bc-header"><div class="bc-brand"><div class="bc-name">OPPO</div><div class="bc-partner">× 哈苏 HASSELBLAD</div></div><div class="bc-school">色彩派</div></div>
       <p class="bc-body">和<span class="gold">哈苏</span>合作，色彩一样非常讨喜。如果小米不用繁花如梦，<span class="gold">OPPO 的色彩甚至比小米还好很多</span>，也是非常出片。</p>
       <p class="bc-body">整体均衡，各镜头素质差距没小米那么极端。</p>
-      <div class="bc-ratings">
-        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:80%"></div></div><span class="bc-rating-val">8.0</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:50%"></div></div><span class="bc-rating-val">5.0</span></div>
-      </div>
-      <div class="bc-tags">
-        <span class="bc-tag sp">色彩最佳</span>
-        <span class="bc-tag pro">整体均衡</span>
-      </div>
+      <div class="bc-ratings"><div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div><div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:80%"></div></div><span class="bc-rating-val">8.0</span></div><div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:50%"></div></div><span class="bc-rating-val">5.0</span></div></div>
+      <div class="bc-tags"><span class="bc-tag sp">色彩最佳</span><span class="bc-tag pro">整体均衡</span></div>
     </div>
     <div class="brand-card vi" data-reveal>
-      <div class="bc-header">
-        <div class="bc-brand">
-          <div class="bc-name">vivo</div>
-          <div class="bc-partner">× 蔡司 ZEISS</div>
-        </div>
-        <div class="bc-school">解析派</div>
-      </div>
+      <div class="bc-header"><div class="bc-brand"><div class="bc-name">vivo</div><div class="bc-partner">× 蔡司 ZEISS</div></div><div class="bc-school">解析派</div></div>
       <p class="bc-body">和<span class="blue">蔡司</span>（全世界断层顶级的光学玻璃厂商）合作，得到蔡司镀膜加持，加上 vivo 自身对解析力的重视和 AI 大力算法，<span class="blue">基本是现在解析力最强的</span>。</p>
       <p class="bc-body">通俗讲就是<b>拍照最清晰</b>，但色彩差，只能做到拍清楚，跟别家比<b>非常不出片</b>。</p>
-      <div class="bc-ratings">
-        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:60%"></div></div><span class="bc-rating-val">6.0</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:60%"></div></div><span class="bc-rating-val">6.0</span></div>
-      </div>
-      <div class="bc-tags">
-        <span class="bc-tag pro">解析最强</span>
-        <span class="bc-tag pro">蔡司镀膜</span>
-        <span class="bc-tag con">色彩差不出片</span>
-      </div>
+      <div class="bc-ratings"><div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:60%"></div></div><span class="bc-rating-val">6.0</span></div><div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:95%"></div></div><span class="bc-rating-val">9.5</span></div><div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:60%"></div></div><span class="bc-rating-val">6.0</span></div></div>
+      <div class="bc-tags"><span class="bc-tag pro">解析最强</span><span class="bc-tag pro">蔡司镀膜</span><span class="bc-tag con">色彩差不出片</span></div>
     </div>
     <div class="brand-card ap" data-reveal>
-      <div class="bc-header">
-        <div class="bc-brand">
-          <div class="bc-name">苹果</div>
-          <div class="bc-partner">Apple · 无相机品牌合作</div>
-        </div>
-        <div class="bc-school">录像王</div>
-      </div>
+      <div class="bc-header"><div class="bc-brand"><div class="bc-name">苹果</div><div class="bc-partner">Apple · 无相机品牌合作</div></div><div class="bc-school">录像王</div></div>
       <p class="bc-body">纠正大多数人的误区：苹果拍照已经算是<b class="red">最垃圾的</b>，断层级别差。说苹果拍照好，<span class="red">也只是自吹自擂嘴硬罢了</span>。不过苹果拍照有一个优点：<b>色彩真实</b>，拍出来什么样就是什么样，不做过多美化。</p>
       <p class="bc-body">但苹果的<b>录像断层领先所有</b>，稳定性和色彩一致性在视频领域无人能及。</p>
-      <div class="bc-ratings">
-        <div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:30%"></div></div><span class="bc-rating-val">3.0</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:35%"></div></div><span class="bc-rating-val">3.5</span></div>
-        <div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:100%"></div></div><span class="bc-rating-val">10</span></div>
-      </div>
-      <div class="bc-tags">
-        <span class="bc-tag pro">录像断层第一</span>
-        <span class="bc-tag pro">色彩真实</span>
-        <span class="bc-tag con">拍照断层垫底</span>
-      </div>
+      <div class="bc-ratings"><div class="bc-rating"><span class="bc-rating-label">色彩</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:30%"></div></div><span class="bc-rating-val">3.0</span></div><div class="bc-rating"><span class="bc-rating-label">解析</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:35%"></div></div><span class="bc-rating-val">3.5</span></div><div class="bc-rating"><span class="bc-rating-label">视频</span><div class="bc-rating-track"><div class="bc-rating-fill" style="width:100%"></div></div><span class="bc-rating-val">10</span></div></div>
+      <div class="bc-tags"><span class="bc-tag pro">录像断层第一</span><span class="bc-tag pro">色彩真实</span><span class="bc-tag con">拍照断层垫底</span></div>
     </div>
   </div>
   <p class="brand-note" data-reveal>选手机拍照，<b>先确定你要色彩出片还是解析清晰</b>，再看品牌。要录像就选苹果，没得选。</p>
@@ -1070,18 +1117,9 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
     </div>
   </div>
   <div class="lofic-benefits" data-reveal>
-    <div class="lofic-bf">
-      <div class="lofic-bf-h"><div class="lofic-bf-dot a"></div><div class="lofic-bf-t">逆光不黑脸</div></div>
-      <div class="lofic-bf-d">人脸和背景同时清晰，不用再纠结对焦谁</div>
-    </div>
-    <div class="lofic-bf">
-      <div class="lofic-bf-h"><div class="lofic-bf-dot b"></div><div class="lofic-bf-t">大光比场景</div></div>
-      <div class="lofic-bf-d">窗边、日落、舞台灯光，高光和暗部都有细节</div>
-    </div>
-    <div class="lofic-bf">
-      <div class="lofic-bf-h"><div class="lofic-bf-dot c"></div><div class="lofic-bf-t">暗部也清晰</div></div>
-      <div class="lofic-bf-d">亮的地方不过曝，暗的地方也能看清细节</div>
-    </div>
+    <div class="lofic-bf"><div class="lofic-bf-h"><div class="lofic-bf-dot a"></div><div class="lofic-bf-t">逆光不黑脸</div></div><div class="lofic-bf-d">人脸和背景同时清晰，不用再纠结对焦谁</div></div>
+    <div class="lofic-bf"><div class="lofic-bf-h"><div class="lofic-bf-dot b"></div><div class="lofic-bf-t">大光比场景</div></div><div class="lofic-bf-d">窗边、日落、舞台灯光，高光和暗部都有细节</div></div>
+    <div class="lofic-bf"><div class="lofic-bf-h"><div class="lofic-bf-dot c"></div><div class="lofic-bf-t">暗部也清晰</div></div><div class="lofic-bf-d">亮的地方不过曝，暗的地方也能看清细节</div></div>
   </div>
   <div class="lofic-xm" data-reveal>
     <div class="lofic-xm-tag">小米17 Pro 系列</div>
@@ -1131,35 +1169,116 @@ body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
 <div class="bottom-pad"></div>
 
 <script>
-setTimeout(function(){var el=document.getElementById('entranceCurtain');if(el)el.remove();},2800);
+var MOBILE = innerWidth <= 800;
 
+/* === Entrance curtain === */
+setTimeout(function(){ var el = document.getElementById('entranceCurtain'); if(el) el.remove(); }, 2800);
+
+/* === Canvas: optimized for mobile === */
 (function(){
-  var c=document.getElementById('sky'),ctx=c.getContext('2d'),W,H,bg=document.createElement('canvas'),bgCtx=bg.getContext('2d'),shoot=[];
-  function drawSky(){W=c.width=bg.width=innerWidth*devicePixelRatio;H=c.height=bg.height=innerHeight*devicePixelRatio;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';var g=bgCtx.createRadialGradient(W*.5,H*.4,0,W*.5,H*.55,W*.6);g.addColorStop(0,'#1a2555');g.addColorStop(.15,'#141c42');g.addColorStop(.35,'#0c1228');g.addColorStop(.6,'#070b16');g.addColorStop(.85,'#040710');g.addColorStop(1,'#020306');bgCtx.fillStyle=g;bgCtx.fillRect(0,0,W,H);var nd=[{x:.2,y:.15,r:.3,c:'rgba(140,80,255,.06)'},{x:.78,y:.55,r:.24,c:'rgba(70,110,255,.05)'},{x:.48,y:.35,r:.2,c:'rgba(255,200,100,.025)'}];for(var j=0;j<nd.length;j++){var n=nd[j],d=bgCtx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r*W);d.addColorStop(0,n.c);d.addColorStop(1,'transparent');bgCtx.fillStyle=d;bgCtx.fillRect(0,0,W,H);}var ct=Math.floor(W*H/12000);for(var i=0;i<ct;i++){var x=Math.random()*W,y=Math.random()*H,r=Math.random()*1.2+.2,b=120+Math.random()*135;bgCtx.fillStyle='rgba('+Math.floor(b)+','+Math.floor(b)+','+Math.min(255,Math.floor(b+15))+','+(0.3+Math.random()*0.4)+')';bgCtx.beginPath();bgCtx.arc(x,y,r,0,6.283);bgCtx.fill();}}
-  function drawShoot(){for(var i=shoot.length-1;i>=0;i--){var s=shoot[i];s.progress+=s.speed;if(s.progress>1){shoot.splice(i,1);continue;}var p=s.progress,x=s.sx+(s.ex-s.sx)*p,y=s.sy+(s.ey-s.sy)*p,a=Math.sin(p*Math.PI)*s.bright;var tl=ctx.createLinearGradient(x,y,x-s.dx*40,y-s.dy*40);tl.addColorStop(0,'rgba(255,255,255,'+a+')');tl.addColorStop(0.3,'rgba(200,220,255,'+(a*0.25)+')');tl.addColorStop(1,'transparent');ctx.strokeStyle=tl;ctx.lineWidth=1.5*devicePixelRatio;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-s.dx*40,y-s.dy*40);ctx.stroke();}}
-  function spawnS(){var a=0.3+Math.random()*0.4,sp=1+Math.random()*1.5,sx=Math.random()*W*0.3,sy=Math.random()*H*0.2;shoot.push({sx:sx,sy:sy,dx:Math.cos(a)*sp*3,dy:Math.sin(a)*sp*3,ex:sx+Math.cos(a)*W*0.8,ey:sy+Math.sin(a)*H*0.8,progress:0,speed:(0.003+Math.random()*0.004)*sp,bright:0.3+Math.random()*0.4});}
-  function loop(){ctx.drawImage(bg,0,0);drawShoot();requestAnimationFrame(loop);}
-  drawSky();loop();addEventListener('resize',drawSky);setTimeout(spawnS,3000);setInterval(function(){if(Math.random()>0.4)spawnS();},5000);
+  var c = document.getElementById('sky'), ctx = c.getContext('2d');
+  var W, H, bg = document.createElement('canvas'), bgCtx = bg.getContext('2d');
+  var shoot = [];
+  var dpr = MOBILE ? 1 : Math.min(devicePixelRatio, 2);
+
+  function drawSky(){
+    W = c.width = bg.width = innerWidth * dpr;
+    H = c.height = bg.height = innerHeight * dpr;
+    c.style.width = innerWidth + 'px';
+    c.style.height = innerHeight + 'px';
+    var g = bgCtx.createRadialGradient(W*.5,H*.4,0,W*.5,H*.55,W*.6);
+    g.addColorStop(0,'#1a2555');g.addColorStop(.15,'#141c42');g.addColorStop(.35,'#0c1228');
+    g.addColorStop(.6,'#070b16');g.addColorStop(.85,'#040710');g.addColorStop(1,'#020306');
+    bgCtx.fillStyle = g; bgCtx.fillRect(0,0,W,H);
+    var nd = [{x:.2,y:.15,r:.3,c:'rgba(140,80,255,.06)'},{x:.78,y:.55,r:.24,c:'rgba(70,110,255,.05)'},{x:.48,y:.35,r:.2,c:'rgba(255,200,100,.025)'}];
+    for(var j=0;j<nd.length;j++){var n=nd[j],d=bgCtx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r*W);d.addColorStop(0,n.c);d.addColorStop(1,'transparent');bgCtx.fillStyle=d;bgCtx.fillRect(0,0,W,H);}
+    var density = MOBILE ? 25000 : 12000;
+    var ct = Math.floor(W*H/density);
+    for(var i=0;i<ct;i++){var x=Math.random()*W,y=Math.random()*H,r=Math.random()*1.2+.2,b=120+Math.random()*135;bgCtx.fillStyle='rgba('+Math.floor(b)+','+Math.floor(b)+','+Math.min(255,Math.floor(b+15))+','+(0.3+Math.random()*0.4)+')';bgCtx.beginPath();bgCtx.arc(x,y,r,0,6.283);bgCtx.fill();}
+  }
+
+  function drawShoot(){
+    for(var i=shoot.length-1;i>=0;i--){
+      var s=shoot[i];s.progress+=s.speed;
+      if(s.progress>1){shoot.splice(i,1);continue;}
+      var p=s.progress,x=s.sx+(s.ex-s.sx)*p,y=s.sy+(s.ey-s.sy)*p,a=Math.sin(p*Math.PI)*s.bright;
+      var tl=ctx.createLinearGradient(x,y,x-s.dx*40,y-s.dy*40);
+      tl.addColorStop(0,'rgba(255,255,255,'+a+')');tl.addColorStop(0.3,'rgba(200,220,255,'+(a*0.25)+')');tl.addColorStop(1,'transparent');
+      ctx.strokeStyle=tl;ctx.lineWidth=1.5*dpr;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-s.dx*40,y-s.dy*40);ctx.stroke();
+    }
+  }
+
+  function spawnS(){
+    var a=0.3+Math.random()*0.4,sp=1+Math.random()*1.5,sx=Math.random()*W*0.3,sy=Math.random()*H*0.2;
+    shoot.push({sx:sx,sy:sy,dx:Math.cos(a)*sp*3,dy:Math.sin(a)*sp*3,ex:sx+Math.cos(a)*W*0.8,ey:sy+Math.sin(a)*H*0.8,progress:0,speed:(0.003+Math.random()*0.004)*sp,bright:0.3+Math.random()*0.4});
+  }
+
+  function loop(){ctx.drawImage(bg,0,0);if(!MOBILE)drawShoot();requestAnimationFrame(loop);}
+  drawSky();loop();
+  addEventListener('resize',drawSky);
+  if(!MOBILE){setTimeout(spawnS,3000);setInterval(function(){if(Math.random()>0.4)spawnS();},5000);}
 })();
 
-(function(){var box=document.getElementById('lensBox');if(!box)return;var s=document.createElement('style');s.textContent='@keyframes lnsF{0%{transform:translate(0,0) rotate(0deg);opacity:0}5%{opacity:var(--op)}92%{opacity:var(--op)}100%{transform:translate(var(--tx),var(--ty)) rotate(var(--rt));opacity:0}}';document.head.appendChild(s);function spawn(){var el=document.createElement('div');el.className='lens-bg';var roll=Math.random(),size=roll>.85?280+Math.random()*120:roll>.45?120+Math.random()*100:50+Math.random()*50,W=innerWidth,H=innerHeight,edge=Math.floor(Math.random()*4),x,y;if(edge===0){x=-size*.6;y=Math.random()*H;}else if(edge===1){x=W+size*.6;y=Math.random()*H;}else if(edge===2){x=Math.random()*W;y=-size*.6;}else{x=Math.random()*W;y=H+size*.6;}var tx=(W*.5-x)+(Math.random()-.5)*W*.6,ty=(H*.5-y)+(Math.random()-.5)*H*.6,dur=30+Math.random()*40,rot=100+Math.random()*200,op=size>250?0.025+Math.random()*0.02:size>120?0.035+Math.random()*0.025:0.05+Math.random()*0.04,hue=Math.random();el.style.cssText='width:'+size+'px;height:'+size+'px;left:'+x+'px;top:'+y+'px;'+'background:radial-gradient(circle at 35% 35%,'+(hue>.6?'rgba(255,200,100,.01)':hue>.3?'rgba(180,210,255,.01)':'rgba(255,255,255,.01)')+',transparent 70%);'+'opacity:0;animation:lnsF '+dur+'s linear forwards;'+'--tx:'+tx+'px;--ty:'+ty+'px;--rt:'+rot+'deg;--op:'+op;box.appendChild(el);setTimeout(function(){if(el.parentNode)el.remove();},(dur+2)*1000);}for(var i=0;i<5;i++)setTimeout(spawn,i*800);setInterval(spawn,3000);})();
+/* === Floating lens backgrounds: desktop only === */
+if(!MOBILE)(function(){
+  var box=document.getElementById('lensBox');if(!box)return;
+  var s=document.createElement('style');s.textContent='@keyframes lnsF{0%{transform:translate(0,0) rotate(0deg);opacity:0}5%{opacity:var(--op)}92%{opacity:var(--op)}100%{transform:translate(var(--tx),var(--ty)) rotate(var(--rt));opacity:0}}';document.head.appendChild(s);
+  function spawn(){var el=document.createElement('div');el.className='lens-bg';var roll=Math.random(),size=roll>.85?280+Math.random()*120:roll>.45?120+Math.random()*100:50+Math.random()*50,W=innerWidth,H=innerHeight,edge=Math.floor(Math.random()*4),x,y;if(edge===0){x=-size*.6;y=Math.random()*H;}else if(edge===1){x=W+size*.6;y=Math.random()*H;}else if(edge===2){x=Math.random()*W;y=-size*.6;}else{x=Math.random()*W;y=H+size*.6;}var tx=(W*.5-x)+(Math.random()-.5)*W*.6,ty=(H*.5-y)+(Math.random()-.5)*H*.6,dur=30+Math.random()*40,rot=100+Math.random()*200,op=size>250?0.025+Math.random()*0.02:size>120?0.035+Math.random()*0.025:0.05+Math.random()*0.04,hue=Math.random();el.style.cssText='width:'+size+'px;height:'+size+'px;left:'+x+'px;top:'+y+'px;'+'background:radial-gradient(circle at 35% 35%,'+(hue>.6?'rgba(255,200,100,.01)':hue>.3?'rgba(180,210,255,.01)':'rgba(255,255,255,.01)')+',transparent 70%);'+'opacity:0;animation:lnsF '+dur+'s linear forwards;'+'--tx:'+tx+'px;--ty:'+ty+'px;--rt:'+rot+'deg;--op:'+op;box.appendChild(el);setTimeout(function(){if(el.parentNode)el.remove();},(dur+2)*1000);}
+  for(var i=0;i<5;i++)setTimeout(spawn,i*800);setInterval(spawn,3000);
+})();
 
-(function(){var hero=document.getElementById('hero');if(!hero)return;function spawn(){var p=document.createElement('div');p.className='pt';var sz=1+Math.random()*1.5,x=15+Math.random()*70,y=55+Math.random()*35,tx=Math.random()*80-40,ty=-30-Math.random()*70,dur=40+Math.random()*30,op=0.03+Math.random()*0.03,warm=Math.random()>.4,col=warm?'rgba(255,200,100,'+op+')':'rgba(190,220,255,'+op+')';p.style.cssText='left:'+x+'%;top:'+y+'%;width:'+sz+'px;height:'+sz+'px;background:'+col+';'+'--tx:'+tx+'px;--ty:'+ty+'px;--o:'+op+';animation-duration:'+dur+'s';hero.appendChild(p);setTimeout(function(){if(p.parentNode)p.remove();},(dur+2)*1000);}for(var i=0;i<6;i++)setTimeout(spawn,1600+i*1500);setInterval(spawn,3000);})();
+/* === Particles: desktop only === */
+if(!MOBILE)(function(){
+  var hero=document.getElementById('hero');if(!hero)return;
+  function spawn(){var p=document.createElement('div');p.className='pt';var sz=1+Math.random()*1.5,x=15+Math.random()*70,y=55+Math.random()*35,tx=Math.random()*80-40,ty=-30-Math.random()*70,dur=40+Math.random()*30,op=0.03+Math.random()*0.03,warm=Math.random()>.4,col=warm?'rgba(255,200,100,'+op+')':'rgba(190,220,255,'+op+')';p.style.cssText='left:'+x+'%;top:'+y+'%;width:'+sz+'px;height:'+sz+'px;background:'+col+';'+'--tx:'+tx+'px;--ty:'+ty+'px;--o:'+op+';animation-duration:'+dur+'s';hero.appendChild(p);setTimeout(function(){if(p.parentNode)p.remove();},(dur+2)*1000);}
+  for(var i=0;i<6;i++)setTimeout(spawn,1600+i*1500);setInterval(spawn,3000);
+})();
 
-(function(){var wrap=document.getElementById('lensWrap');if(!wrap)return;var rx=6,ry=8,tx=8,ty=6;document.addEventListener('mousemove',function(e){tx=(e.clientX/innerWidth-0.5)*30;ty=(e.clientY/innerHeight-0.5)*-20;});(function loop(){rx+=(ty-rx)*0.06;ry+=(tx-ry)*0.06;wrap.style.transform='rotateY('+ry+'deg) rotateX('+rx+'deg)';requestAnimationFrame(loop);})();})();
+/* === 3D lens tracking: desktop only === */
+if(!MOBILE)(function(){
+  var wrap=document.getElementById('lensWrap');if(!wrap)return;
+  var rx=6,ry=8,tx=8,ty=6;
+  document.addEventListener('mousemove',function(e){tx=(e.clientX/innerWidth-0.5)*30;ty=(e.clientY/innerHeight-0.5)*-20;});
+  (function loop(){rx+=(ty-rx)*0.06;ry+=(tx-ry)*0.06;wrap.style.transform='rotateY('+ry+'deg) rotateX('+rx+'deg)';requestAnimationFrame(loop);})();
+})();
 
-(function(){var els=document.querySelectorAll('[data-reveal]');function check(){var h=innerHeight;for(var i=0;i<els.length;i++){var r=els[i].getBoundingClientRect();if(r.top<h*0.88)els[i].classList.add('on');}}check();addEventListener('scroll',check,{passive:true});})();
+/* === Reveal: IntersectionObserver (no scroll handler overhead) === */
+(function(){
+  var els = document.querySelectorAll('[data-reveal]');
+  if('IntersectionObserver' in window){
+    var observer = new IntersectionObserver(function(entries){
+      for(var i=0;i<entries.length;i++){
+        if(entries[i].isIntersecting){
+          entries[i].target.classList.add('on');
+          observer.unobserve(entries[i].target);
+        }
+      }
+    },{rootMargin: MOBILE ? '0px 0px -5% 0px' : '0px 0px -12% 0px', threshold: 0});
+    for(var i=0;i<els.length;i++) observer.observe(els[i]);
+  }else{
+    function check(){var h=innerHeight;for(var i=0;i<els.length;i++){var r=els[i].getBoundingClientRect();if(r.top<h*0.88)els[i].classList.add('on');}}
+    check();addEventListener('scroll',check,{passive:true});
+  }
+})();
 
+/* === Nav scroll: rAF throttled === */
 (function(){
   var nav=document.getElementById('topnav');
   var links=document.querySelectorAll('.topnav-link');
   var ids=['sec-brand','sec-basics','sec-lens','sec-sensor','sec-mp','sec-zoom','sec-fl','sec-cam3','sec-tele','sec-path','sec-aper','sec-lofic','sec-coat'];
+  var ticking=false;
   addEventListener('scroll',function(){
-    var y=scrollY;
-    if(y>300){nav.classList.add('show');}else{nav.classList.remove('show');}
-    var cur='';
-    for(var i=ids.length-1;i>=0;i--){var el=document.getElementById(ids[i]);if(el&&el.getBoundingClientRect().top<200){cur=ids[i];break;}}
-    for(var j=0;j<links.length;j++){links[j].classList.toggle('active',links[j].getAttribute('href')==='#'+cur);}
+    if(!ticking){
+      requestAnimationFrame(function(){
+        var y=scrollY;
+        nav.classList.toggle('show',y>300);
+        var cur='';
+        for(var i=ids.length-1;i>=0;i--){var el=document.getElementById(ids[i]);if(el&&el.getBoundingClientRect().top<200){cur=ids[i];break;}}
+        for(var j=0;j<links.length;j++){links[j].classList.toggle('active',links[j].getAttribute('href')==='#'+cur);}
+        ticking=false;
+      });
+      ticking=true;
+    }
   },{passive:true});
 })();
 </script>
