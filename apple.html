@@ -3,400 +3,438 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>苹果 A 系列芯片指南 2026</title>
+<title>苹果A系列芯片2026完全指南</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#000;
-  --bg-card:#1d1d1f;
-  --bg-card-hover:#2d2d2f;
-  --apple-blue:#2997ff;
-  --apple-green:#30d158;
-  --apple-orange:#ff9f0a;
-  --apple-red:#ff453a;
-  --apple-purple:#bf5af2;
-  --apple-teal:#64d2ff;
-  --apple-yellow:#ffd60a;
-  --apple-pink:#ff375f;
-  --text-primary:#d2d2d7;
-  --text-heading:#e8e8ed;
-  --text-secondary:#86868b;
-  --text-muted:#6e6e73;
-  --text-dim:#48484a;
-  --accent-subtle:#a1a1a6;
-  --border:rgba(255,255,255,.08);
-  --border-light:rgba(255,255,255,.12);
-  --glass:rgba(255,255,255,.05);
-  --glass-border:rgba(255,255,255,.1);
+:root {
+  --bg: #080808;
+  --surface: #111;
+  --surface-2: #1a1a1a;
+  --border: #2a2a2a;
+  --accent: #FF6B35;
+  --accent-glow: rgba(255,107,53,0.12);
+  --accent-2: #4ECDC4;
+  --accent-3: #FFD93D;
+  --gold: #D4A843;
+  --text: #EDEAE4;
+  --text-muted: #8A857E;
+  --text-dim: #4A4640;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-mono: 'DM Mono', 'Menlo', monospace;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-body{
-  font-family:'Inter','SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
-  background:var(--bg);color:var(--text-primary);line-height:1.7;overflow-x:hidden;
-  font-size:16px;font-weight:400;letter-spacing:-.011em;
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(41,151,255,.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(191,90,242,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
-a{color:var(--accent-subtle);text-decoration:none;transition:color .3s}
-a:hover{color:var(--text-heading)}
-.container{position:relative;z-index:2;max-width:980px;margin:0 auto;padding:0 22px}
+::selection { background: var(--accent); color: #000; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
-.site-nav{
-  position:fixed;top:0;left:0;right:0;z-index:1000;height:48px;display:flex;align-items:center;
-  background:rgba(0,0,0,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-bottom:1px solid rgba(255,255,255,.06);
+/* ===== NAV — no backdrop-filter ===== */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(8,8,8,0.96);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.site-nav .inner{max-width:980px;margin:0 auto;padding:0 22px;width:100%;display:flex;align-items:center;justify-content:space-between}
-.nav-back{
-  display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:var(--accent-subtle);
-  transition:all .25s;padding:4px 10px 4px 6px;border-radius:18px;
-  border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);letter-spacing:-.006em;
+.nav-logo { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.06em; color: var(--accent); }
+.nav-links { display: flex; gap: 20px; }
+.nav-links a {
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
+  letter-spacing: 0.04em; text-transform: uppercase;
 }
-.nav-back:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:var(--text-heading)}
-.nav-back svg{width:12px;height:12px;transition:transform .25s}
-.nav-back:hover svg{transform:translateX(-2px)}
-.nav-brand{font-weight:600;font-size:12px;color:var(--text-muted);letter-spacing:-.016em}
-.nav-links{display:flex;gap:1px}
-.nav-links a{
-  font-size:11px;font-weight:400;padding:4px 10px;border-radius:8px;color:var(--text-muted);
-  transition:all .25s;letter-spacing:-.006em;
-}
-.nav-links a:hover{color:var(--text-primary);background:rgba(255,255,255,.06)}
-.nav-links a.active{color:var(--text-heading);background:rgba(255,255,255,.08)}
+.nav-links a:active { color: var(--accent); }
 
-.nav-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:10px}
-.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim);cursor:pointer;transition:all .3s ease}
-.nav-dot:hover,.nav-dot.active{background:var(--text-primary);transform:scale(1.5)}
+/* ===== HERO — single CSS animation, no JS ===== */
+.hero {
+  padding: 100px 24px 64px;
+  position: relative;
+}
+.hero-bg {
+  position: absolute; top: -20%; right: -10%;
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  animation: heroGlow 1.2s ease 0.3s forwards;
+}
+@keyframes heroGlow { to { opacity: 1; } }
+.hero-eyebrow {
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+  letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 9vw, 7.5rem);
+  line-height: 0.95; letter-spacing: 0.02em;
+  color: var(--text); max-width: 900px;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero h1 .accent2 { color: var(--accent-2); }
+.hero-sub {
+  font-size: 1.05rem; color: var(--text-muted);
+  max-width: 580px; margin-top: 24px; line-height: 1.9;
+}
+.hero-meta {
+  display: flex; gap: 28px; margin-top: 32px;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  color: var(--text-dim); letter-spacing: 0.04em;
+}
+.hero-meta span { color: var(--accent-2); }
 
-.scroll-bar{position:fixed;top:0;left:0;height:1px;background:var(--accent-subtle);z-index:10001;width:0;transition:width .05s linear;opacity:.35}
-
-.hero{
-  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;padding:120px 22px 100px;position:relative;overflow:hidden;
+/* ===== SECTIONS ===== */
+section { padding: 80px 0; }
+section + section { border-top: 1px solid var(--border); }
+.section-tag {
+  font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent);
+  letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px;
 }
-.hero-glow{
-  position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:700px;border-radius:50%;
-  background:radial-gradient(circle,rgba(41,151,255,.06) 0%,rgba(191,90,242,.03) 40%,transparent 70%);
-  pointer-events:none;animation:heroPulse 8s ease-in-out infinite;
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  line-height: 1; letter-spacing: 0.02em; margin-bottom: 14px;
 }
-@keyframes heroPulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.05)}}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:8px;padding:5px 16px;
-  border-radius:50px;font-size:12px;font-weight:500;color:var(--text-muted);
-  letter-spacing:-.01em;margin-bottom:30px;animation:fadeDown .8s ease forwards;
-}
-.hero-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--apple-green);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{
-  font-size:clamp(48px,10vw,96px);font-weight:700;letter-spacing:-.05em;line-height:1.0;
-  margin-bottom:20px;animation:fadeUp .8s ease .2s forwards;opacity:0;
-}
-.hero h1 .headline-dark{display:block;color:var(--text-heading)}
-.hero h1 .headline-gradient{
-  display:block;
-  background:linear-gradient(90deg,var(--text-dim),var(--text-secondary),var(--text-primary));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.hero-sub{
-  font-size:clamp(17px,2.8vw,21px);color:var(--text-secondary);max-width:540px;
-  font-weight:400;letter-spacing:-.017em;line-height:1.5;
-  margin-bottom:48px;animation:fadeUp .8s ease .4s forwards;opacity:0;
-}
-.hero-sub strong{color:var(--text-primary);font-weight:600}
-.hero-scroll{
-  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
-  color:var(--text-dim);font-size:12px;font-weight:400;letter-spacing:-.006em;
-  animation:scrollBounce 3s ease-in-out infinite;
-}
-.hero-scroll::after{content:'↓';display:block;text-align:center;margin-top:4px;font-size:13px;opacity:.6}
-@keyframes scrollBounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-5px)}}
-
-section{padding:100px 0}
-.section-header{text-align:center;margin-bottom:56px}
-.section-pill{
-  display:inline-block;padding:4px 12px;
-  border-radius:50px;font-size:10px;font-weight:600;
-  color:var(--accent-subtle);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;
-}
-.section-header h2{
-  font-size:clamp(28px,5.5vw,48px);font-weight:700;letter-spacing:-.035em;margin-bottom:8px;color:var(--text-heading);
-}
-.section-header p{color:var(--text-secondary);font-size:15px;max-width:480px;margin:0 auto;font-weight:400;letter-spacing:-.011em}
-.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
-
-.fade-in{opacity:0;transform:translateY(20px);transition:all .7s cubic-bezier(.25,.1,.25,1)}
-.fade-in.visible{opacity:1;transform:translateY(0)}
-
-.tldr-box{
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:18px;padding:30px 32px;margin-bottom:48px;position:relative;overflow:hidden;
-}
-.tldr-box::before{
-  content:'概要';position:absolute;top:12px;right:16px;
-  font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.06em;
-}
-.tldr-box h3{font-size:17px;font-weight:600;letter-spacing:-.022em;margin-bottom:10px;color:var(--text-heading)}
-.tldr-box p{font-size:14px;color:var(--text-secondary);line-height:1.75}
-.tldr-box strong{color:var(--text-primary);font-weight:600}
-
-.vs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:48px}
-.vs-card{
-  background:var(--bg-card);border:1px solid var(--border);border-radius:18px;
-  padding:24px;text-align:center;transition:all .4s cubic-bezier(.25,.1,.25,1);position:relative;overflow:hidden;
-}
-.vs-card:hover{transform:translateY(-4px);border-color:var(--border-light);box-shadow:0 12px 40px rgba(0,0,0,.4)}
-.vs-card h3{font-size:16px;font-weight:600;letter-spacing:-.022em;margin-bottom:8px;color:var(--text-heading)}
-.vs-card .tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:10px}
-.vs-card .tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:5px}
-.tag-good{background:rgba(48,209,88,.1);color:var(--apple-green)}
-.tag-bad{background:rgba(255,69,58,.08);color:var(--apple-red)}
-.vs-card ul{list-style:none;text-align:left;font-size:12px;color:var(--text-secondary);line-height:1.9}
-.vs-card .quote{
-  margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.03);
-  border-radius:10px;font-size:11px;color:var(--text-muted);font-style:italic;
+.section-desc {
+  font-size: 0.95rem; color: var(--text-muted);
+  max-width: 620px; margin-bottom: 36px; line-height: 1.8;
 }
 
-.chip-cards{display:grid;gap:20px}
-.chip-card{
-  background:var(--bg-card);border:1px solid var(--border);border-radius:20px;
-  padding:32px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.25,.1,.25,1);
-}
-.chip-card:hover{border-color:var(--border-light);box-shadow:0 16px 48px rgba(0,0,0,.3)}
-.chip-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px}
-.chip-name{font-size:24px;font-weight:700;letter-spacing:-.035em;line-height:1.15;color:var(--text-heading)}
-.chip-name .tag{
-  display:inline-block;padding:2px 9px;font-size:10px;font-weight:600;
-  border-radius:5px;margin-left:8px;vertical-align:middle;letter-spacing:.01em;
-}
-.tag-ss{background:rgba(255,214,10,.12);color:var(--apple-yellow)}
-.tag-premium{background:rgba(161,161,166,.12);color:var(--accent-subtle)}
-.tag-mid{background:rgba(191,90,242,.08);color:var(--apple-purple)}
-.tag-budget{background:rgba(100,210,255,.08);color:var(--apple-teal)}
-.tag-old{background:rgba(134,134,139,.1);color:var(--text-secondary)}
-.chip-price{padding:5px 12px;border-radius:8px;font-weight:600;font-size:12px;letter-spacing:-.01em}
-.price-gold{background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.2);color:var(--apple-yellow)}
-.price-blue{background:rgba(161,161,166,.08);border:1px solid rgba(161,161,166,.15);color:var(--accent-subtle)}
-.price-purple{background:rgba(191,90,242,.06);border:1px solid rgba(191,90,242,.12);color:var(--apple-purple)}
-.price-teal{background:rgba(100,210,255,.06);border:1px solid rgba(100,210,255,.12);color:var(--apple-teal)}
-.price-gray{background:rgba(134,134,139,.06);border:1px solid rgba(134,134,139,.12);color:var(--text-secondary)}
-.chip-intro{font-size:14px;color:var(--text-secondary);margin-bottom:20px;max-width:680px;line-height:1.7;letter-spacing:-.011em}
-.chip-intro strong{color:var(--text-primary);font-weight:600}
-.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-.spec-item{
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
-  border-radius:12px;padding:14px 16px;transition:all .3s;
-}
-.spec-item:hover{background:rgba(255,255,255,.05);border-color:var(--border-light)}
-.spec-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:3px}
-.spec-value{font-size:14px;font-weight:600;color:var(--text-primary);letter-spacing:-.011em}
-.spec-value .hl{color:var(--accent-subtle)}
-.spec-value .hl-green{color:var(--apple-green)}
+/* ===== INTRO ===== */
+.intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.intro-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.intro-card h3 { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.04em; margin-bottom: 10px; color: var(--accent-3); }
+.intro-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.8; }
+.stat-row { display: flex; align-items: baseline; gap: 8px; margin-top: 14px; }
+.stat-num { font-family: var(--font-display); font-size: 2.6rem; color: var(--accent); line-height: 1; }
+.stat-label { font-size: 0.82rem; color: var(--text-muted); }
 
-.callout{
-  background:rgba(255,255,255,.03);border-left:2px solid var(--text-dim);
-  border-radius:0 12px 12px 0;padding:16px 20px;margin:16px 0;
-  font-size:13px;color:var(--text-secondary);line-height:1.8;letter-spacing:-.011em;
+/* ===== TIER BADGE ===== */
+.tier-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-family: var(--font-mono); font-size: 0.6rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px;
 }
-.callout strong{color:var(--text-primary);font-weight:600}
+.tier-badge.s { background: rgba(212,168,67,0.15); color: var(--gold); }
+.tier-badge.a { background: rgba(255,107,53,0.12); color: var(--accent); }
+.tier-badge.b { background: rgba(78,205,196,0.1); color: var(--accent-2); }
 
-.verdict{
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
-  border-radius:14px;padding:20px 22px;margin-top:14px;
+/* ===== SPEC CARDS — no hover transform on mobile ===== */
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.spec-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  transition: border-color 0.2s;
 }
-.verdict h4{font-size:14px;font-weight:600;color:var(--apple-yellow);margin-bottom:6px;letter-spacing:-.016em}
-.verdict p{font-size:13px;color:var(--text-secondary);line-height:1.7}
+@media (hover: hover) {
+  .spec-card:hover { border-color: var(--accent); }
+}
+.spec-card-header { padding: 20px 24px 16px; position: relative; }
+.spec-card-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.spec-card.tier-s .spec-card-header::before { background: linear-gradient(90deg, var(--gold), var(--accent)); }
+.spec-card.tier-a .spec-card-header::before { background: linear-gradient(90deg, var(--accent), #FF8C61); }
+.spec-card.tier-b .spec-card-header::before { background: linear-gradient(90deg, var(--accent-2), #7FEAE3); }
+.spec-chip-name { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.04em; line-height: 1; }
+.spec-chip-year { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); letter-spacing: 0.06em; margin-top: 4px; }
+.spec-card-body { padding: 0 24px 20px; }
+.spec-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; }
+.spec-row:last-child { border-bottom: none; }
+.spec-label { color: var(--text-muted); }
+.spec-value { font-family: var(--font-mono); font-weight: 500; color: var(--text); font-size: 0.76rem; }
+.spec-card-footer { padding: 12px 24px; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); font-size: 0.76rem; color: var(--text-muted); }
+.spec-card-footer .v { color: var(--accent); font-weight: 700; }
 
-.modem-dual{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.modem-card{
-  border-radius:18px;padding:24px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.25,.1,.25,1);
-}
-.modem-card:hover{transform:translateY(-3px)}
-.modem-card.wifi{
-  background:linear-gradient(135deg,rgba(48,209,88,.06),var(--bg-card));
-  border:1px solid rgba(48,209,88,.12);
-}
-.modem-card.fiveg{
-  background:linear-gradient(135deg,rgba(255,69,58,.04),var(--bg-card));
-  border:1px solid rgba(255,69,58,.1);
-}
-.modem-card h3{font-size:17px;font-weight:600;letter-spacing:-.022em;margin-bottom:6px;color:var(--text-heading)}
-.modem-card.wifi h3{color:var(--apple-green)}.modem-card.fiveg h3{color:var(--apple-red)}
-.modem-card p{font-size:12px;color:var(--text-muted);line-height:1.65}
-.modem-meter{margin-top:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden}
-.modem-meter-fill{height:100%;border-radius:2px;transition:width 1.5s cubic-bezier(.25,.1,.25,1)}
-.modem-card.wifi .modem-meter-fill{background:var(--apple-green);width:95%}
-.modem-card.fiveg .modem-meter-fill{background:var(--apple-red);width:42%}
-.modem-label{font-size:10px;color:var(--text-muted);margin-top:6px;font-weight:500;letter-spacing:-.006em}
+/* ===== VS ===== */
+.vs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.vs-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 20px; text-align: center; }
+.vs-card .fi { font-size: 2.2rem; margin-bottom: 6px; display: block; }
+.vs-card h3 { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; margin-bottom: 4px; }
+.vs-card .fs { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); letter-spacing: 0.06em; margin-bottom: 14px; }
+.vs-card.apple { border-color: rgba(255,107,53,0.3); }
+.vs-card.qualcomm { border-color: rgba(78,205,196,0.3); }
+.vs-card.mediatek { border-color: rgba(255,217,61,0.3); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.64rem; font-family: var(--font-mono); margin: 2px 2px; }
+.tag-pro { background: rgba(78,205,196,0.12); color: var(--accent-2); }
+.tag-con { background: rgba(255,107,53,0.1); color: var(--accent); }
+.vs-card ul { list-style: none; text-align: left; margin-top: 14px; font-size: 0.8rem; color: var(--text-muted); }
+.vs-card ul li { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03); line-height: 1.6; }
+.vs-card ul li:last-child { border-bottom: none; }
+.vs-card .motto { margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-muted); line-height: 1.6; }
 
-.buy-card{
-  background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:28px 30px;overflow:hidden;
-}
-.buy-row{
-  display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.04);
-}
-.buy-row:last-child{border-bottom:none}
-.buy-icon{
-  width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:17px;flex-shrink:0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
-}
-.buy-text{flex:1}
-.buy-title{font-size:14px;font-weight:600;margin-bottom:3px;letter-spacing:-.016em}
-.buy-desc{font-size:13px;color:var(--text-secondary);line-height:1.65;letter-spacing:-.011em}
-.buy-desc strong{color:var(--text-primary);font-weight:600}
+/* ===== MODEM ===== */
+.modem-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.modem-card { border-radius: var(--radius); padding: 28px 24px; overflow: hidden; }
+.modem-card.wifi { background: linear-gradient(135deg, #0d2b1a 0%, #111 100%); border: 1px solid rgba(78,205,196,0.2); }
+.modem-card.fiveg { background: linear-gradient(135deg, #2b0d0d 0%, #111 100%); border: 1px solid rgba(255,107,53,0.2); }
+.modem-card .mi { font-size: 2.4rem; margin-bottom: 10px; }
+.modem-card h3 { font-family: var(--font-display); font-size: 1.7rem; letter-spacing: 0.04em; margin-bottom: 10px; }
+.modem-card.wifi h3 { color: var(--accent-2); }
+.modem-card.fiveg h3 { color: var(--accent); }
+.modem-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.8; }
+.meter { margin-top: 16px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 4px; }
+.modem-card.wifi .meter-fill { background: var(--accent-2); width: 95%; }
+.modem-card.fiveg .meter-fill { background: var(--accent); width: 42%; }
+.meter-label { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-dim); margin-top: 5px; }
 
-footer{text-align:center;padding:52px 22px;border-top:1px solid rgba(255,255,255,.04);margin-top:80px}
-footer p{color:var(--text-muted);font-size:11px;font-weight:400;letter-spacing:-.006em}
-
-#egg-popup{
-  position:fixed;bottom:20px;right:20px;z-index:9000;
-  background:rgba(29,29,31,.94);border:1px solid rgba(255,255,255,.1);
-  border-radius:14px;padding:14px 18px;max-width:260px;
-  font-size:12px;color:var(--text-muted);line-height:1.6;
-  opacity:0;transform:translateY(10px);transition:all .4s cubic-bezier(.25,.1,.25,1);
-  pointer-events:none;backdrop-filter:blur(20px);box-shadow:0 8px 40px rgba(0,0,0,.5);
+/* ===== CALLOUT ===== */
+.callout-box {
+  margin-top: 28px; background: var(--surface-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 18px 20px; font-size: 0.85rem;
+  color: var(--text-muted); line-height: 1.8;
 }
-#egg-popup.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.callout-box strong { color: var(--accent); }
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+/* ===== EFFICIENCY ===== */
+.eff-meter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+.eff-meter-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; }
+.eff-meter-card .eb { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.04em; margin-bottom: 10px; }
+.eff-bar-wrap { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; text-align: left; }
+.eff-bar-item label { font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 3px; }
+.eff-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.eff-bar-fill { height: 100%; border-radius: 4px; }
+.eff-bar-fill.perf { background: var(--accent); }
+.eff-bar-fill.eff { background: var(--accent-2); }
+.eff-bar-fill.ai { background: var(--accent-3); }
 
-@media(max-width:768px){
-  .chip-card{padding:22px 18px}
-  .spec-grid{grid-template-columns:1fr 1fr}
-  .modem-dual{grid-template-columns:1fr}
-  .vs-grid{grid-template-columns:1fr}
-  .nav-dots{display:none}
-  .nav-links{display:none}
-  section{padding:64px 0}
-  .hero{padding:100px 22px 80px}
-  .hero h1{font-size:clamp(36px,10vw,56px)}
-  .chip-name{font-size:20px}
-  .buy-card{padding:20px 18px}
+/* ===== EXCLUSIVE ===== */
+.exclusive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.exclusive-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.exclusive-card h3 { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; margin-bottom: 14px; }
+.exclusive-card.good h3 { color: var(--accent-2); }
+.exclusive-card.bad h3 { color: var(--accent); }
+.exclusive-card ul { list-style: none; font-size: 0.85rem; }
+.exclusive-card ul li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.7; color: var(--text-muted); }
+.exclusive-card ul li:last-child { border-bottom: none; }
+.exclusive-card ul li strong { color: var(--text); }
+
+/* ===== BUY ===== */
+.buy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.buy-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.buy-card .pe { font-size: 1.8rem; margin-bottom: 6px; display: block; }
+.buy-card h3 { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.04em; margin-bottom: 6px; }
+.buy-card .rec { display: inline-block; padding: 3px 12px; border-radius: 20px; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500; margin-bottom: 10px; }
+.buy-card .rec.gold { background: rgba(212,168,67,0.15); color: var(--gold); }
+.buy-card .rec.orange { background: rgba(255,107,53,0.12); color: var(--accent); }
+.buy-card .rec.teal { background: rgba(78,205,196,0.1); color: var(--accent-2); }
+.buy-card .rec.gray { background: rgba(136,136,136,0.12); color: #aaa; }
+.buy-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ===== ROADMAP ===== */
+.roadmap-timeline { position: relative; padding-left: 36px; margin-top: 28px; }
+.roadmap-timeline::before {
+  content: ''; position: absolute; left: 12px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2), var(--accent-3));
+}
+.roadmap-item { position: relative; margin-bottom: 28px; }
+.roadmap-item::before {
+  content: ''; position: absolute; left: -30px; top: 5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--accent); background: var(--bg);
+}
+.roadmap-item .year { font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 3px; }
+.roadmap-item h4 { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.04em; margin-bottom: 5px; }
+.roadmap-item p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ===== CLOSING ===== */
+.closing { text-align: center; padding: 80px 24px; position: relative; }
+.closing h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 4.5vw, 2.8rem); margin-bottom: 14px; letter-spacing: 0.04em; }
+.closing p { color: var(--text-muted); max-width: 540px; margin: 0 auto; font-size: 0.92rem; line-height: 1.8; }
+
+footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-dim); letter-spacing: 0.06em; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .intro-grid, .modem-dual, .exclusive-grid, .vs-grid, .eff-meter-grid { grid-template-columns: 1fr; }
+  .spec-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  section { padding: 56px 0; }
+  .hero { padding: 80px 24px 48px; }
+  .hero-meta { flex-direction: column; gap: 6px; }
+}
+@media (max-width: 480px) {
+  .buy-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<div class="scroll-bar" id="scrollBar"></div>
-
-<nav class="site-nav">
-<div class="inner">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="性能.html" class="nav-back">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-      <span>返回</span>
-    </a>
-    <span class="nav-brand">Apple A-Series</span>
-  </div>
+<nav>
+  <div class="nav-logo">A系列 · 2026</div>
   <div class="nav-links">
-    <a href="snapdragon.html">骁龙</a>
-    <a href="dimensity.html">天玑</a>
-    <a href="apple.html" class="active">苹果</a>
-    <a href="samsung.html">三星</a>
-    <a href="xuanjie.html">玄戒</a>
-    <a href="kirin.html">麒麟</a>
+    <a href="#lineup">阵容</a>
+    <a href="#compare">对比</a>
+    <a href="#modem">基带</a>
+    <a href="#efficiency">能效</a>
+    <a href="#roadmap">未来</a>
+    <a href="#buy">选购</a>
   </div>
-</div>
 </nav>
 
-<div class="nav-dots">
-  <div class="nav-dot active" data-section="hero"></div>
-  <div class="nav-dot" data-section="lineup"></div>
-  <div class="nav-dot" data-section="compare"></div>
-  <div class="nav-dot" data-section="modem"></div>
-  <div class="nav-dot" data-section="buy"></div>
-</div>
+<header class="hero">
+  <div class="container">
+    <div class="hero-bg"></div>
+    <div class="hero-eyebrow">2026年6月 · 基于最新跑分与评测数据</div>
+    <h1>THE <span class="accent">A-SERIES</span><br>CHIP <span class="accent2">GUIDE</span></h1>
+    <p class="hero-sub">2026年的移动芯片战场，三方混战白热化：苹果A19 Pro单核无敌但独守一隅，骁龙8至尊版第五代性能爆炸但动不动就发烧，天玑9500能效逆天悄悄逆袭。到底该站哪边？一篇讲透。</p>
+    <div class="hero-meta">
+      <div>更新于 <span>2026.06.20</span></div>
+      <div>涵盖 <span>A16 — A19 Pro + 竞品对比</span></div>
+      <div>阅读 <span>约10分钟</span></div>
+    </div>
+  </div>
+</header>
 
-<!-- ===== HERO ===== -->
-<section class="hero" id="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-eyebrow"><span class="dot"></span> 2026 · 最新评测数据</div>
-  <h1>
-    <span class="headline-dark">A-Series</span>
-    <span class="headline-gradient">Chip Guide</span>
-  </h1>
-  <p class="hero-sub">A19 Pro 单核无敌，骁龙 8EG5 跑分爆炸但发烫，天玑 9500 能效逆天闷声发财——<strong>选哪个？</strong></p>
-  <div class="hero-scroll">继续</div>
+<main>
+
+<!-- 第一章 -->
+<section id="intro">
+  <div class="container">
+    <div class="section-tag">第一章</div>
+    <h2 class="section-title">A系列是什么来头？</h2>
+    <p class="section-desc">一句话版本：苹果不想把命运交给别人，于是自己下场造芯片，结果一不小心造出了移动端最能打的处理器。</p>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h3>起源故事</h3>
+        <p>2010年，苹果掏出第一颗自研芯片A4，搭载在初代iPad上。当时全行业的反应是："你一个卖手机的，造什么芯片？"结果十几年过去，A系列从"笑话"变成了"神话"。</p>
+        <p style="margin-top:10px">苹果为什么非要自己造？算笔账就懂了：自研芯片成本约26美元一颗，买高通的要80美元。一年卖2亿部手机，省下来的钱……反正够把整个硅谷包下来团建了。</p>
+      </div>
+      <div class="intro-card">
+        <h3>进化幅度（吹爆预警）</h3>
+        <div class="stat-row">
+          <div class="stat-num">100倍</div>
+          <div class="stat-label">CPU性能提升（A4 → A19 Pro）</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">1000倍</div>
+          <div class="stat-label">GPU性能提升</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">45纳米 → 3纳米</div>
+          <div class="stat-label">工艺制程迭代，下一步2纳米</div>
+        </div>
+        <p style="margin-top:12px;font-size:0.78rem;color:var(--text-dim);">从A7首发64位移动芯片，到A11首发神经网络引擎，再到A17 Pro首发3纳米工艺和硬件光追——A系列基本就是"移动芯片黑科技首发机"。</p>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ===== LINEUP ===== -->
+<!-- 第二章 -->
 <section id="lineup">
   <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-pill">在售阵容</div>
-      <h2>A16 到 A19 Pro</h2>
-      <p>数字越大越强，带 Pro 比标准版更强</p>
-    </div>
+    <div class="section-tag">第二章</div>
+    <h2 class="section-title">2026年在售主力阵容</h2>
+    <p class="section-desc">从A16到A19 Pro，苹果目前有6颗A系列芯片在售。记忆法：数字越大越猛，带Pro的比不带的猛。</p>
 
-    <div class="chip-cards">
+    <div class="spec-grid">
 
-      <div class="chip-card fade-in">
-        <div class="chip-card-header">
-          <div class="chip-name">A19 Pro <span class="tag tag-ss">2025 · 天花板</span></div>
-          <div class="chip-price price-gold">天花板</div>
+      <div class="spec-card tier-s">
+        <div class="spec-card-header">
+          <span class="tier-badge s">天花板级 · 2026年移动端最强单核</span>
+          <div class="spec-chip-name">A19 Pro</div>
+          <div class="spec-chip-year">2025年 · 苹果17 Pro / 17 Pro Max</div>
         </div>
-        <p class="chip-intro">2026 移动端<strong>单核之王。</strong>GB6 单核约 3800，碾压一切对手。</p>
-        <div class="spec-grid">
-          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">3nm <span class="hl">增强版</span></div></div>
-          <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">6 核（2 大 + 4 小）</div></div>
-          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">6 核 · 硬件光追</div></div>
-          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">16 核 · <span class="hl">40 TOPS</span></div></div>
-          <div class="spec-item"><div class="spec-label">GB6 单核</div><div class="spec-value"><span class="hl">~3800</span></div></div>
-          <div class="spec-item"><div class="spec-label">安兔兔</div><div class="spec-value">~400 万</div></div>
+        <div class="spec-card-body">
+          <div class="spec-row"><span class="spec-label">工艺制程</span><span class="spec-value">台积电3纳米增强版</span></div>
+          <div class="spec-row"><span class="spec-label">中央处理器</span><span class="spec-value">6核（2大核 + 4小核）</span></div>
+          <div class="spec-row"><span class="spec-label">图形处理器</span><span class="spec-value">6核</span></div>
+          <div class="spec-row"><span class="spec-label">神经网络引擎</span><span class="spec-value">16核 · 40 TOPS</span></div>
+          <div class="spec-row"><span class="spec-label">极客跑分6 单核</span><span class="spec-value">约3800分</span></div>
+          <div class="spec-row"><span class="spec-label">极客跑分6 多核</span><span class="spec-value">约9500分</span></div>
+          <div class="spec-row"><span class="spec-label">安兔兔综合跑分</span><span class="spec-value">约400万分</span></div>
         </div>
-        <div class="callout"><strong>单核之王，日常丝滑度无人能敌。</strong>安兔兔 400 万虽不及骁龙天玑，但系统+芯片协同带来的流畅感是跑分无法体现的。</div>
-      </div>
-
-      <div class="chip-card fade-in">
-        <div class="chip-card-header">
-          <div class="chip-name">A18 Pro <span class="tag tag-premium">2024 · 准旗舰</span></div>
-          <div class="chip-price price-blue">抄底首选</div>
-        </div>
-        <p class="chip-intro">上一代旗舰，618 到手 6999 元起。<strong>能用五年不落后。</strong></p>
-        <div class="spec-grid">
-          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">3nm <span class="hl">N3E</span></div></div>
-          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">16 核 · <span class="hl">35 TOPS</span></div></div>
-          <div class="spec-item"><div class="spec-label">GB6 单核</div><div class="spec-value"><span class="hl">~3738</span></div></div>
-        </div>
-        <div class="verdict"><h4>现在买就是捡漏</h4><p>上一代旗舰芯片，性价比极高，性能依然强劲。</p></div>
-      </div>
-
-      <div class="chip-card fade-in">
-        <div class="chip-card-header">
-          <div class="chip-name">A18 <span class="tag tag-mid">2024 · 甜品级</span></div>
-          <div class="chip-price price-purple">性能过剩</div>
-        </div>
-        <p class="chip-intro">GPU 5 核，比 Pro 少 1 核。<strong>99% 用户根本用不完。</strong></p>
-        <div class="spec-grid">
-          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">5 核</div></div>
-          <div class="spec-item"><div class="spec-label">GB6 单核</div><div class="spec-value">~3288</div></div>
+        <div class="spec-card-footer">
+          <span class="v">2026年移动端单核之王。</span>安兔兔约400万，但极客跑分单核仍然碾压骁龙和天玑。简单说：日常丝滑度，无人能敌。
         </div>
       </div>
 
-      <div class="chip-card fade-in">
-        <div class="chip-card-header">
-          <div class="chip-name">A17 Pro <span class="tag tag-budget">2023 · 3nm 开山</span></div>
-          <div class="chip-price price-teal">二手香饽饽</div>
+      <div class="spec-card tier-a">
+        <div class="spec-card-header">
+          <span class="tier-badge a">准旗舰级 · 抄底首选</span>
+          <div class="spec-chip-name">A18 Pro</div>
+          <div class="spec-chip-year">2024年 · 苹果16 Pro / 16 Pro Max</div>
         </div>
-        <p class="chip-intro">业界首款 3nm 手机芯片，190 亿晶体管，硬件光追。<strong>二手 15 Pro Max 性价比极高。</strong></p>
-        <div class="spec-grid">
-          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">N3B · 190 亿</div></div>
-          <div class="spec-item"><div class="spec-label">GPU</div><div class="spec-value">6 核 · 768 SP</div></div>
-          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">16 核 · 35 TOPS</div></div>
-          <div class="spec-item"><div class="spec-label">内存</div><div class="spec-value">LPDDR5 8GB</div></div>
+        <div class="spec-card-body">
+          <div class="spec-row"><span class="spec-label">工艺制程</span><span class="spec-value">台积电3纳米N3E</span></div>
+          <div class="spec-row"><span class="spec-label">中央处理器</span><span class="spec-value">6核（高频率版）</span></div>
+          <div class="spec-row"><span class="spec-label">图形处理器</span><span class="spec-value">6核</span></div>
+          <div class="spec-row"><span class="spec-label">神经网络引擎</span><span class="spec-value">16核 · 35 TOPS</span></div>
+          <div class="spec-row"><span class="spec-label">极客跑分6 单核</span><span class="spec-value">约3738分</span></div>
+          <div class="spec-row"><span class="spec-label">极客跑分6 多核</span><span class="spec-value">约9447分</span></div>
+        </div>
+        <div class="spec-card-footer">
+          <span class="v">上一代旗舰芯片，现在买就是捡漏。</span>618到手价6999元起，能用5年不落后。
         </div>
       </div>
 
-      <div class="chip-card fade-in">
-        <div class="chip-card-header">
-          <div class="chip-name">A16 仿生 <span class="tag tag-old">2022 · 老兵</span></div>
-          <div class="chip-price price-gray">够用</div>
+      <div class="spec-card tier-b">
+        <div class="spec-card-header">
+          <span class="tier-badge b">甜品级 · 性能过剩典范</span>
+          <div class="spec-chip-name">A18</div>
+          <div class="spec-chip-year">2024年 · 苹果16 / 16 Plus</div>
         </div>
-        <p class="chip-intro">别看数字小就嫌弃。<strong>2026 年日常依然丝滑</strong>，刷视频聊微信毫无压力。</p>
-        <div class="spec-grid">
-          <div class="spec-item"><div class="spec-label">工艺</div><div class="spec-value">N4 · 160 亿</div></div>
-          <div class="spec-item"><div class="spec-label">NPU</div><div class="spec-value">16 核 · 17 TOPS</div></div>
+        <div class="spec-card-body">
+          <div class="spec-row"><span class="spec-label">工艺制程</span><span class="spec-value">台积电3纳米N3E</span></div>
+          <div class="spec-row"><span class="spec-label">中央处理器</span><span class="spec-value">6核（2大 + 4小）</span></div>
+          <div class="spec-row"><span class="spec-label">图形处理器</span><span class="spec-value">5核</span></div>
+          <div class="spec-row"><span class="spec-label">神经网络引擎</span><span class="spec-value">16核 · 35 TOPS</span></div>
+          <div class="spec-row"><span class="spec-label">极客跑分6 单核</span><span class="spec-value">约3288分</span></div>
+          <div class="spec-row"><span class="spec-label">极客跑分6 多核</span><span class="spec-value">约8023分</span></div>
+        </div>
+        <div class="spec-card-footer">
+          <span class="v">99%用户根本用不完的性能。</span>刷抖音聊微信拍照发朋友圈？闭着眼搞定。
+        </div>
+      </div>
+
+      <div class="spec-card tier-b">
+        <div class="spec-card-header">
+          <span class="tier-badge b">3纳米开山之作 · 二手市场香饽饽</span>
+          <div class="spec-chip-name">A17 Pro</div>
+          <div class="spec-chip-year">2023年 · 苹果15 Pro / 15 Pro Max</div>
+        </div>
+        <div class="spec-card-body">
+          <div class="spec-row"><span class="spec-label">工艺制程</span><span class="spec-value">台积电N3B · 190亿管</span></div>
+          <div class="spec-row"><span class="spec-label">中央处理器</span><span class="spec-value">2×3.78GHz + 4×2.11GHz</span></div>
+          <div class="spec-row"><span class="spec-label">图形处理器</span><span class="spec-value">6核 · 768流处理器</span></div>
+          <div class="spec-row"><span class="spec-label">神经网络引擎</span><span class="spec-value">16核 · 35 TOPS</span></div>
+          <div class="spec-row"><span class="spec-label">内存规格</span><span class="spec-value">LPDDR5 6400MHz · 8GB</span></div>
+          <div class="spec-row"><span class="spec-label">内存带宽</span><span class="spec-value">51.2 GB/s</span></div>
+        </div>
+        <div class="spec-card-footer">
+          <span class="v">业界首款3纳米手机芯片，支持硬件光追。</span>现在买二手15 Pro Max，性价比极高。
+        </div>
+      </div>
+
+      <div class="spec-card tier-a">
+        <div class="spec-card-header">
+          <span class="tier-badge a">老兵不死 · 苹果15全系搭载</span>
+          <div class="spec-chip-name">A16 仿生</div>
+          <div class="spec-chip-year">2022年 · 苹果15全系 / 14 Pro</div>
+        </div>
+        <div class="spec-card-body">
+          <div class="spec-row"><span class="spec-label">工艺制程</span><span class="spec-value">台积电N4 · 160亿管</span></div>
+          <div class="spec-row"><span class="spec-label">中央处理器</span><span class="spec-value">2×3.46GHz + 4×2.02GHz</span></div>
+          <div class="spec-row"><span class="spec-label">图形处理器</span><span class="spec-value">5核 · 640流处理器</span></div>
+          <div class="spec-row"><span class="spec-label">神经网络引擎</span><span class="spec-value">16核 · 17 TOPS</span></div>
+          <div class="spec-row"><span class="spec-label">内存规格</span><span class="spec-value">LPDDR5 6400MHz · 6GB</span></div>
+        </div>
+        <div class="spec-card-footer">
+          <span class="v">别看数字小就嫌弃！</span>2026年日常使用依然丝滑，刷视频聊微信毫无压力。
         </div>
       </div>
 
@@ -404,178 +442,316 @@ footer p{color:var(--text-muted);font-size:11px;font-weight:400;letter-spacing:-
   </div>
 </section>
 
-<div class="section-divider"></div>
-
-<!-- ===== COMPARE ===== -->
+<!-- 第三章 -->
 <section id="compare">
   <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-pill">三大门派</div>
-      <h2>2026 华山论剑</h2>
+    <div class="section-tag">第三章</div>
+    <h2 class="section-title">2026年三大门派华山论剑</h2>
+    <p class="section-desc">苹果A系列、高通骁龙、联发科天玑——三大门派三种路数。骁龙8至尊版第五代性能爆表，天玑9500能效逆天，苹果A19 Pro单核依然碾压。</p>
+
+    <div class="vs-grid">
+      <div class="vs-card apple">
+        <span class="fi">&#127822;</span>
+        <h3>苹果 A19 Pro</h3>
+        <div class="fs">少林派 · 内功深厚 一招制敌</div>
+        <div>
+          <span class="tag tag-pro">单核碾压</span>
+          <span class="tag tag-pro">能效顶级</span>
+          <span class="tag tag-pro">软硬一体</span>
+        </div>
+        <ul>
+          <li><strong>单核性能：</strong>极客跑分单核约3800，移动端绝对第一</li>
+          <li><strong>图形处理器：</strong>支持硬件光追，能效比业界最佳</li>
+          <li><strong>系统整合：</strong>苹果系统 + A芯片 = 天作之合</li>
+          <li><span class="tag tag-con">贵</span> 安兔兔约400万，骁龙天玑都超450万了</li>
+          <li><span class="tag tag-con">没集成基带</span></li>
+          <li><span class="tag tag-con">散热保守</span></li>
+        </ul>
+        <div class="motto">"不跟你们比跑分，比日常丝滑度你们都得叫我爸爸。"</div>
+      </div>
+
+      <div class="vs-card qualcomm">
+        <span class="fi">&#128293;</span>
+        <h3>骁龙8至尊版 第五代</h3>
+        <div class="fs">武当派 · 全能暴力 偶尔发烧</div>
+        <div>
+          <span class="tag tag-pro">安兔兔450万</span>
+          <span class="tag tag-pro">多核第一</span>
+          <span class="tag tag-pro">集成基带</span>
+        </div>
+        <ul>
+          <li><strong>综合跑分：</strong>安兔兔高达425-450万分，极客跑分多核超12500分</li>
+          <li><strong>图形处理器：</strong>Adreno 840 + 18MB独立显存，游戏画质拉满</li>
+          <li><strong>人工智能：</strong>NPU生成式AI推理速度达220 Token/秒</li>
+          <li><span class="tag tag-con">高负载发热</span> 原神测试温度飙到46.2℃</li>
+          <li><span class="tag tag-con">功耗偏高</span></li>
+        </ul>
+        <div class="motto">"安兔兔跑分王，但手机烫得能煎鸡蛋。"</div>
+      </div>
+
+      <div class="vs-card mediatek">
+        <span class="fi">&#9889;</span>
+        <h3>天玑9500</h3>
+        <div class="fs">明教 · 能效逆天 闷声发大财</div>
+        <div>
+          <span class="tag tag-pro">能效王者</span>
+          <span class="tag tag-pro">光追暴涨119%</span>
+          <span class="tag tag-pro">性价比炸裂</span>
+        </div>
+        <ul>
+          <li><strong>能效比：</strong>原神高画质30分钟功耗仅5.2W，比骁龙低8℃</li>
+          <li><strong>单核跑分：</strong>极客跑分6单核约3600-4007分</li>
+          <li><strong>光追性能：</strong>3DMark光追测试暴涨119%</li>
+          <li><strong>搭载机型价位：</strong>2000-4000元，性价比拉满</li>
+          <li><span class="tag tag-con">品牌认知仍在追赶</span></li>
+          <li><span class="tag tag-con">极端画质下帧率不如骁龙</span></li>
+        </ul>
+        <div class="motto">"曾经被叫山寨之王，现在让骁龙背脊发凉。"</div>
+      </div>
     </div>
 
-    <div class="vs-grid fade-in">
-      <div class="vs-card">
-        <h3 style="color:var(--apple-blue)">A19 Pro</h3>
-        <div class="tags">
-          <span class="tag tag-good">单核碾压</span>
-          <span class="tag tag-good">能效顶级</span>
-          <span class="tag tag-bad">贵</span>
-          <span class="tag tag-bad">外挂基带</span>
-        </div>
-        <ul>
-          <li>GB6 单核 ~3800，移动第一</li>
-          <li>系统 + 芯片天作之合</li>
-          <li>安兔兔 400 万</li>
-        </ul>
-        <div class="quote">"不比跑分，比日常丝滑叫我爸爸。"</div>
-      </div>
-
-      <div class="vs-card">
-        <h3 style="color:var(--apple-teal)">骁龙 8EG5</h3>
-        <div class="tags">
-          <span class="tag tag-good">450 万</span>
-          <span class="tag tag-good">多核第一</span>
-          <span class="tag tag-bad">发热</span>
-        </div>
-        <ul>
-          <li>安兔兔 425-450 万</li>
-          <li>原神 30 分钟 46.2°C</li>
-        </ul>
-        <div class="quote">"跑分王，但烫得能煎蛋。"</div>
-      </div>
-
-      <div class="vs-card">
-        <h3 style="color:var(--apple-orange)">天玑 9500</h3>
-        <div class="tags">
-          <span class="tag tag-good">能效王者</span>
-          <span class="tag tag-good">性价比</span>
-          <span class="tag tag-bad">品牌追赶</span>
-        </div>
-        <ul>
-          <li>原神 30 分钟仅 5.2W</li>
-          <li>搭载机型 2000-4000</li>
-        </ul>
-        <div class="quote">"曾被叫山寨之王，现在让骁龙背脊发凉。"</div>
-      </div>
-    </div>
-
-    <div class="callout fade-in">
-      <strong>最新战况：</strong><br>
-      安兔兔：骁龙 8EG5 ≈450万 > 天玑 9500 ≈408万 > 苹果 A19 Pro ≈400万<br>
-      GB6 单核：骁龙 ≈3830 ≈ 苹果 ≈3800 > 天玑 ≈3600-4007<br>
-      能效比：天玑 9500 > 苹果 A19 Pro > 骁龙 8EG5<br><br>
-      <strong>结论：</strong>没有绝对赢家。苹果赢日常丝滑，骁龙赢跑分极限，天玑赢能效性价比。
+    <div class="callout-box">
+      <strong>2026年最新战况（基于实测数据）：</strong><br><br>
+      &#8226; <strong>安兔兔跑分：</strong>骁龙8至尊版第五代约450万 > 天玑9500约408万 > 苹果A19 Pro约400万<br>
+      &#8226; <strong>极客跑分6单核：</strong>骁龙8至尊版第五代约3830 ≈ 苹果A19 Pro约3800 > 天玑9500约3600<br>
+      &#8226; <strong>能效比：</strong>天玑9500 > 苹果A19 Pro > 骁龙8至尊版第五代<br>
+      &#8226; <strong>游戏帧率稳定性：</strong>天玑9500（30分钟不降频）> 苹果A19 Pro > 骁龙8至尊版第五代（会过热降频）<br><br>
+      <strong>结论：</strong>没有绝对赢家。苹果赢在单核和日常体验，骁龙赢在跑分极限，天玑赢在能效和性价比。
     </div>
   </div>
 </section>
 
-<div class="section-divider"></div>
-
-<!-- ===== MODEM ===== -->
+<!-- 第四章 -->
 <section id="modem">
   <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-pill">基带问题</div>
-      <h2>WiFi 战神，5G 费电</h2>
-      <p>A 系列最大软肋：没有集成蜂窝基带</p>
-    </div>
+    <div class="section-tag">第四章</div>
+    <h2 class="section-title">WiFi战神，5G费电怪</h2>
+    <p class="section-desc">A系列芯片最大的"阿喀琉斯之踵"：内部没有集成蜂窝基带，外挂了一颗独立基带芯片。就像别人家的CPU和基带住一个屋檐下，苹果的基带却住在隔壁小区，每次沟通都要跨墙喊话。</p>
 
-    <div class="modem-dual fade-in">
+    <div class="modem-dual">
       <div class="modem-card wifi">
-        <h3>WiFi · 战神附体</h3>
-        <p>不用跟基带抢资源，WiFi 7 全力输出，功耗更低。</p>
-        <div class="modem-meter"><div class="modem-meter-fill"></div></div>
-        <div class="modem-label">WiFi 性能 — 95/100</div>
+        <div class="mi">&#128225;</div>
+        <h3>WiFi模式：战神附体</h3>
+        <p>不用跟基带"抢地盘"，WiFi模块全力输出。支持WiFi 7技术，速度快到飞起。连WiFi时整体功耗反而比很多竞品更低。</p>
+        <div class="meter"><div class="meter-fill"></div></div>
+        <div class="meter-label">WiFi性能指数 — 95/100</div>
       </div>
       <div class="modem-card fiveg">
-        <h3>5G · 吃电怪兽</h3>
-        <p>外挂基带需额外供电，功耗明显高于集成方案。</p>
-        <div class="modem-meter"><div class="modem-meter-fill"></div></div>
-        <div class="modem-label">5G 能效 — 42/100</div>
+        <div class="mi">&#9889;</div>
+        <h3>5G模式：吃电怪兽</h3>
+        <p>外挂基带需要额外供电和数据传输，功耗明显高于骁龙和天玑的集成方案。手机内部空间被占用，电池容量也被"挤"小了。</p>
+        <div class="meter"><div class="meter-fill"></div></div>
+        <div class="meter-label">5G能效指数 — 42/100</div>
       </div>
     </div>
 
-    <div class="callout fade-in" style="margin-top:14px">
-      <strong>民间名言：</strong>"连 WiFi 战神，开 5G 吃电怪。"<br>
-      骁龙和天玑都是集成基带，5G 功耗天然更低。<br>
-      <strong>好消息：</strong>苹果正在研发自研基带，未来有望集成。
+    <div class="callout-box">
+      <strong>民间名言：</strong>"苹果连WiFi是战神，开5G是吃电怪。"<br><br>
+      这话虽然夸张，但确实反映了现实——外挂基带就像把行李箱绑在车顶上跑高速，功能一样，风阻大了不少。<br><br>
+      <strong>好消息：</strong>苹果正在研发自研基带芯片，未来有望直接集成进A系列，彻底解决这个功耗痛点。到时候"WiFi战神"要升级成"全能战神"了。<br><br>
+      <strong>对比：</strong>骁龙8至尊版第五代和天玑9500都是集成基带设计，5G功耗天然比苹果低。
     </div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<!-- 第五章 -->
+<section id="efficiency">
+  <div class="container">
+    <div class="section-tag">第五章</div>
+    <h2 class="section-title">能效比才是王道</h2>
+    <p class="section-desc">跑分高不高是面子问题，能效比强不强是里子问题。2026年芯片圈的终极KPI只有一个：<strong style="color:var(--accent)">每瓦功耗能输出多少性能</strong>。能效比高 = 更长续航 + 更低发热 + 更持久流畅。</p>
 
-<!-- ===== BUY ===== -->
+    <div class="eff-meter-grid">
+      <div class="eff-meter-card">
+        <div class="eb" style="color:var(--accent)">苹果 A19 Pro</div>
+        <div class="eff-bar-wrap">
+          <div class="eff-bar-item">
+            <label>单核性能</label>
+            <div class="eff-bar"><div class="eff-bar-fill perf" style="width:97%"></div></div>
+          </div>
+          <div class="eff-bar-item">
+            <label>能效比（性能/瓦）</label>
+            <div class="eff-bar"><div class="eff-bar-fill eff" style="width:93%"></div></div>
+          </div>
+          <div class="eff-bar-item">
+            <label>人工智能算力</label>
+            <div class="eff-bar"><div class="eff-bar-fill ai" style="width:80%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="eff-meter-card">
+        <div class="eb" style="color:var(--accent-2)">天玑9500</div>
+        <div class="eff-bar-wrap">
+          <div class="eff-bar-item">
+            <label>单核性能</label>
+            <div class="eff-bar"><div class="eff-bar-fill perf" style="width:88%"></div></div>
+          </div>
+          <div class="eff-bar-item">
+            <label>能效比（性能/瓦）</label>
+            <div class="eff-bar"><div class="eff-bar-fill eff" style="width:96%"></div></div>
+          </div>
+          <div class="eff-bar-item">
+            <label>人工智能算力</label>
+            <div class="eff-bar"><div class="eff-bar-fill ai" style="width:88%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="eff-meter-card">
+        <div class="eb" style="color:var(--accent-3)">骁龙8至尊版 第五代</div>
+        <div class="eff-bar-wrap">
+          <div class="eff-bar-item">
+            <label>单核性能</label>
+            <div class="eff-bar"><div class="eff-bar-fill perf" style="width:95%"></div></div>
+          </div>
+          <div class="eff-bar-item">
+            <label>能效比（性能/瓦）</label>
+            <div class="eff-bar"><div class="eff-bar-fill eff" style="width:75%"></div></div>
+          </div>
+          <div class="eff-bar-item">
+            <label>人工智能算力</label>
+            <div class="eff-bar"><div class="eff-bar-fill ai" style="width:92%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout-box" style="margin-top:28px">
+      <strong>能效比为什么重要？看真实场景：</strong><br><br>
+      &#8226; 刷抖音2小时：能效高的掉15%电，能效低的掉30%<br>
+      &#8226; 打原神30分钟：天玑9500机身38.7℃，骁龙8至尊版第五代高达46.2℃<br>
+      &#8226; 同样玩一局游戏：天玑9500的手机续航多出16%<br>
+      &#8226; 用两年后：能效高的芯片更少过热降频，依然丝滑<br><br>
+      <strong>2026年能效比排名：</strong>天玑9500 > 苹果A19 Pro > 骁龙8至尊版第五代。<br>
+      天玑9500用更少的电量干更多的活，堪称"芯片界的混动车"。苹果靠系统优化也做到了极高能效。骁龙性能猛但功耗也猛——跑分战士，日常偏热。
+    </div>
+  </div>
+</section>
+
+<!-- 第六章 -->
+<section id="exclusive">
+  <div class="container">
+    <div class="section-tag">第六章</div>
+    <h2 class="section-title">独苗策略：苹果自用 概不外卖</h2>
+    <p class="section-desc">A系列芯片只给苹果自己用，从来不卖给其他厂商。骁龙和天玑可以卖给小米OPPO vivo随便用，但A系列？对不起，独门秘籍。</p>
+
+    <div class="exclusive-grid">
+      <div class="exclusive-card good">
+        <h3>&#9989; 好处</h3>
+        <ul>
+          <li><strong>深度优化到变态：</strong>芯片和系统是"亲生"配对，优化100%，没有"适配"这个概念。安卓十几家厂商共用骁龙/天玑，优化参差不齐；苹果只做自己一家，每一行代码都为这颗芯片量身定制。</li>
+          <li><strong>省钱大法：</strong>自研约26美元/颗，外购高通约80美元/颗。一年省的钱够再开一家芯片公司。</li>
+          <li><strong>技术护城河：</strong>你永远买不到搭载A19 Pro的小米手机，差异化竞争，别人没法抄。</li>
+          <li><strong>利润独享：</strong>不用给高通或联发科交"过路费"。</li>
+          <li><strong>技术保密：</strong>核心技术不会泄露给任何竞争对手。</li>
+        </ul>
+      </div>
+      <div class="exclusive-card bad">
+        <h3>&#10060; 代价</h3>
+        <ul>
+          <li><strong>研发压力山大：</strong>高通有十几家厂商分摊研发成本，苹果只能自己扛。一颗芯片的成败只系于iPhone一身。</li>
+          <li><strong>迭代不能停：</strong>骁龙和天玑一年比一年猛（安兔兔已突破450万），苹果停一步就被追上。</li>
+          <li><strong>缺乏外部刺激：</strong>没有其他厂商"挑刺"，少了竞争带来的紧迫感。</li>
+          <li><strong>先进工艺成本飙升：</strong>台积电先进工艺涨价飞快，A19 Pro成本估计40-50美元/颗，未来1.4纳米可能飙到100美元以上。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout-box" style="margin-top:28px">
+      <strong>一句话总结：</strong>"独苗策略"让苹果打造了软硬件高度统一的体验，这种整合度安卓阵营很难复制。代价就是——你必须买苹果手机才能用到这颗芯片，没有第二条路。
+    </div>
+  </div>
+</section>
+
+<!-- 第七章 -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-tag">第七章</div>
+    <h2 class="section-title">A系列未来路线图</h2>
+    <p class="section-desc">苹果的芯片布局已经排到2028年。台积电先进工艺一路往前冲，苹果永远是第一批上车的乘客。</p>
+
+    <div class="roadmap-timeline">
+      <div class="roadmap-item">
+        <div class="year">2026年 · 即将发布</div>
+        <h4>A20 / A20 Pro — 首发台积电2纳米</h4>
+        <p>2026年下半年，A20系列将搭载于苹果18 Pro和首款折叠屏iPhone上，采用台积电N2工艺。相比3纳米，2纳米晶体管密度提高约1.15倍，导线电阻下降20%，性能提升约15%，功耗降低约30%。更关键的是，A20将首次采用WMCM封装技术，CPU、GPU和NPU可以独立动态调压——聊天时大核睡觉，玩游戏时小核休息，续航将大幅飞跃。</p>
+      </div>
+      <div class="roadmap-item">
+        <div class="year">2027年</div>
+        <h4>A21 / A21 Pro — Pro版独享改良工艺</h4>
+        <p>苹果20周年纪念版iPhone将搭载A21系列。A21 Pro独享台积电N2P改良工艺（同频性能比N2提升约5%），标准版A21继续用N2。"精准刀法"是为了控制成本——2纳米晶圆价格飙升，苹果在高端制程导入节奏上精打细算。</p>
+      </div>
+      <div class="roadmap-item">
+        <div class="year">2028年</div>
+        <h4>A22 Pro — 跨入1.4纳米时代</h4>
+        <p>台积电1.4纳米工艺预计2028年量产。相比2纳米，相同功耗下性能提升15%，相同速度下功耗降低30%，逻辑密度增加20%以上。A22 Pro预计首发这个工艺。但晶圆报价可能高达4.5万美元，每颗成本恐超100美元——届时iPhone的售价，想想都刺激。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第八章 -->
 <section id="buy">
   <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-pill">选购指南</div>
-      <h2>你该选哪颗</h2>
+    <div class="section-tag">第八章</div>
+    <h2 class="section-title">选购指南：你该选哪颗？</h2>
+    <p class="section-desc">别光看跑分焦虑，先搞清自己的需求。对大部分人来说，近几代A系列芯片都稳稳够用。</p>
+
+    <div class="buy-grid">
+      <div class="buy-card">
+        <span class="pe">&#127918;</span>
+        <h3>重度玩家 / 影像创作者</h3>
+        <div class="rec gold">A19 Pro / A18 Pro</div>
+        <p>6核满血GPU，硬件光追，高负载不掉帧。剪视频搞3D建模玩大作，能用5年不落后。2026年618到手A18 Pro约6999元起。</p>
+      </div>
+      <div class="buy-card">
+        <span class="pe">&#128241;</span>
+        <h3>主流日常用户</h3>
+        <div class="rec orange">A19 / A18</div>
+        <p>刷视频聊天拍照偶尔打游戏？日常体验丝般顺滑，性价比拉满。不追极限性能的话，Pro版省下来的钱买个好壳不好吗？</p>
+      </div>
+      <div class="buy-card">
+        <span class="pe">&#128176;</span>
+        <h3>预算有限 / 二手入手</h3>
+        <div class="rec teal">A17 Pro / A16</div>
+        <p>别看数字小就嫌弃！A17 Pro支持硬件光追，A16依然满足日常所有需求。二手苹果15 Pro Max性价比极高。</p>
+      </div>
+      <div class="buy-card">
+        <span class="pe">&#9889;</span>
+        <h3>安卓阵营纠结？</h3>
+        <div class="rec gold">骁龙8至尊版第五代 vs 天玑9500</div>
+        <p><strong>要极致游戏画质不差钱：</strong>选骁龙8至尊版第五代，安兔兔450万分，144帧满帧不是梦。搭载机型5000元以上。<br><br>
+        <strong>要续航和能效、性价比高：</strong>选天玑9500，能效比吊打骁龙，30分钟原神不降频不烫手，搭载机型2000-4000元。<br><br>
+        <strong>2026年真香之选：</strong>搭载天玑9500的一加Ace 6至尊版国补后2999元起。</p>
+      </div>
+      <div class="buy-card">
+        <span class="pe">&#128564;</span>
+        <h3>正在用老款？别焦虑</h3>
+        <div class="rec gray">继续用，完全没问题</div>
+        <p>只要流畅度和续航还行，A16、A17 Pro设备再战几年完全OK。定期清理缓存，管控后台应用。别被厂商跑分大战带节奏了。</p>
+      </div>
     </div>
 
-    <div class="buy-card fade-in">
-      <div class="buy-row">
-        <div class="buy-icon" style="background:rgba(255,214,10,.06);border-color:rgba(255,214,10,.1)">🎮</div>
-        <div class="buy-text">
-          <div class="buy-title" style="color:var(--apple-yellow)">重度游戏 / 创作</div>
-          <div class="buy-desc"><strong>A19 Pro / A18 Pro</strong>，硬件光追，五年不落后。</div>
-        </div>
-      </div>
-      <div class="buy-row">
-        <div class="buy-icon" style="background:rgba(161,161,166,.05);border-color:rgba(161,161,166,.08)">📱</div>
-        <div class="buy-text">
-          <div class="buy-title" style="color:var(--accent-subtle)">主流日常</div>
-          <div class="buy-desc"><strong>A18</strong>，Pro 版省下来买个好壳不香吗？</div>
-        </div>
-      </div>
-      <div class="buy-row">
-        <div class="buy-icon" style="background:rgba(191,90,242,.05);border-color:rgba(191,90,242,.1)">💰</div>
-        <div class="buy-text">
-          <div class="buy-title" style="color:var(--apple-purple)">预算有限</div>
-          <div class="buy-desc"><strong>A17 Pro / A16</strong>，二手 15 Pro Max 性价比极高。</div>
-        </div>
-      </div>
-      <div class="buy-row">
-        <div class="buy-icon">⏳</div>
-        <div class="buy-text">
-          <div class="buy-title" style="color:var(--text-secondary)">老款用户</div>
-          <div class="buy-desc">只要流畅续航还行，A16、A17 Pro 再战几年没问题。</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tldr-box fade-in" style="margin-top:20px">
-      <h3>安卓用户也看看</h3>
-      <p>
-        <strong>极致游戏画质：</strong>骁龙 8EG5（安兔兔 450 万），搭载机型 5000+。<br>
-        <strong>续航和性价比：</strong>天玑 9500（能效吊打骁龙），搭载机型 2000-4000。<br>
-        <strong>2026 真香之选：</strong>天玑 9500 的一加 Ace 6 至尊版，国补后 2999 元起。
-      </p>
+    <div class="callout-box" style="margin-top:32px">
+      <strong>选购铁律：</strong>A16 &lt; A17 Pro &lt; A18 &lt; A18 Pro &lt; A19 &lt; A19 Pro。但更重要的是：先搞清自己要干嘛。大部分人买A19 Pro，90%的性能一辈子用不到。省下来的钱，不如买个好耳机？
     </div>
   </div>
 </section>
 
+<div class="closing">
+  <div class="container">
+    <div class="section-tag">写在最后</div>
+    <h2>选芯片不如先选需求</h2>
+    <p>2026年的移动芯片战场，三方混战进入最精彩的时代。苹果A19 Pro单核无敌但独守一隅，骁龙8至尊版第五代性能爆炸但偶尔发烧，天玑9500能效逆天闷声发大财。没有绝对赢家，只有最适合你的选择。</p>
+  </div>
+</div>
+
+</main>
+
 <footer>
-  <p>Apple A 系列芯片完全指南 · 2026 · 苹果自研芯片只供自家使用，没有第二条路</p>
+  <div class="container">
+    苹果A系列芯片完全指南 · 2026年6月 · 数据来源：安兔兔、极客跑分、各厂商官方参数、科技媒体实测
+  </div>
 </footer>
 
-<div id="egg-popup"></div>
-
-<script>
-const scrollBar=document.getElementById('scrollBar');
-window.addEventListener('scroll',()=>{const h=document.documentElement;scrollBar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%'});
-
-const obs=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){i.target.classList.add('visible');obs.unobserve(i.target)}})},{threshold:.08});
-document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
-
-const sections=document.querySelectorAll('section[id]'),navDots=document.querySelectorAll('.nav-dot');
-window.addEventListener('scroll',()=>{let c='';sections.forEach(s=>{if(scrollY>=s.offsetTop-200)c=s.getAttribute('id')});navDots.forEach(d=>{d.classList.remove('active');if(d.dataset.section===c)d.classList.add('active')})});
-navDots.forEach(d=>{d.addEventListener('click',()=>{const s=document.getElementById(d.dataset.section);if(s)s.scrollIntoView({behavior:'smooth'})})});
-
-const eggs=["苹果自研芯片 26 美元，买高通 80 美元","连 WiFi 战神，开 5G 吃电怪","A 系列：自用不卖，概不外卖","A19 Pro 90% 性能你一辈子用不到","A4 到 A19 Pro：CPU 100 倍 GPU 1000 倍","苹果基带住隔壁小区，沟通要跨墙喊话"];
-let eggT;function showEgg(){const el=document.getElementById('egg-popup');el.textContent=eggs[Math.floor(Math.random()*eggs.length)];el.classList.add('show');clearTimeout(eggT);eggT=setTimeout(()=>el.classList.remove('show'),5000)}
-setTimeout(showEgg,8000);setInterval(showEgg,45000+Math.random()*25000);
-</script>
 </body>
 </html>
