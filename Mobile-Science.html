@@ -9,640 +9,181 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #08090e;
-      --surface: #10131a;
-      --surface-hover: #171c28;
-      --border: #1e2436;
-      --accent: #00e5a0;
-      --accent-dim: #00e5a030;
-      --accent-2: #4a9eff;
-      --text-primary: #e8ecf4;
-      --text-secondary: #8b93a8;
-      --text-muted: #4a5168;
-      --glow: 0 0 40px var(--accent-dim);
+      --bg:#08090e;--surface:#10131a;--surface-hover:#171c28;--border:#1e2436;
+      --accent:#00e5a0;--accent-dim:#00e5a030;--accent-2:#4a9eff;
+      --text-primary:#e8ecf4;--text-secondary:#8b93a8;--text-muted:#4a5168;
+      --glow:0 0 40px var(--accent-dim);
     }
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Noto Sans SC', sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at 15% 20%, #00e5a008, transparent 50%),
-                  radial-gradient(ellipse at 85% 80%, #4a9eff08, transparent 50%);
-      pointer-events: none; z-index: 0;
-      animation: breathBg 6s ease-in-out infinite alternate;
-    }
-    @keyframes breathBg { from { opacity: .8; } to { opacity: 1; } }
-    body::after {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: radial-gradient(circle, var(--text-muted) .5px, transparent .5px);
-      background-size: 40px 40px;
-      opacity: .1; pointer-events: none; z-index: 0;
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 20%,#00e5a008,transparent 50%),radial-gradient(ellipse at 85% 80%,#4a9eff08,transparent 50%);pointer-events:none;z-index:0;animation:breathBg 6s ease-in-out infinite alternate}
+    @keyframes breathBg{from{opacity:.8}to{opacity:1}}
+    body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,var(--text-muted) .5px,transparent .5px);background-size:40px 40px;opacity:.1;pointer-events:none;z-index:0}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent-dim)}
+    .particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .particle{position:absolute;background:var(--accent);border-radius:50%;opacity:0;animation:pFloat linear infinite}
+    @keyframes pFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:var(--po,.3)}90%{opacity:var(--po,.3)}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+    .cursor-glow{position:fixed;width:300px;height:300px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(0,229,160,.06),transparent 70%);transform:translate(-50%,-50%);opacity:0;will-change:transform;transition:opacity .3s}.cursor-glow.visible{opacity:1}
+    .vignette{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.4) 100%)}
+    /* ★ 优化：用 scaleX 代替 width，避免滚动时触发 layout */
+    .scroll-progress{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:9998;transform:scaleX(0);transform-origin:left;will-change:transform}
+    .reveal-line{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}.reveal-line.visible{opacity:1;transform:translateY(0)}
+    .ripple{position:absolute;border-radius:50%;background:rgba(0,229,160,.3);transform:scale(0);animation:ripOut .6s ease-out forwards;pointer-events:none}@keyframes ripOut{to{transform:scale(4);opacity:0}}
+    .splash-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .8s ease,visibility .8s ease}.splash-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .splash-ambient{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#00e5a012,transparent 60%),radial-gradient(ellipse at 30% 70%,#4a9eff0a,transparent 50%);animation:spAmb 4s ease-in-out infinite alternate}@keyframes spAmb{from{opacity:.5}to{opacity:1}}
+    .splash-geo{position:absolute;opacity:.06;pointer-events:none}
+    .splash-geo:nth-child(2){width:200px;height:200px;border:1px solid var(--accent);border-radius:50%;top:10%;left:10%;animation:gFloat 12s ease-in-out infinite alternate}
+    .splash-geo:nth-child(3){width:120px;height:120px;border:1px solid var(--accent-2);bottom:15%;right:12%;animation:gFloat 9s ease-in-out infinite alternate-reverse}
+    .splash-geo:nth-child(4){width:0;height:0;border-left:40px solid transparent;border-right:40px solid transparent;border-bottom:70px solid var(--accent);top:20%;right:20%;animation:gFloat 15s ease-in-out infinite alternate}
+    @keyframes gFloat{to{transform:translate(30px,-20px) rotate(20deg)}}
+    .splash-ripple{position:absolute;width:80px;height:80px;border-radius:50%;border:1px solid var(--accent);transform:translate(-50%,-50%);opacity:0;animation:spRip 3s ease-out infinite}.splash-ripple:nth-child(6){animation-delay:.8s}.splash-ripple:nth-child(7){animation-delay:1.6s}
+    @keyframes spRip{0%{transform:translate(-50%,-50%) scale(1);opacity:.5}100%{transform:translate(-50%,-50%) scale(6);opacity:0}}
+    .splash-skip{position:absolute;top:calc(20px + env(safe-area-inset-top,0px));right:20px;font-size:12px;color:var(--text-muted);padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;z-index:2;opacity:0;animation:spUp .5s ease 1s forwards;transition:all .2s}.splash-skip:hover{border-color:var(--accent);color:var(--accent)}
+    .splash-content{text-align:center;position:relative;z-index:1}
+    .splash-logo{width:88px;height:88px;margin:0 auto 28px;opacity:0;animation:spUp .7s ease forwards}.splash-logo path{stroke-dasharray:160;stroke-dashoffset:160;animation:drawM 1.2s ease forwards .3s}@keyframes drawM{to{stroke-dashoffset:0}}
+    .splash-title{font-family:'Syne','Noto Sans SC',sans-serif;font-size:clamp(24px,5vw,32px);font-weight:800;color:var(--text-primary);margin-bottom:8px;opacity:0;animation:spUp .7s ease .15s forwards}
+    .splash-sub{font-size:13px;color:var(--text-muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;opacity:0;animation:spUp .7s ease .3s forwards}
+    .splash-line{width:40px;height:2px;background:var(--accent);margin:0 auto 28px;border-radius:1px;opacity:0;animation:spUp .7s ease .45s forwards}
+    .splash-prompt{font-size:16px;color:var(--text-secondary);margin-bottom:8px;opacity:0;animation:spUp .7s ease .6s forwards,spPulse 2s ease-in-out 1.3s infinite}@keyframes spPulse{0%,100%{opacity:.5}50%{opacity:1}}
+    .splash-hint{font-size:12px;color:var(--text-muted);opacity:0;animation:spUp .5s ease .8s forwards}.splash-hint span{color:var(--accent)}
+    @keyframes spUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 24px;padding-bottom:100px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid var(--border);margin-bottom:60px;position:relative}
+    .logo{display:flex;align-items:center;gap:14px}
+    .logo-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--glow);font-family:'Syne',sans-serif;font-weight:800;color:var(--bg);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+    .logo-text{font-family:'Syne','Noto Sans SC',sans-serif;font-weight:800;font-size:20px;background:linear-gradient(135deg,var(--text-primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .logo-sub{font-size:12px;color:var(--text-muted);font-weight:300;letter-spacing:2px;text-transform:uppercase}
+    .contact-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .3s;font-family:'Noto Sans SC',sans-serif}.contact-btn:hover,.contact-btn:active{border-color:var(--accent);color:var(--accent)}.contact-btn.open{border-color:var(--accent);color:var(--accent);background:var(--surface-hover)}
+    .contact-btn .c-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;transition:transform .3s}.contact-btn.open .c-icon{transform:rotate(180deg)}.contact-btn .c-label{font-weight:500}
+    .contact-panel{position:absolute;top:100%;right:0;width:320px;background:rgba(16,19,26,.96);backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:16px;overflow:hidden;z-index:100;transform:translateY(-10px);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .3s;box-shadow:0 20px 60px rgba(0,0,0,.4)}.contact-panel.open{transform:translateY(8px);opacity:1;pointer-events:auto}
+    .cp-header{padding:18px 20px 14px;border-bottom:1px solid var(--border)}.cp-header h4{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}.cp-header p{font-size:12px;color:var(--text-muted);margin-top:4px}
+    .cp-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s;background:none;border:none;width:100%;text-align:left;font-family:inherit;color:inherit;text-decoration:none}.cp-row:last-child{border-bottom:none}.cp-row:hover{background:var(--surface-hover)}.cp-link{color:inherit}.cp-link:visited{color:inherit}
+    .cp-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .cp-icon.qq{background:linear-gradient(135deg,#12B7F520,#12B7F508);border:1px solid #12B7F530;color:#12B7F5}.cp-icon.group{background:linear-gradient(135deg,#7C3AED20,#7C3AED08);border:1px solid #7C3AED30;color:#7C3AED}.cp-icon.bili{background:linear-gradient(135deg,#FB729920,#FB729908);border:1px solid #FB729930;color:#FB7299}
+    .cp-info{flex:1;min-width:0}.cp-label{font-size:12px;color:var(--text-muted);margin-bottom:2px}.cp-value{font-size:14px;color:var(--text-primary);font-weight:500;font-family:'DM Mono',monospace}
+    .cp-action{font-size:11px;color:var(--text-muted);padding:4px 10px;border-radius:6px;background:var(--bg);border:1px solid var(--border);white-space:nowrap;transition:all .2s}.cp-row:hover .cp-action{border-color:var(--accent);color:var(--accent)}
+    .toast-bar{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,229,160,.3);opacity:0;transition:opacity .3s;pointer-events:none}.toast-bar.show{opacity:1}
+    .hero{position:relative;text-align:center;padding:40px 0 70px;overflow:hidden}
+    .hero-aurora{position:absolute;inset:-100px;background:radial-gradient(ellipse at 25% 50%,rgba(0,229,160,.08),transparent 50%),radial-gradient(ellipse at 75% 30%,rgba(74,158,255,.08),transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(255,107,107,.04),transparent 50%);filter:blur(60px);animation:aurora 20s ease-in-out infinite alternate;pointer-events:none;z-index:-1}@keyframes aurora{0%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.05)}100%{transform:translate(-20px,10px) scale(.95)}}
+    .hero-orbs{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+    .hero-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.1;animation:orbF ease-in-out infinite alternate}
+    .hero-orb:nth-child(1){width:400px;height:400px;background:var(--accent);top:-100px;left:-100px;animation-duration:8s}
+    .hero-orb:nth-child(2){width:350px;height:350px;background:var(--accent-2);bottom:-80px;right:-80px;animation-duration:10s}
+    .hero-orb:nth-child(3){width:250px;height:250px;background:#ff6b6b;top:50%;left:50%;animation-duration:12s}
+    @keyframes orbF{to{transform:translate(40px,-30px) scale(1.1)}}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:8px 20px;font-size:13px;color:var(--text-secondary);margin-bottom:28px;animation:fadeDown .6s ease forwards}.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+    .hero-title{font-family:'Syne','Noto Sans SC',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;line-height:1.15;margin-bottom:20px;opacity:0;animation:fadeUp .8s ease forwards .1s,glitchA 6s infinite 2s}.hero-title .hl{background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.hero-title .tw-cursor{display:inline-block;width:3px;height:.85em;background:var(--accent);margin-left:4px;vertical-align:text-bottom;animation:blink 1s step-end infinite}@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}@keyframes glitchA{0%,93%,96%,100%{text-shadow:none}94%{text-shadow:-2px 0 #ff0040,2px 0 #00e5ff}95%{text-shadow:2px 0 #ff0040,-2px 0 #00e5ff}}
+    .hero-desc{font-size:clamp(15px,2vw,18px);color:var(--text-secondary);max-width:560px;margin:0 auto;line-height:1.8;font-weight:300;opacity:0;animation:fadeUp .8s ease forwards .25s}
+    .hero-slogan{margin-top:28px;opacity:0;animation:fadeUp .8s ease forwards .4s}.hero-slogan span{display:inline-block;font-family:'Syne','Noto Sans SC',sans-serif;font-size:clamp(16px,2.5vw,20px);font-weight:700;padding:10px 28px;border-radius:100px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--bg);letter-spacing:1px}
+    .section-label{font-size:12px;font-weight:500;color:var(--text-muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:12px}.section-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);flex-shrink:0}.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--accent-dim),var(--border) 40%,transparent)}
+    .section-spacer{height:48px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:48px}
+    /* ★ 优化：卡片默认 opacity:0 用于桌面端入场动画，移动端在下方覆盖 */
+    .card{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 20px 20px;position:relative;overflow:hidden;transition:all .35s cubic-bezier(.22,1,.36,1);opacity:0;transform:translateY(24px);cursor:pointer;--ca:var(--accent);--cg:var(--accent-dim);will-change:transform}
+    .card.revealed{opacity:1;transform:translateY(0);transition:opacity .6s ease,transform .6s ease,background .35s,border-color .35s,box-shadow .35s}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ca),transparent);opacity:0;transition:opacity .35s;z-index:2}
+    .card::after{content:'';position:absolute;top:-60%;left:-20%;width:140%;height:140%;background:radial-gradient(circle,var(--cg),transparent 60%);opacity:0;transition:opacity .4s;pointer-events:none}
+    .card-shine{position:absolute;inset:0;border-radius:14px;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.07),transparent 60%);opacity:0;pointer-events:none;z-index:1;transition:opacity .5s}
+    .card:hover{background:var(--surface-hover);border-color:var(--ca);transform:translateY(-4px);box-shadow:0 0 40px var(--cg)}.card:hover::before,.card:hover .card-shine{opacity:1}.card:hover::after{opacity:1}.card:hover .card-kw{opacity:.1}.card:hover .card-title{color:var(--ca)}.card:hover .card-arrow{opacity:1}.card:hover .card-divider{background:var(--ca);width:50px}
+    .card-glow{position:absolute;inset:-1px;border-radius:14px;opacity:0;transition:opacity .5s;pointer-events:none;background:conic-gradient(from var(--ga,0deg),transparent,var(--ca),transparent,transparent);z-index:-1;filter:blur(1px)}.card.playing-glow .card-glow{opacity:.15}
+    .card-content{position:relative;z-index:1}
+    .card-kw{font-family:'Syne','Noto Sans SC',sans-serif;font-size:44px;font-weight:800;line-height:1;opacity:.05;position:absolute;top:18px;left:50%;transform:translateX(-50%);pointer-events:none;transition:opacity .35s;white-space:nowrap;letter-spacing:8px;z-index:0;color:var(--ca)}
+    .card-top{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;position:relative;z-index:1}.card-num{font-family:'Syne',sans-serif;font-size:10px;color:var(--text-muted);font-weight:700;letter-spacing:2px}.card-dot{width:4px;height:4px;border-radius:50%;background:var(--ca)}.card-tag{font-size:10px;color:var(--text-muted);letter-spacing:1px}
+    .card-title{font-size:17px;font-weight:700;color:var(--text-primary);transition:color .3s;position:relative;z-index:1;text-align:center;line-height:1.3}
+    .card-divider{width:30px;height:1px;background:var(--border);margin:14px auto;position:relative;z-index:1;transition:all .35s}
+    .card-desc{font-size:12px;color:var(--text-secondary);line-height:1.7;font-weight:300;position:relative;z-index:1;text-align:center}
+    .card-footer{display:flex;justify-content:flex-end;margin-top:14px;position:relative;z-index:1}.card-arrow{font-size:14px;color:var(--ca);opacity:.2;transition:all .3s}.card:hover .card-arrow{transform:translate(3px,-3px);opacity:.8}
+    .tip-bar{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:18px 24px;margin-bottom:60px;font-size:14px;color:var(--text-secondary);line-height:1.8}.tip-bar .tip-icon{display:inline-block;margin-right:8px;color:var(--accent);font-weight:700}.tip-bar .tip-secret{cursor:pointer}
+    .joke-section{margin-bottom:80px}
+    .joke-phone{max-width:400px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;overflow:hidden}.joke-phone::before{content:'';position:absolute;top:-40%;right:-30%;width:80%;height:80%;border-radius:50%;background:radial-gradient(circle,rgba(0,229,160,.04),transparent 60%);pointer-events:none}
+    .joke-statusbar{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:16px;font-family:'DM Mono',monospace}
+    .joke-notch{width:100px;height:24px;background:var(--bg);border-radius:0 0 14px 14px;margin:-24px auto 16px;position:relative}
+    .joke-notification{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:20px;min-height:100px;transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}.joke-notification.slide-out{transform:translateY(-20px);opacity:0}
+    .joke-tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:500;margin-bottom:12px}.joke-tag.t-j{background:rgba(255,159,67,.12);color:#ff9f43}.joke-tag.t-k{background:rgba(74,158,255,.12);color:#4a9eff}.joke-tag.t-g{background:rgba(255,107,107,.12);color:#ff6b6b}
+    .joke-text{font-size:15px;line-height:1.8;color:var(--text-primary);min-height:48px}
+    .joke-btn{width:100%;padding:14px;margin-top:16px;border-radius:12px;border:1px solid var(--accent);background:rgba(0,229,160,.06);color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Noto Sans SC',sans-serif;-webkit-tap-highlight-color:transparent}.joke-btn:hover,.joke-btn:active{background:var(--accent);color:var(--bg)}
+    .joke-counter{text-align:center;margin-top:10px;font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,4,10,.88);backdrop-filter:blur(8px);z-index:1000;animation:fadeIn .3s}.modal-overlay.active{display:flex;flex-direction:column}
+    .modal-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}.modal-title-area{display:flex;align-items:center;gap:12px}.modal-title-area .mod-label{font-family:'Syne',sans-serif;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;background:var(--bg);border:1px solid var(--border);padding:4px 10px;border-radius:6px}.modal-title{font-size:15px;font-weight:600}.modal-actions{display:flex;gap:8px}
+    .modal-btn{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);transition:all .2s;font-family:'Noto Sans SC',sans-serif}.modal-btn:hover{border-color:var(--accent);color:var(--accent)}.modal-btn.primary{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}.modal-btn.primary:hover{opacity:.85}
+    .modal-body{flex:1;overflow:hidden}.modal-body iframe{width:100%;height:100%;border:none;background:#fff}
+    .egg-overlay{display:none;position:fixed;inset:0;background:rgba(4,4,10,.85);backdrop-filter:blur(10px);z-index:2000;align-items:center;justify-content:center}.egg-overlay.show{display:flex}
+    .egg-box{background:var(--surface);border:1px solid var(--accent);border-radius:20px;padding:36px 40px;max-width:380px;text-align:center;animation:popIn .4s cubic-bezier(.22,1,.36,1)}.egg-box .egg-emoji{font-size:48px;margin-bottom:16px}.egg-box .egg-title{font-size:20px;font-weight:700;margin-bottom:10px;color:var(--accent)}.egg-box .egg-text{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px}.egg-box .egg-close{padding:8px 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;font-size:13px;font-family:'Noto Sans SC',sans-serif;transition:all .2s}.egg-box .egg-close:hover{border-color:var(--accent);color:var(--accent)}
+    @keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .music-player{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:calc(24px + env(safe-area-inset-left,0px));z-index:2001;-webkit-tap-highlight-color:transparent}
+    .mp-trigger{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 24px rgba(0,229,160,.18);transition:all .3s;position:relative;overflow:visible}.mp-trigger:hover{transform:scale(1.08)}.mp-trigger:active{transform:scale(.96)}
+    .mp-icon svg{width:22px;height:22px;stroke:var(--bg);fill:none;stroke-width:2}@keyframes pulseRing{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.2);opacity:0}}.music-player.playing:not(.muted-state) .mp-trigger::after{content:'';position:absolute;inset:-4px;border-radius:20px;border:2px solid var(--accent);animation:pulseRing 2s ease-out infinite}
+    .eq-bars{display:none;align-items:flex-end;gap:3px;height:22px}.music-player.playing .eq-bars{display:flex}.music-player.playing .mp-icon{display:none}.eq-bar{width:3px;background:var(--bg);border-radius:1.5px;transition:height .12s ease;height:4px}
+    .mp-visualizer{width:100%;height:40px;margin-bottom:12px;display:flex;align-items:flex-end;justify-content:center;gap:2px;overflow:hidden}.viz-bar{width:3px;background:linear-gradient(to top,var(--accent),var(--accent-2));border-radius:1.5px;transition:height .12s ease;min-height:2px}
+    .mp-panel{position:absolute;bottom:64px;left:0;width:300px;background:rgba(16,19,26,.92);backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:18px;transform:translateY(10px) scale(.92);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.22,1,.36,1);box-shadow:0 24px 64px rgba(0,0,0,.5)}.music-player.open .mp-panel{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+    .mp-header{display:flex;align-items:center;margin-bottom:14px;gap:10px}.mp-art{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1a1a2e,#2a2a44);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border)}.mp-art svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2}
+    .mp-song-info{flex:1;min-width:0;cursor:pointer}.mp-song-name{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mp-song-sub{font-size:11px;color:var(--text-muted);margin-top:2px}.mp-song-name.switching{animation:swSong .4s}@keyframes swSong{0%{opacity:1;transform:translateY(0)}50%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateY(0)}}
+    .mp-close-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}.mp-close-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .mp-progress-wrap{width:100%;height:18px;display:flex;align-items:center;cursor:pointer;margin-bottom:2px;position:relative}.mp-progress-track{width:100%;height:4px;background:var(--border);border-radius:2px;overflow:visible}.mp-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:2px;position:relative}.mp-progress-fill::after{content:'';position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-dim);opacity:0;transition:opacity .2s}.mp-progress-wrap:hover .mp-progress-fill::after,.mp-progress-wrap.dragging .mp-progress-fill::after{opacity:1}.mp-progress-fill.resetting{transition:width .3s!important}
+    .mp-time-row{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:14px}
+    .mp-controls{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px}.mp-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;-webkit-tap-highlight-color:transparent}.mp-btn:hover{border-color:var(--accent);color:var(--accent)}.mp-btn:active{transform:scale(.9)}.mp-btn.mp-play-btn{width:50px;height:50px;background:var(--accent);border-color:var(--accent);color:var(--bg);font-size:18px}.mp-btn.mp-play-btn:hover{opacity:.85;color:var(--bg)}
+    .mp-mode-row{display:flex;justify-content:center;gap:6px;margin-bottom:12px}.mp-mode-btn{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-family:'Noto Sans SC',sans-serif;transition:all .2s;line-height:1;-webkit-tap-highlight-color:transparent}.mp-mode-btn svg{flex-shrink:0;opacity:.6}.mp-mode-btn:hover{border-color:var(--accent);color:var(--text-secondary)}.mp-mode-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,160,.06)}.mp-mode-btn.active svg{opacity:1;stroke:var(--accent)}
+    .mp-vol-row{display:flex;align-items:center;gap:10px}.mp-vol-icon{font-size:14px;color:var(--text-muted);width:18px;text-align:center;cursor:pointer}.mp-vol{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none;cursor:pointer}.mp-vol::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer;box-shadow:0 0 6px var(--accent-dim)}.mp-vol::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer}
+    .progress-ring{position:absolute;top:-4px;left:-4px;width:60px;height:60px;transform:rotate(-90deg)}.progress-ring circle{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;transition:stroke-dashoffset .3s}
+    .mp-playlist{max-height:0;overflow:hidden;transition:max-height .35s,margin .35s,opacity .25s;opacity:0;margin:0 -18px}.mp-playlist.show{max-height:160px;overflow-y:auto;margin:0 -18px 14px;opacity:1;padding:4px 8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}.mp-pl-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:background .2s;font-size:13px;color:var(--text-secondary)}.mp-pl-item:hover{background:var(--surface-hover)}.mp-pl-item.active{color:var(--accent);background:rgba(0,229,160,.06)}.mp-pl-num{font-family:'DM Mono',monospace;font-size:11px;width:20px;text-align:center;opacity:.5}.mp-pl-item.active .mp-pl-num{opacity:1}.mp-pl-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mp-empty{padding:20px 0;text-align:center;color:var(--text-muted);font-size:13px}.mp-disclaimer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:9px;color:var(--text-muted);line-height:1.6;text-align:center;opacity:.7}
+    .vol-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);background:rgba(16,19,26,.9);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:20px 28px;z-index:9000;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}.vol-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1)}.vol-hud-icon{font-size:28px;margin-bottom:6px}.vol-hud-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--accent)}.music-player.muted-state .eq-bars .eq-bar{height:3px!important}
+    .disclaimer-section{margin-top:60px;padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:16px;font-size:12px;color:var(--text-muted);line-height:2}.disclaimer-section h4{font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:16px;display:flex;align-items:center;gap:8px}.disclaimer-section h4::before{content:'';width:4px;height:16px;background:var(--accent);border-radius:2px;flex-shrink:0}.disclaimer-section p{margin-bottom:8px;text-align:justify}.disclaimer-section p:last-child{margin-bottom:0}
+    .footer{text-align:center;padding:32px 0 48px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px}.footer .footer-secret{opacity:0;transition:opacity .3s;cursor:default}.footer:hover .footer-secret{opacity:.5}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+
+    /* ★★★ 性能优化：触屏设备专用规则 ★★★ */
+    @media(hover:none){
+      /* ① 卡片直接可见，消除滚动入场动画造成的掉帧 */
+      .card{
+        opacity:1!important;
+        transform:translateY(0)!important;
+        transition:background .15s,border-color .15s,transform .08s;
+        will-change:auto;
+      }
+      .card:active{
+        transform:scale(.96)!important;
+        transition-duration:.08s;
+      }
+      /* ② 移除昂贵的点阵背景层，减少合成层数 */
+      body::after{display:none}
+      /* ③ 降低模糊半径，大幅减少 GPU 开销 */
+      .hero-aurora{filter:blur(20px)}
+      .hero-orb{filter:blur(20px);opacity:.06}
+      /* ④ 去除 backdrop-filter（背景已足够不透明，视觉差异极小） */
+      .contact-panel,
+      .mp-panel,
+      .modal-overlay,
+      .egg-overlay,
+      .vol-hud{
+        backdrop-filter:none;
+        -webkit-backdrop-filter:none;
+      }
+      /* ⑤ 音乐播放时的卡片光晕降低，减少重绘 */
+      .card.playing-glow .card-glow{opacity:.06}
+      /* ⑥ reveal-line 保持入场动画但缩短时长 */
+      .reveal-line.visible{transition-duration:.35s}
+      .joke-btn:active,.mp-btn:active,.modal-btn:active,.contact-btn:active{transform:scale(.95)}
     }
 
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
-
-    .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-    .particle {
-      position: absolute; background: var(--accent); border-radius: 50%;
-      opacity: 0; animation: pFloat linear infinite;
-    }
-    @keyframes pFloat {
-      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
-      10%  { opacity: var(--po, .3); }
-      90%  { opacity: var(--po, .3); }
-      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
-    }
-
-    .cursor-glow {
-      position: fixed; width: 300px; height: 300px; border-radius: 50%;
-      pointer-events: none; z-index: 0;
-      background: radial-gradient(circle, rgba(0,229,160,.06), transparent 70%);
-      transform: translate(-50%, -50%); opacity: 0;
-      will-change: transform; transition: opacity .3s;
-    }
-    .cursor-glow.visible { opacity: 1; }
-
-    .vignette {
-      position: fixed; inset: 0; pointer-events: none; z-index: 1;
-      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.4) 100%);
-    }
-
-    .scroll-progress {
-      position: fixed; top: 0; left: 0; height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      z-index: 9998; width: 0%;
-    }
-
-    .reveal-line {
-      opacity: 0; transform: translateY(20px);
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    .reveal-line.visible { opacity: 1; transform: translateY(0); }
-
-    .ripple {
-      position: absolute; border-radius: 50%;
-      background: rgba(0,229,160,.3);
-      transform: scale(0);
-      animation: ripOut .6s ease-out forwards;
-      pointer-events: none;
-    }
-    @keyframes ripOut { to { transform: scale(4); opacity: 0; } }
-
-    .splash-overlay {
-      position: fixed; inset: 0; z-index: 9999; background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
-      transition: opacity .8s ease, visibility .8s ease;
-    }
-    .splash-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .splash-ambient {
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 40%, #00e5a012, transparent 60%),
-                  radial-gradient(ellipse at 30% 70%, #4a9eff0a, transparent 50%);
-      animation: spAmb 4s ease-in-out infinite alternate;
-    }
-    @keyframes spAmb { from { opacity: .5; } to { opacity: 1; } }
-    .splash-geo { position: absolute; opacity: .06; pointer-events: none; }
-    .splash-geo:nth-child(2) {
-      width: 200px; height: 200px; border: 1px solid var(--accent); border-radius: 50%;
-      top: 10%; left: 10%; animation: gFloat 12s ease-in-out infinite alternate;
-    }
-    .splash-geo:nth-child(3) {
-      width: 120px; height: 120px; border: 1px solid var(--accent-2);
-      bottom: 15%; right: 12%; animation: gFloat 9s ease-in-out infinite alternate-reverse;
-    }
-    .splash-geo:nth-child(4) {
-      width: 0; height: 0;
-      border-left: 40px solid transparent; border-right: 40px solid transparent;
-      border-bottom: 70px solid var(--accent);
-      top: 20%; right: 20%; animation: gFloat 15s ease-in-out infinite alternate;
-    }
-    @keyframes gFloat { to { transform: translate(30px, -20px) rotate(20deg); } }
-    .splash-ripple {
-      position: absolute; width: 80px; height: 80px; border-radius: 50%;
-      border: 1px solid var(--accent); transform: translate(-50%, -50%);
-      opacity: 0; animation: spRip 3s ease-out infinite;
-    }
-    .splash-ripple:nth-child(6) { animation-delay: .8s; }
-    .splash-ripple:nth-child(7) { animation-delay: 1.6s; }
-    @keyframes spRip {
-      0%   { transform: translate(-50%, -50%) scale(1); opacity: .5; }
-      100% { transform: translate(-50%, -50%) scale(6); opacity: 0; }
-    }
-    .splash-skip {
-      position: absolute; top: calc(20px + env(safe-area-inset-top, 0px)); right: 20px;
-      font-size: 12px; color: var(--text-muted); padding: 8px 16px;
-      border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
-      cursor: pointer; z-index: 2;
-      opacity: 0; animation: spUp .5s ease 1s forwards;
-      transition: all .2s;
-    }
-    .splash-skip:hover { border-color: var(--accent); color: var(--accent); }
-    .splash-content { text-align: center; position: relative; z-index: 1; }
-    .splash-logo {
-      width: 88px; height: 88px; margin: 0 auto 28px;
-      opacity: 0; animation: spUp .7s ease forwards;
-    }
-    .splash-logo path {
-      stroke-dasharray: 160; stroke-dashoffset: 160;
-      animation: drawM 1.2s ease forwards .3s;
-    }
-    @keyframes drawM { to { stroke-dashoffset: 0; } }
-    .splash-title {
-      font-family: 'Syne', 'Noto Sans SC', sans-serif;
-      font-size: clamp(24px, 5vw, 32px); font-weight: 800;
-      color: var(--text-primary); margin-bottom: 8px;
-      opacity: 0; animation: spUp .7s ease .15s forwards;
-    }
-    .splash-sub {
-      font-size: 13px; color: var(--text-muted);
-      letter-spacing: 4px; text-transform: uppercase; margin-bottom: 32px;
-      opacity: 0; animation: spUp .7s ease .3s forwards;
-    }
-    .splash-line {
-      width: 40px; height: 2px; background: var(--accent);
-      margin: 0 auto 28px; border-radius: 1px;
-      opacity: 0; animation: spUp .7s ease .45s forwards;
-    }
-    .splash-prompt {
-      font-size: 16px; color: var(--text-secondary); margin-bottom: 8px;
-      opacity: 0; animation: spUp .7s ease .6s forwards, spPulse 2s ease-in-out 1.3s infinite;
-    }
-    @keyframes spPulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
-    .splash-hint {
-      font-size: 12px; color: var(--text-muted);
-      opacity: 0; animation: spUp .5s ease .8s forwards;
-    }
-    .splash-hint span { color: var(--accent); }
-    @keyframes spUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .container { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 24px; padding-bottom: 100px; }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 24px 0; border-bottom: 1px solid var(--border);
-      margin-bottom: 60px; position: relative;
-    }
-    .logo { display: flex; align-items: center; gap: 14px; }
-    .logo-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; box-shadow: var(--glow);
-      font-family: 'Syne', sans-serif; font-weight: 800; color: var(--bg);
-      cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
-    }
-    .logo-text {
-      font-family: 'Syne', 'Noto Sans SC', sans-serif; font-weight: 800; font-size: 20px;
-      background: linear-gradient(135deg, var(--text-primary), var(--accent));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .logo-sub { font-size: 12px; color: var(--text-muted); font-weight: 300; letter-spacing: 2px; text-transform: uppercase; }
-
-    .contact-btn {
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px 20px; border-radius: 10px;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--text-secondary); font-size: 13px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent; transition: all .3s;
-      font-family: 'Noto Sans SC', sans-serif;
-    }
-    .contact-btn:hover, .contact-btn:active { border-color: var(--accent); color: var(--accent); }
-    .contact-btn.open { border-color: var(--accent); color: var(--accent); background: var(--surface-hover); }
-    .contact-btn .c-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; transition: transform .3s; }
-    .contact-btn.open .c-icon { transform: rotate(180deg); }
-    .contact-btn .c-label { font-weight: 500; }
-    .contact-panel {
-      position: absolute; top: 100%; right: 0; width: 320px;
-      background: rgba(16,19,26,.96); backdrop-filter: blur(24px);
-      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
-      z-index: 100; transform: translateY(-10px); opacity: 0; pointer-events: none;
-      transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .3s;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
-    }
-    .contact-panel.open { transform: translateY(8px); opacity: 1; pointer-events: auto; }
-    .cp-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
-    .cp-header h4 { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .cp-header p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-    .cp-row {
-      display: flex; align-items: center; gap: 14px; padding: 14px 20px;
-      border-bottom: 1px solid var(--border); cursor: pointer;
-      -webkit-tap-highlight-color: transparent; transition: background .2s;
-      background: none; border: none; width: 100%; text-align: left;
-      font-family: inherit; color: inherit; text-decoration: none;
-    }
-    .cp-row:last-child { border-bottom: none; }
-    .cp-row:hover { background: var(--surface-hover); }
-    .cp-link { color: inherit; }
-    .cp-link:visited { color: inherit; }
-    .cp-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; flex-shrink: 0;
-    }
-    .cp-icon.qq    { background: linear-gradient(135deg, #12B7F520, #12B7F508); border: 1px solid #12B7F530; color: #12B7F5; }
-    .cp-icon.group  { background: linear-gradient(135deg, #7C3AED20, #7C3AED08); border: 1px solid #7C3AED30; color: #7C3AED; }
-    .cp-icon.bili   { background: linear-gradient(135deg, #FB729920, #FB729908); border: 1px solid #FB729930; color: #FB7299; }
-    .cp-info { flex: 1; min-width: 0; }
-    .cp-label { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
-    .cp-value { font-size: 14px; color: var(--text-primary); font-weight: 500; font-family: 'DM Mono', monospace; }
-    .cp-action {
-      font-size: 11px; color: var(--text-muted); padding: 4px 10px;
-      border-radius: 6px; background: var(--bg); border: 1px solid var(--border);
-      white-space: nowrap; transition: all .2s;
-    }
-    .cp-row:hover .cp-action { border-color: var(--accent); color: var(--accent); }
-
-    .toast-bar {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      background: var(--accent); color: var(--bg); padding: 10px 24px;
-      border-radius: 10px; font-size: 14px; font-weight: 600;
-      z-index: 9999; box-shadow: 0 4px 20px rgba(0,229,160,.3);
-      opacity: 0; transition: opacity .3s; pointer-events: none;
-    }
-    .toast-bar.show { opacity: 1; }
-
-    .hero { position: relative; text-align: center; padding: 40px 0 70px; overflow: hidden; }
-    .hero-aurora {
-      position: absolute; inset: -100px;
-      background: radial-gradient(ellipse at 25% 50%, rgba(0,229,160,.08), transparent 50%),
-                  radial-gradient(ellipse at 75% 30%, rgba(74,158,255,.08), transparent 50%),
-                  radial-gradient(ellipse at 50% 80%, rgba(255,107,107,.04), transparent 50%);
-      filter: blur(60px); animation: aurora 20s ease-in-out infinite alternate;
-      pointer-events: none; z-index: -1;
-    }
-    @keyframes aurora {
-      0%   { transform: translate(0, 0) scale(1); }
-      50%  { transform: translate(30px, -20px) scale(1.05); }
-      100% { transform: translate(-20px, 10px) scale(.95); }
-    }
-    .hero-orbs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-    .hero-orb {
-      position: absolute; border-radius: 50%;
-      filter: blur(80px); opacity: .1;
-      animation: orbF ease-in-out infinite alternate;
-    }
-    .hero-orb:nth-child(1) { width: 400px; height: 400px; background: var(--accent);    top: -100px; left: -100px;  animation-duration: 8s; }
-    .hero-orb:nth-child(2) { width: 350px; height: 350px; background: var(--accent-2);  bottom: -80px; right: -80px; animation-duration: 10s; }
-    .hero-orb:nth-child(3) { width: 250px; height: 250px; background: #ff6b6b;          top: 50%; left: 50%;       animation-duration: 12s; }
-    @keyframes orbF { to { transform: translate(40px, -30px) scale(1.1); } }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 100px; padding: 8px 20px; font-size: 13px;
-      color: var(--text-secondary); margin-bottom: 28px;
-      animation: fadeDown .6s ease forwards;
-    }
-    .hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
-    .hero-title {
-      font-family: 'Syne', 'Noto Sans SC', sans-serif;
-      font-size: clamp(36px, 6vw, 64px); font-weight: 800;
-      line-height: 1.15; margin-bottom: 20px;
-      opacity: 0; animation: fadeUp .8s ease forwards .1s, glitchA 6s infinite 2s;
-    }
-    .hero-title .hl {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .hero-title .tw-cursor {
-      display: inline-block; width: 3px; height: .85em;
-      background: var(--accent); margin-left: 4px;
-      vertical-align: text-bottom; animation: blink 1s step-end infinite;
-    }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    @keyframes glitchA {
-      0%, 93%, 96%, 100% { text-shadow: none; }
-      94% { text-shadow: -2px 0 #ff0040, 2px 0 #00e5ff; }
-      95% { text-shadow: 2px 0 #ff0040, -2px 0 #00e5ff; }
-    }
-    .hero-desc {
-      font-size: clamp(15px, 2vw, 18px); color: var(--text-secondary);
-      max-width: 560px; margin: 0 auto; line-height: 1.8; font-weight: 300;
-      opacity: 0; animation: fadeUp .8s ease forwards .25s;
-    }
-    .hero-slogan { margin-top: 28px; opacity: 0; animation: fadeUp .8s ease forwards .4s; }
-    .hero-slogan span {
-      display: inline-block;
-      font-family: 'Syne', 'Noto Sans SC', sans-serif;
-      font-size: clamp(16px, 2.5vw, 20px); font-weight: 700;
-      padding: 10px 28px; border-radius: 100px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: var(--bg); letter-spacing: 1px;
-    }
-
-    .section-label {
-      font-size: 12px; font-weight: 500; color: var(--text-muted);
-      letter-spacing: 4px; text-transform: uppercase;
-      margin-bottom: 32px; display: flex; align-items: center; gap: 12px;
-    }
-    .section-label::before {
-      content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent); box-shadow: 0 0 10px var(--accent); flex-shrink: 0;
-    }
-    .section-label::after {
-      content: ''; flex: 1; height: 1px;
-      background: linear-gradient(90deg, var(--accent-dim), var(--border) 40%, transparent);
-    }
-    .section-spacer { height: 48px; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 48px; }
-    .card {
-      display: block; text-decoration: none;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 14px; padding: 24px 20px 20px;
-      position: relative; overflow: hidden;
-      transition: all .35s cubic-bezier(.22,1,.36,1);
-      opacity: 0; transform: translateY(24px);
-      cursor: pointer; --ca: var(--accent); --cg: var(--accent-dim);
-      will-change: transform;
-    }
-    .card.revealed {
-      opacity: 1; transform: translateY(0);
-      transition: opacity .6s ease, transform .6s ease, background .35s, border-color .35s, box-shadow .35s;
-    }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--ca), transparent);
-      opacity: 0; transition: opacity .35s; z-index: 2;
-    }
-    .card::after {
-      content: ''; position: absolute; top: -60%; left: -20%;
-      width: 140%; height: 140%;
-      background: radial-gradient(circle, var(--cg), transparent 60%);
-      opacity: 0; transition: opacity .4s; pointer-events: none;
-    }
-    .card-shine {
-      position: absolute; inset: 0; border-radius: 14px;
-      background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.07), transparent 60%);
-      opacity: 0; pointer-events: none; z-index: 1; transition: opacity .5s;
-    }
-    .card:hover {
-      background: var(--surface-hover); border-color: var(--ca);
-      transform: translateY(-4px); box-shadow: 0 0 40px var(--cg);
-    }
-    .card:hover::before, .card:hover .card-shine { opacity: 1; }
-    .card:hover::after { opacity: 1; }
-    .card:hover .card-kw { opacity: .1; }
-    .card:hover .card-title { color: var(--ca); }
-    .card:hover .card-arrow { opacity: 1; }
-    .card:hover .card-divider { background: var(--ca); width: 50px; }
-    .card-glow {
-      position: absolute; inset: -1px; border-radius: 14px;
-      opacity: 0; transition: opacity .5s; pointer-events: none;
-      background: conic-gradient(from var(--ga, 0deg), transparent, var(--ca), transparent, transparent);
-      z-index: -1; filter: blur(1px);
-    }
-    .card.playing-glow .card-glow { opacity: .15; }
-    .card-content { position: relative; z-index: 1; }
-    .card-kw {
-      font-family: 'Syne', 'Noto Sans SC', sans-serif;
-      font-size: 44px; font-weight: 800; line-height: 1;
-      opacity: .05; position: absolute; top: 18px; left: 50%;
-      transform: translateX(-50%); pointer-events: none;
-      transition: opacity .35s; white-space: nowrap;
-      letter-spacing: 8px; z-index: 0; color: var(--ca);
-    }
-    .card-top { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; position: relative; z-index: 1; }
-    .card-num { font-family: 'Syne', sans-serif; font-size: 10px; color: var(--text-muted); font-weight: 700; letter-spacing: 2px; }
-    .card-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--ca); }
-    .card-tag { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
-    .card-title { font-size: 17px; font-weight: 700; color: var(--text-primary); transition: color .3s; position: relative; z-index: 1; text-align: center; line-height: 1.3; }
-    .card-divider { width: 30px; height: 1px; background: var(--border); margin: 14px auto; position: relative; z-index: 1; transition: all .35s; }
-    .card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.7; font-weight: 300; position: relative; z-index: 1; text-align: center; }
-    .card-footer { display: flex; justify-content: flex-end; margin-top: 14px; position: relative; z-index: 1; }
-    .card-arrow { font-size: 14px; color: var(--ca); opacity: .2; transition: all .3s; }
-    .card:hover .card-arrow { transform: translate(3px, -3px); opacity: .8; }
-
-    .tip-bar {
-      background: var(--surface); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0;
-      padding: 18px 24px; margin-bottom: 60px;
-      font-size: 14px; color: var(--text-secondary); line-height: 1.8;
-    }
-    .tip-bar .tip-icon { display: inline-block; margin-right: 8px; color: var(--accent); font-weight: 700; }
-    .tip-bar .tip-secret { cursor: pointer; }
-
-    .joke-section { margin-bottom: 80px; }
-    .joke-phone {
-      max-width: 400px; margin: 0 auto;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 28px; padding: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.3);
-      position: relative; overflow: hidden;
-    }
-    .joke-phone::before {
-      content: ''; position: absolute; top: -40%; right: -30%;
-      width: 80%; height: 80%; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,229,160,.04), transparent 60%);
-      pointer-events: none;
-    }
-    .joke-statusbar { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; font-family: 'DM Mono', monospace; }
-    .joke-notch { width: 100px; height: 24px; background: var(--bg); border-radius: 0 0 14px 14px; margin: -24px auto 16px; position: relative; }
-    .joke-notification {
-      background: rgba(255,255,255,.03); border: 1px solid var(--border);
-      border-radius: 16px; padding: 20px; min-height: 100px;
-      transition: all .3s cubic-bezier(.22,1,.36,1);
-      position: relative; overflow: hidden;
-    }
-    .joke-notification.slide-out { transform: translateY(-20px); opacity: 0; }
-    .joke-tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; margin-bottom: 12px; }
-    .joke-tag.t-j { background: rgba(255,159,67,.12); color: #ff9f43; }
-    .joke-tag.t-k { background: rgba(74,158,255,.12); color: #4a9eff; }
-    .joke-tag.t-g { background: rgba(255,107,107,.12); color: #ff6b6b; }
-    .joke-text { font-size: 15px; line-height: 1.8; color: var(--text-primary); min-height: 48px; }
-    .joke-btn {
-      width: 100%; padding: 14px; margin-top: 16px; border-radius: 12px;
-      border: 1px solid var(--accent); background: rgba(0,229,160,.06);
-      color: var(--accent); font-size: 15px; font-weight: 600;
-      cursor: pointer; transition: all .2s;
-      font-family: 'Noto Sans SC', sans-serif; -webkit-tap-highlight-color: transparent;
-    }
-    .joke-btn:hover, .joke-btn:active { background: var(--accent); color: var(--bg); }
-    .joke-counter { text-align: center; margin-top: 10px; font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
-
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(4,4,10,.88); backdrop-filter: blur(8px); z-index: 1000; animation: fadeIn .3s; }
-    .modal-overlay.active { display: flex; flex-direction: column; }
-    .modal-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    .modal-title-area { display: flex; align-items: center; gap: 12px; }
-    .modal-title-area .mod-label { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; background: var(--bg); border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px; }
-    .modal-title { font-size: 15px; font-weight: 600; }
-    .modal-actions { display: flex; gap: 8px; }
-    .modal-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: var(--bg); color: var(--text-secondary); transition: all .2s; font-family: 'Noto Sans SC', sans-serif; }
-    .modal-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .modal-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
-    .modal-btn.primary:hover { opacity: .85; }
-    .modal-body { flex: 1; overflow: hidden; }
-    .modal-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
-
-    .egg-overlay { display: none; position: fixed; inset: 0; background: rgba(4,4,10,.85); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; }
-    .egg-overlay.show { display: flex; }
-    .egg-box { background: var(--surface); border: 1px solid var(--accent); border-radius: 20px; padding: 36px 40px; max-width: 380px; text-align: center; animation: popIn .4s cubic-bezier(.22,1,.36,1); }
-    .egg-box .egg-emoji { font-size: 48px; margin-bottom: 16px; }
-    .egg-box .egg-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: var(--accent); }
-    .egg-box .egg-text { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
-    .egg-box .egg-close { padding: 8px 24px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 13px; font-family: 'Noto Sans SC', sans-serif; transition: all .2s; }
-    .egg-box .egg-close:hover { border-color: var(--accent); color: var(--accent); }
-    @keyframes popIn { from { opacity: 0; transform: scale(.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-    .music-player {
-      position: fixed;
-      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-      left: calc(24px + env(safe-area-inset-left, 0px));
-      z-index: 2001; -webkit-tap-highlight-color: transparent;
-    }
-    .mp-trigger {
-      width: 52px; height: 52px; border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; box-shadow: 0 4px 24px rgba(0,229,160,.18);
-      transition: all .3s; position: relative; overflow: visible;
-    }
-    .mp-trigger:hover { transform: scale(1.08); }
-    .mp-trigger:active { transform: scale(.96); }
-    .mp-icon svg { width: 22px; height: 22px; stroke: var(--bg); fill: none; stroke-width: 2; }
-    @keyframes pulseRing { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.2); opacity: 0; } }
-    .music-player.playing:not(.muted-state) .mp-trigger::after {
-      content: ''; position: absolute; inset: -4px; border-radius: 20px;
-      border: 2px solid var(--accent); animation: pulseRing 2s ease-out infinite;
-    }
-    .eq-bars { display: none; align-items: flex-end; gap: 3px; height: 22px; }
-    .music-player.playing .eq-bars { display: flex; }
-    .music-player.playing .mp-icon { display: none; }
-    .eq-bar { width: 3px; background: var(--bg); border-radius: 1.5px; transition: height .12s ease; height: 4px; }
-    .mp-visualizer { width: 100%; height: 40px; margin-bottom: 12px; display: flex; align-items: flex-end; justify-content: center; gap: 2px; overflow: hidden; }
-    .viz-bar { width: 3px; background: linear-gradient(to top, var(--accent), var(--accent-2)); border-radius: 1.5px; transition: height .12s ease; min-height: 2px; }
-    .mp-panel {
-      position: absolute; bottom: 64px; left: 0; width: 300px;
-      background: rgba(16,19,26,.92); backdrop-filter: blur(32px);
-      border: 1px solid rgba(255,255,255,.06); border-radius: 18px;
-      padding: 18px; transform: translateY(10px) scale(.92);
-      opacity: 0; pointer-events: none;
-      transition: all .35s cubic-bezier(.22,1,.36,1);
-      box-shadow: 0 24px 64px rgba(0,0,0,.5);
-    }
-    .music-player.open .mp-panel { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
-    .mp-header { display: flex; align-items: center; margin-bottom: 14px; gap: 10px; }
-    .mp-art { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #1a1a2e, #2a2a44); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--border); }
-    .mp-art svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 2; }
-    .mp-song-info { flex: 1; min-width: 0; cursor: pointer; }
-    .mp-song-name { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .mp-song-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .mp-song-name.switching { animation: swSong .4s; }
-    @keyframes swSong { 0% { opacity: 1; transform: translateY(0); } 50% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } }
-    .mp-close-btn { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0; }
-    .mp-close-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .mp-progress-wrap { width: 100%; height: 18px; display: flex; align-items: center; cursor: pointer; margin-bottom: 2px; position: relative; }
-    .mp-progress-track { width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: visible; }
-    .mp-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 2px; position: relative; }
-    .mp-progress-fill::after { content: ''; position: absolute; right: -7px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent-dim); opacity: 0; transition: opacity .2s; }
-    .mp-progress-wrap:hover .mp-progress-fill::after, .mp-progress-wrap.dragging .mp-progress-fill::after { opacity: 1; }
-    .mp-progress-fill.resetting { transition: width .3s !important; }
-    .mp-time-row { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
-    .mp-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; }
-    .mp-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; -webkit-tap-highlight-color: transparent; }
-    .mp-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .mp-btn:active { transform: scale(.9); }
-    .mp-btn.mp-play-btn { width: 50px; height: 50px; background: var(--accent); border-color: var(--accent); color: var(--bg); font-size: 18px; }
-    .mp-btn.mp-play-btn:hover { opacity: .85; color: var(--bg); }
-    .mp-mode-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
-    .mp-mode-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-family: 'Noto Sans SC', sans-serif; transition: all .2s; line-height: 1; -webkit-tap-highlight-color: transparent; }
-    .mp-mode-btn svg { flex-shrink: 0; opacity: .6; }
-    .mp-mode-btn:hover { border-color: var(--accent); color: var(--text-secondary); }
-    .mp-mode-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,.06); }
-    .mp-mode-btn.active svg { opacity: 1; stroke: var(--accent); }
-    .mp-vol-row { display: flex; align-items: center; gap: 10px; }
-    .mp-vol-icon { font-size: 14px; color: var(--text-muted); width: 18px; text-align: center; cursor: pointer; }
-    .mp-vol { flex: 1; -webkit-appearance: none; appearance: none; height: 4px; background: var(--border); border-radius: 2px; outline: none; cursor: pointer; }
-    .mp-vol::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); cursor: pointer; box-shadow: 0 0 6px var(--accent-dim); }
-    .mp-vol::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); cursor: pointer; }
-    .progress-ring { position: absolute; top: -4px; left: -4px; width: 60px; height: 60px; transform: rotate(-90deg); }
-    .progress-ring circle { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset .3s; }
-    .mp-playlist { max-height: 0; overflow: hidden; transition: max-height .35s, margin .35s, opacity .25s; opacity: 0; margin: 0 -18px; }
-    .mp-playlist.show { max-height: 160px; overflow-y: auto; margin: 0 -18px 14px; opacity: 1; padding: 4px 8px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-    .mp-pl-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 8px; cursor: pointer; transition: background .2s; font-size: 13px; color: var(--text-secondary); }
-    .mp-pl-item:hover { background: var(--surface-hover); }
-    .mp-pl-item.active { color: var(--accent); background: rgba(0,229,160,.06); }
-    .mp-pl-num { font-family: 'DM Mono', monospace; font-size: 11px; width: 20px; text-align: center; opacity: .5; }
-    .mp-pl-item.active .mp-pl-num { opacity: 1; }
-    .mp-pl-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .mp-empty { padding: 20px 0; text-align: center; color: var(--text-muted); font-size: 13px; }
-    .mp-disclaimer { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 9px; color: var(--text-muted); line-height: 1.6; text-align: center; opacity: .7; }
-
-    .vol-hud {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(.8);
-      background: rgba(16,19,26,.9); backdrop-filter: blur(20px);
-      border: 1px solid var(--border); border-radius: 16px;
-      padding: 20px 28px; z-index: 9000;
-      opacity: 0; pointer-events: none;
-      transition: opacity .2s, transform .2s; text-align: center;
-    }
-    .vol-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    .vol-hud-icon { font-size: 28px; margin-bottom: 6px; }
-    .vol-hud-val { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 700; color: var(--accent); }
-    .music-player.muted-state .eq-bars .eq-bar { height: 3px !important; }
-
-    .disclaimer-section {
-      margin-top: 60px; padding: 32px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; font-size: 12px; color: var(--text-muted); line-height: 2;
-    }
-    .disclaimer-section h4 { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .disclaimer-section h4::before { content: ''; width: 4px; height: 16px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
-    .disclaimer-section p { margin-bottom: 8px; text-align: justify; }
-    .disclaimer-section p:last-child { margin-bottom: 0; }
-
-    .footer { text-align: center; padding: 32px 0 48px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; }
-    .footer .footer-secret { opacity: 0; transition: opacity .3s; cursor: default; }
-    .footer:hover .footer-secret { opacity: .5; }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(1.4); } }
-
-    @media (hover: none) {
-      .card:active { transform: scale(.96) !important; transition-duration: .1s; }
-      .joke-btn:active, .mp-btn:active, .modal-btn:active, .contact-btn:active { transform: scale(.95); }
-      .reveal-line.visible, .card.revealed { transition-duration: .4s; }
-    }
-    @media (max-width: 640px) {
-      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-      .topbar { margin-bottom: 36px; }
-      .hero { padding: 32px 0 48px; }
-      .card { padding: 20px 16px 18px; }
-      .card-kw { font-size: 32px; }
-      .card-title { font-size: 15px; }
-      .card-desc { font-size: 11px; }
-      .tip-bar { padding: 14px 16px; font-size: 13px; }
-      .egg-box { margin: 0 20px; padding: 28px 24px; }
-      .contact-panel { width: 280px; }
-      .contact-btn .c-label { display: none; }
-      .contact-btn { padding: 10px 14px; }
-      .music-player { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); left: calc(16px + env(safe-area-inset-left, 0px)); }
-      .mp-panel { width: calc(100vw - 80px); max-width: 300px; }
-      .splash-logo { width: 72px; height: 72px; }
-      .mp-mode-row { gap: 4px; }
-      .mp-mode-btn { padding: 3px 8px; font-size: 9px; }
-      .cursor-glow { display: none; }
-      .joke-phone { border-radius: 20px; padding: 18px; }
-      .joke-text { font-size: 14px; }
-      .disclaimer-section { padding: 20px; font-size: 11px; }
-    }
-    @media (max-width: 400px) { .grid { grid-template-columns: 1fr; } }
+    @media(max-width:640px){
+      .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+      .topbar{margin-bottom:36px}.hero{padding:32px 0 48px}
+      .card{padding:20px 16px 18px}.card-kw{font-size:32px}.card-title{font-size:15px}.card-desc{font-size:11px}
+      .tip-bar{padding:14px 16px;font-size:13px}
+      .egg-box{margin:0 20px;padding:28px 24px}
+      .contact-panel{width:280px}.contact-btn .c-label{display:none}.contact-btn{padding:10px 14px}
+      .music-player{bottom:calc(16px + env(safe-area-inset-bottom,0px));left:calc(16px + env(safe-area-inset-left,0px))}.mp-panel{width:calc(100vw - 80px);max-width:300px}
+      .splash-logo{width:72px;height:72px}
+      .mp-mode-row{gap:4px}.mp-mode-btn{padding:3px 8px;font-size:9px}
+      .cursor-glow{display:none}
+      .joke-phone{border-radius:20px;padding:18px}.joke-text{font-size:14px}
+      .disclaimer-section{padding:20px;font-size:11px}
+    }
+    @media(max-width:400px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -651,25 +192,16 @@
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="vignette"></div>
   <div class="scroll-progress" id="scrollProgress"></div>
-  <div class="vol-hud" id="volHud">
-    <div class="vol-hud-icon" id="volHudIcon">🔊</div>
-    <div class="vol-hud-val" id="volHudVal">35%</div>
-  </div>
+  <div class="vol-hud" id="volHud"><div class="vol-hud-icon" id="volHudIcon">🔊</div><div class="vol-hud-val" id="volHudVal">35%</div></div>
 
   <!-- Splash -->
   <div id="splash" class="splash-overlay">
     <div class="splash-ambient"></div>
     <div class="splash-geo"></div><div class="splash-geo"></div><div class="splash-geo"></div>
-    <div class="splash-ripple" style="top:40%;left:50%"></div>
-    <div class="splash-ripple" style="top:40%;left:50%"></div>
-    <div class="splash-ripple" style="top:40%;left:50%"></div>
+    <div class="splash-ripple" style="top:40%;left:50%"></div><div class="splash-ripple" style="top:40%;left:50%"></div><div class="splash-ripple" style="top:40%;left:50%"></div>
     <div class="splash-skip" id="splash-skip">跳过，不播放音乐</div>
     <div class="splash-content">
-      <svg class="splash-logo" viewBox="0 0 88 88" fill="none">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="88" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00e5a0"/><stop offset="100%" stop-color="#4a9eff"/></linearGradient></defs>
-        <rect x="2" y="2" width="84" height="84" rx="22" fill="url(#lg)" opacity="0.15"/>
-        <path d="M22 66V22L44 50L66 22V66" stroke="url(#lg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <svg class="splash-logo" viewBox="0 0 88 88" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="88" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00e5a0"/><stop offset="100%" stop-color="#4a9eff"/></linearGradient></defs><rect x="2" y="2" width="84" height="84" rx="22" fill="url(#lg)" opacity="0.15"/><path d="M22 66V22L44 50L66 22V66" stroke="url(#lg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <h1 class="splash-title">手机原理科普</h1>
       <p class="splash-sub">NAVIGATION HUB</p>
       <div class="splash-line"></div>
@@ -679,18 +211,10 @@
   </div>
 
   <div class="container">
-
-    <!-- Topbar -->
     <header class="topbar">
-      <div class="logo">
-        <div class="logo-icon" id="logo-icon">M</div>
-        <div><div class="logo-text">手机原理科普</div><div class="logo-sub">NAVIGATION HUB</div></div>
-      </div>
+      <div class="logo"><div class="logo-icon" id="logo-icon">M</div><div><div class="logo-text">手机原理科普</div><div class="logo-sub">NAVIGATION HUB</div></div></div>
       <div style="position:relative">
-        <button class="contact-btn" id="contact-btn" type="button">
-          <span class="c-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
-          <span class="c-label">联系我</span>
-        </button>
+        <button class="contact-btn" id="contact-btn" type="button"><span class="c-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span><span class="c-label">联系我</span></button>
         <div class="contact-panel" id="contact-panel">
           <div class="cp-header"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>联系方式</h4><p>点击号码复制 · 点击链接跳转</p></div>
           <div class="cp-row" id="cp-qq"><div class="cp-icon qq"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.82 2 10.5c0 2.34 1.05 4.47 2.78 6.06-.37 1.24-.98 2.86-1.78 4.44 0 0 2.6-.5 4.5-1.5.68.18 1.4.3 2.15.33A8.4 8.4 0 0 0 12 20.5c1.5 0 2.92-.32 4.16-.88 1.82 1.01 4.34 1.5 4.34 1.5-.8-1.58-1.41-3.2-1.78-4.44C20.42 15.05 21.5 13.22 21.5 10.5 21.5 5.82 17.52 2 12 2z"/></svg></div><div class="cp-info"><div class="cp-label">QQ</div><div class="cp-value">3189847874</div></div><span class="cp-action">复制</span></div>
@@ -702,7 +226,6 @@
 
     <div class="toast-bar" id="toast-bar"></div>
 
-    <!-- Hero -->
     <section class="hero">
       <div class="hero-aurora"></div>
       <div class="hero-orbs"><div class="hero-orb"></div><div class="hero-orb"></div><div class="hero-orb"></div></div>
@@ -712,159 +235,41 @@
       <div class="hero-slogan reveal-line" style="transition-delay:.15s"><span>帮助你更好地选择自己的手机</span></div>
     </section>
 
-    <!-- 品牌选择 -->
     <div class="section-label reveal-line">品牌选择</div>
     <div class="grid">
-      <a class="card" data-file="苹果.html" style="--ca:#a2aaad;--cg:#a2aaad25">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>果</div>
-          <div class="card-top"><span class="card-num">01</span><span class="card-dot"></span><span class="card-tag">Apple</span></div>
-          <h3 class="card-title">Apple 苹果</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">iOS</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="小米.html" style="--ca:#FF6700;--cg:#FF670025">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>米</div>
-          <div class="card-top"><span class="card-num">02</span><span class="card-dot"></span><span class="card-tag">Xiaomi</span></div>
-          <h3 class="card-title">小米</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">HyperOS</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="vivo.html" style="--ca:#415FFF;--cg:#415FFF25">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>V</div>
-          <div class="card-top"><span class="card-num">03</span><span class="card-dot"></span><span class="card-tag">vivo</span></div>
-          <h3 class="card-title">vivo</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">OriginOS</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="OPPO.html" style="--ca:#1BA784;--cg:#1BA78425">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>O</div>
-          <div class="card-top"><span class="card-num">04</span><span class="card-dot"></span><span class="card-tag">OPPO</span></div>
-          <h3 class="card-title">OPPO</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">ColorOS</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="荣耀.html" style="--ca:#0AB4E0;--cg:#0AB4E025">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>耀</div>
-          <div class="card-top"><span class="card-num">05</span><span class="card-dot"></span><span class="card-tag">HONOR</span></div>
-          <h3 class="card-title">荣耀</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">MagicOS</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
+      <a class="card" data-file="苹果.html" style="--ca:#a2aaad;--cg:#a2aaad25"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>果</div><div class="card-top"><span class="card-num">01</span><span class="card-dot"></span><span class="card-tag">Apple</span></div><h3 class="card-title">Apple 苹果</h3><div class="card-divider"></div><p class="card-desc">iOS</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="小米.html" style="--ca:#FF6700;--cg:#FF670025"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>米</div><div class="card-top"><span class="card-num">02</span><span class="card-dot"></span><span class="card-tag">Xiaomi</span></div><h3 class="card-title">小米</h3><div class="card-divider"></div><p class="card-desc">HyperOS</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="vivo.html" style="--ca:#415FFF;--cg:#415FFF25"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>V</div><div class="card-top"><span class="card-num">03</span><span class="card-dot"></span><span class="card-tag">vivo</span></div><h3 class="card-title">vivo</h3><div class="card-divider"></div><p class="card-desc">OriginOS</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="OPPO.html" style="--ca:#1BA784;--cg:#1BA78425"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>O</div><div class="card-top"><span class="card-num">04</span><span class="card-dot"></span><span class="card-tag">OPPO</span></div><h3 class="card-title">OPPO</h3><div class="card-divider"></div><p class="card-desc">ColorOS</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="荣耀.html" style="--ca:#0AB4E0;--cg:#0AB4E025"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>耀</div><div class="card-top"><span class="card-num">05</span><span class="card-dot"></span><span class="card-tag">HONOR</span></div><h3 class="card-title">荣耀</h3><div class="card-divider"></div><p class="card-desc">MagicOS</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
     </div>
-
-    <!-- ★ 妙妙品牌卡片 ★ -->
     <div style="display:flex;justify-content:center;margin-bottom:48px;">
-      <a class="card" data-file="妙妙.html" style="--ca:#E53935;--cg:#E5393525;max-width:200px;width:100%;padding:14px 20px 12px;">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>妙</div>
-          <div class="card-top"><span class="card-dot"></span><span class="card-tag">MIAOMIAO</span></div>
-          <h3 class="card-title">妙妙</h3>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
+      <a class="card" data-file="妙妙.html" style="--ca:#E53935;--cg:#E5393525;max-width:200px;width:100%;padding:14px 20px 12px;"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>妙</div><div class="card-top"><span class="card-dot"></span><span class="card-tag">MIAOMIAO</span></div><h3 class="card-title">妙妙</h3><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
     </div>
-
     <div class="section-spacer"></div>
 
-    <!-- 配置科普 -->
     <div class="section-label reveal-line">配置科普</div>
     <div class="grid">
-      <a class="card" data-file="性能.html" style="--ca:#FFD93D;--cg:#FFD93D20">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>性能</div>
-          <div class="card-top"><span class="card-num">01</span><span class="card-dot"></span><span class="card-tag">日常与游戏</span></div>
-          <h3 class="card-title">性能体验</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">处理器决定运行速度，内存影响多任务，存储决定装多少东西</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="影像.html" style="--ca:#FF6B6B;--cg:#FF6B6B20">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>影像</div>
-          <div class="card-top"><span class="card-num">02</span><span class="card-dot"></span><span class="card-tag">拍照与创作</span></div>
-          <h3 class="card-title">影像系统</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">像素不是唯一标准，传感器大小和算法同样决定照片好坏</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="屏幕.html" style="--ca:#4A9EFF;--cg:#4A9EFF20">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>屏幕</div>
-          <div class="card-top"><span class="card-num">03</span><span class="card-dot"></span><span class="card-tag">观感与触控</span></div>
-          <h3 class="card-title">屏幕显示</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">分辨率、刷新率、亮度和色彩都直接影响你的观看体验</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="其他细节.html" style="--ca:#C084FC;--cg:#C084FC20">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>细节</div>
-          <div class="card-top"><span class="card-num">04</span><span class="card-dot"></span><span class="card-tag">马达与扬声器</span></div>
-          <h3 class="card-title">其他细节</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">马达、扬声器、防水、NFC这些小细节决定日常体验上限</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
-      <a class="card" data-file="超高刷屏幕.html" style="--ca:#00E5A0;--cg:#00E5A020">
-        <div class="card-shine"></div><div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-kw" data-keyword>高刷</div>
-          <div class="card-top"><span class="card-num">05</span><span class="card-dot"></span><span class="card-tag">刷新率真相</span></div>
-          <h3 class="card-title">超高刷屏幕的真相</h3>
-          <div class="card-divider"></div>
-          <p class="card-desc">高刷不等于流畅，LTPO能省电，实际体验取决于软硬件配合</p>
-          <div class="card-footer"><span class="card-arrow">↗</span></div>
-        </div>
-      </a>
+      <a class="card" data-file="性能.html" style="--ca:#FFD93D;--cg:#FFD93D20"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>性能</div><div class="card-top"><span class="card-num">01</span><span class="card-dot"></span><span class="card-tag">日常与游戏</span></div><h3 class="card-title">性能体验</h3><div class="card-divider"></div><p class="card-desc">处理器决定运行速度，内存影响多任务，存储决定装多少东西</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="影像.html" style="--ca:#FF6B6B;--cg:#FF6B6B20"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>影像</div><div class="card-top"><span class="card-num">02</span><span class="card-dot"></span><span class="card-tag">拍照与创作</span></div><h3 class="card-title">影像系统</h3><div class="card-divider"></div><p class="card-desc">像素不是唯一标准，传感器大小和算法同样决定照片好坏</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="屏幕.html" style="--ca:#4A9EFF;--cg:#4A9EFF20"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>屏幕</div><div class="card-top"><span class="card-num">03</span><span class="card-dot"></span><span class="card-tag">观感与触控</span></div><h3 class="card-title">屏幕显示</h3><div class="card-divider"></div><p class="card-desc">分辨率、刷新率、亮度和色彩都直接影响你的观看体验</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="其他细节.html" style="--ca:#C084FC;--cg:#C084FC20"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>细节</div><div class="card-top"><span class="card-num">04</span><span class="card-dot"></span><span class="card-tag">马达与扬声器</span></div><h3 class="card-title">其他细节</h3><div class="card-divider"></div><p class="card-desc">马达、扬声器、防水、NFC这些小细节决定日常体验上限</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
+      <a class="card" data-file="超高刷屏幕.html" style="--ca:#00E5A0;--cg:#00E5A020"><div class="card-shine"></div><div class="card-glow"></div><div class="card-content"><div class="card-kw" data-keyword>高刷</div><div class="card-top"><span class="card-num">05</span><span class="card-dot"></span><span class="card-tag">刷新率真相</span></div><h3 class="card-title">超高刷屏幕的真相</h3><div class="card-divider"></div><p class="card-desc">高刷不等于流畅，LTPO能省电，实际体验取决于软硬件配合</p><div class="card-footer"><span class="card-arrow">↗</span></div></div></a>
     </div>
 
     <div class="tip-bar reveal-line"><span class="tip-icon">i</span>价格不直接决定配置，手机配置同时受限于内部空间，需要在影像、电池以及其他外围配置中做取舍。<span class="tip-secret" id="tip-secret"></span></div>
 
-    <!-- 每日一笑 -->
     <section class="joke-section">
       <div class="section-label reveal-line">每日一笑</div>
       <div class="joke-phone reveal-line">
         <div class="joke-notch"></div>
         <div class="joke-statusbar"><span>9:41</span><span>📶 🔋</span></div>
-        <div class="joke-notification" id="jokeNotif">
-          <div class="joke-tag t-j" id="jokeTag">段子</div>
-          <div class="joke-text" id="jokeText">点击下方按钮，看看手机圈的奇闻趣事 👇</div>
-        </div>
+        <div class="joke-notification" id="jokeNotif"><div class="joke-tag t-j" id="jokeTag">段子</div><div class="joke-text" id="jokeText">点击下方按钮，看看手机圈的奇闻趣事 👇</div></div>
         <button class="joke-btn" id="jokeBtn" type="button">换一条</button>
         <div class="joke-counter" id="jokeCounter">0 / 102</div>
       </div>
     </section>
 
-    <!-- 免责声明 -->
     <section class="disclaimer-section reveal-line">
       <h4>免责声明</h4>
       <p>本站仅为个人学习与科普分享之用途，不存在任何形式的商业行为或营利目的，站内未投放任何广告，亦未通过任何方式获取广告收益。</p>
@@ -876,38 +281,19 @@
       <p>若您认为本站存在任何不当之处，恳请联系我们，我们将虚心接受并及时处理。再次为可能带来的不便深表歉意，感谢您的理解与支持。</p>
     </section>
 
-    <footer class="footer">
-      <p>手机原理科普导航中心</p>
-      <p class="footer-secret" style="margin-top:8px;font-size:11px">长按此处其实什么也不会发生 :)</p>
-    </footer>
+    <footer class="footer"><p>手机原理科普导航中心</p><p class="footer-secret" style="margin-top:8px;font-size:11px">长按此处其实什么也不会发生 :)</p></footer>
   </div>
 
   <!-- Music Player -->
   <div class="music-player" id="music-player">
-    <div class="mp-trigger" id="mp-trigger">
-      <svg class="progress-ring" viewBox="0 0 60 60"><circle id="ringCircle" cx="30" cy="30" r="28" stroke-dasharray="175.93" stroke-dashoffset="175.93"/></svg>
-      <div class="mp-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-      <div class="eq-bars"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></div>
-    </div>
+    <div class="mp-trigger" id="mp-trigger"><svg class="progress-ring" viewBox="0 0 60 60"><circle id="ringCircle" cx="30" cy="30" r="28" stroke-dasharray="175.93" stroke-dashoffset="175.93"/></svg><div class="mp-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="eq-bars"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></div></div>
     <div class="mp-panel" id="mp-panel">
-      <div class="mp-header">
-        <div class="mp-art"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-        <div class="mp-song-info" id="mp-song-click"><div class="mp-song-name" id="mp-song">暂无歌曲</div><div class="mp-song-sub" id="mp-sub">请添加歌曲</div></div>
-        <button class="mp-close-btn" id="mp-close" type="button">×</button>
-      </div>
+      <div class="mp-header"><div class="mp-art"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="mp-song-info" id="mp-song-click"><div class="mp-song-name" id="mp-song">暂无歌曲</div><div class="mp-song-sub" id="mp-sub">请添加歌曲</div></div><button class="mp-close-btn" id="mp-close" type="button">×</button></div>
       <div class="mp-visualizer" id="mpViz"></div>
       <div class="mp-progress-wrap" id="mp-progress"><div class="mp-progress-track"><div class="mp-progress-fill" id="mp-fill"></div></div></div>
       <div class="mp-time-row"><span id="mp-time-now">0:00</span><span id="mp-time-total">0:00</span></div>
-      <div class="mp-controls">
-        <button class="mp-btn" id="mp-prev" type="button">⏮</button>
-        <button class="mp-btn mp-play-btn" id="mp-play" type="button">▶</button>
-        <button class="mp-btn" id="mp-next" type="button">⏭</button>
-      </div>
-      <div class="mp-mode-row">
-        <button class="mp-mode-btn active" id="mp-loop-list" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span>列表</span></button>
-        <button class="mp-mode-btn" id="mp-loop-single" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span>单曲</span></button>
-        <button class="mp-mode-btn" id="mp-loop-shuffle" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg><span>随机</span></button>
-      </div>
+      <div class="mp-controls"><button class="mp-btn" id="mp-prev" type="button">⏮</button><button class="mp-btn mp-play-btn" id="mp-play" type="button">▶</button><button class="mp-btn" id="mp-next" type="button">⏭</button></div>
+      <div class="mp-mode-row"><button class="mp-mode-btn active" id="mp-loop-list" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span>列表</span></button><button class="mp-mode-btn" id="mp-loop-single" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span>单曲</span></button><button class="mp-mode-btn" id="mp-loop-shuffle" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg><span>随机</span></button></div>
       <div class="mp-vol-row"><span class="mp-vol-icon" id="mp-vol-icon">🔊</span><input type="range" class="mp-vol" id="mp-vol" min="0" max="100" value="35"></div>
       <div class="mp-playlist" id="mp-playlist"></div>
       <div class="mp-disclaimer">本站背景音乐仅供个人学习与科普氛围使用，不用于任何商业或广告用途。音乐版权归原作者或版权方所有，如有任何侵权，请联系告知，我们将立即删除，深表歉意。</div>
@@ -915,23 +301,8 @@
   </div>
 
   <!-- Modal -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal-bar">
-      <div class="modal-title-area"><span class="mod-label" id="modal-file">-</span><div><div class="modal-title" id="modal-title">加载中...</div></div></div>
-      <div class="modal-actions"><button class="modal-btn" id="btn-new-tab">新标签页打开</button><button class="modal-btn primary" id="btn-close">关闭</button></div>
-    </div>
-    <div class="modal-body"><iframe id="modal-iframe" src="about:blank"></iframe></div>
-  </div>
-
-  <!-- Egg -->
-  <div class="egg-overlay" id="egg-overlay">
-    <div class="egg-box">
-      <div class="egg-emoji" id="egg-emoji"></div>
-      <div class="egg-title" id="egg-title"></div>
-      <div class="egg-text" id="egg-text"></div>
-      <button class="egg-close" id="egg-close" type="button">好的知道了</button>
-    </div>
-  </div>
+  <div class="modal-overlay" id="modal"><div class="modal-bar"><div class="modal-title-area"><span class="mod-label" id="modal-file">-</span><div><div class="modal-title" id="modal-title">加载中...</div></div></div><div class="modal-actions"><button class="modal-btn" id="btn-new-tab">新标签页打开</button><button class="modal-btn primary" id="btn-close">关闭</button></div></div><div class="modal-body"><iframe id="modal-iframe" src="about:blank"></iframe></div></div>
+  <div class="egg-overlay" id="egg-overlay"><div class="egg-box"><div class="egg-emoji" id="egg-emoji"></div><div class="egg-title" id="egg-title"></div><div class="egg-text" id="egg-text"></div><button class="egg-close" id="egg-close" type="button">好的知道了</button></div></div>
 
   <script>
     /* ★★★ 歌曲列表 ★★★ */
@@ -1059,187 +430,45 @@
       "k|手机的降噪麦克风通常在手机顶部或背面"
     ];
 
-    /* 工具函数 */
-    function showToast(msg) {
-      var t = document.getElementById('toast-bar');
-      t.textContent = msg; t.classList.add('show');
-      clearTimeout(t._T);
-      t._T = setTimeout(function() { t.classList.remove('show'); }, 2200);
-    }
+    function showToast(m){var t=document.getElementById('toast-bar');t.textContent=m;t.classList.add('show');clearTimeout(t._T);t._T=setTimeout(function(){t.classList.remove('show')},2200)}
 
-    /* 粒子特效 */
-    !function() {
-      var c = document.getElementById('particles');
-      var n = matchMedia('(hover:none)').matches ? 12 : 25;
-      for (var i = 0; i < n; i++) {
-        var p = document.createElement('div'); p.className = 'particle';
-        var s = Math.random()*3+1, d = Math.random()*20+15, x = Math.random()*100;
-        p.style.cssText = 'width:'+s+'px;height:'+s+'px;left:'+x+'%;animation-duration:'+d+'s;animation-delay:'+Math.random()*d+'s;--po:'+(Math.random()*.2+.1);
-        c.appendChild(p);
-      }
-    }();
+    /* ★ 优化：移动端减少粒子数量（6 vs 25） */
+    !function(){var c=document.getElementById('particles'),n=matchMedia('(hover:none)').matches?6:25;for(var i=0;i<n;i++){var p=document.createElement('div');p.className='particle';var s=Math.random()*3+1,d=Math.random()*20+15,x=Math.random()*100;p.style.cssText='width:'+s+'px;height:'+s+'px;left:'+x+'%;animation-duration:'+d+'s;animation-delay:'+Math.random()*d+'s;--po:'+(Math.random()*.2+.1);c.appendChild(p)}}();
 
-    /* 鼠标光晕 */
-    !function() {
-      if (matchMedia('(hover:none)').matches) return;
-      var g = document.getElementById('cursorGlow'), mx=0, my=0, gx=0, gy=0;
-      document.addEventListener('mousemove', function(e) { mx=e.clientX; my=e.clientY; g.classList.add('visible'); });
-      document.addEventListener('mouseleave', function() { g.classList.remove('visible'); });
-      (function loop() { gx+=(mx-gx)*.08; gy+=(my-gy)*.08; g.style.left=gx+'px'; g.style.top=gy+'px'; requestAnimationFrame(loop); })();
-    }();
+    /* ★ 优化：桌面端才追踪鼠标光晕 */
+    !function(){if(matchMedia('(hover:none)').matches)return;var g=document.getElementById('cursorGlow'),mx=0,my=0,gx=0,gy=0;document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;g.classList.add('visible')});document.addEventListener('mouseleave',function(){g.classList.remove('visible')});(function r(){gx+=(mx-gx)*.08;gy+=(my-gy)*.08;g.style.left=gx+'px';g.style.top=gy+'px';requestAnimationFrame(r)})()}();
 
-    /* 打字机 */
-    !function() {
-      var a='从芯片到屏幕', b='解码掌中世界', ea=document.getElementById('heroLine1'), eb=document.getElementById('heroLine2'), cur=document.getElementById('twCursor'), i=0, j=0;
-      function t1() { if(i<a.length){ea.textContent+=a[i++];setTimeout(t1,80)}else setTimeout(t2,200); }
-      function t2() { if(j<b.length){eb.textContent+=b[j++];setTimeout(t2,80)}else{cur.style.display='none'}; }
-      setTimeout(t1, 600);
-    }();
+    /* 打字机（只执行一次，不影响滚动） */
+    !function(){var a='从芯片到屏幕',b='解码掌中世界',ea=document.getElementById('heroLine1'),eb=document.getElementById('heroLine2'),cur=document.getElementById('twCursor'),i=0,j=0;function t1(){if(i<a.length){ea.textContent+=a[i++];setTimeout(t1,80)}else setTimeout(t2,200)}function t2(){if(j<b.length){eb.textContent+=b[j++];setTimeout(t2,80)}else{cur.style.display='none'}}setTimeout(t1,600)}();
 
-    /* 滚动动画 */
-    !function() {
-      var obs = new IntersectionObserver(function(es) { es.forEach(function(e) { if(e.isIntersecting){e.target.classList.add('revealed');e.target.classList.add('visible');obs.unobserve(e.target);} }); }, {threshold:.15});
-      document.querySelectorAll('.card,.reveal-line').forEach(function(el){obs.observe(el);});
-    }();
+    /* ★ 优化：移动端只监听 .reveal-line（少量元素），跳过 .card（CSS 已直接可见） */
+    !function(){var isMobile=matchMedia('(hover:none)').matches;var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('revealed');e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.15});if(!isMobile){document.querySelectorAll('.card').forEach(function(el){obs.observe(el)})}document.querySelectorAll('.reveal-line').forEach(function(el){obs.observe(el)})}();
 
-    /* 进度条 */
-    !function() {
-      var bar = document.getElementById('scrollProgress');
-      addEventListener('scroll', function() { var h=document.documentElement; bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'; }, {passive:true});
-    }();
+    /* ★ 优化：进度条用 scaleX 代替 width，避免每帧触发 layout */
+    !function(){var bar=document.getElementById('scrollProgress');addEventListener('scroll',function(){var h=document.documentElement;bar.style.transform='scaleX('+(h.scrollTop/(h.scrollHeight-h.clientHeight))+')'},{passive:true})}();
 
-    /* 视差 */
-    !function() {
-      var orbs = document.querySelectorAll('.hero-orb');
-      addEventListener('scroll', function() { var s=pageYOffset; orbs.forEach(function(o,i){o.style.transform='translateY('+(s*(.1+i*.05))+'px)';}); }, {passive:true});
-    }();
+    /* ★ 优化：移动端跳过视差滚动（减少每帧 style 计算） */
+    !function(){if(matchMedia('(hover:none)').matches)return;var orbs=document.querySelectorAll('.hero-orb');addEventListener('scroll',function(){var s=pageYOffset;orbs.forEach(function(o,i){o.style.transform='translateY('+(s*(.1+i*.05))+'px)'})},{passive:true})}();
 
-    /* 数字动画 */
-    !function() {
-      var obs = new IntersectionObserver(function(es) { es.forEach(function(e) { if(!e.isIntersecting)return; var el=e.target, num=parseInt(el.textContent); if(isNaN(num))return; var i=0, t=setInterval(function(){i++; el.textContent=i<10?'0'+i:''+i; if(i>=num){clearInterval(t); el.textContent=num<10?'0'+num:''+num;}},60); obs.unobserve(el); }); }, {threshold:.5});
-      document.querySelectorAll('.card-num').forEach(function(el){obs.observe(el);});
-    }();
+    /* 卡片数字滚动动画（只触发一次） */
+    !function(){var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,num=parseInt(el.textContent);if(isNaN(num))return;var i=0,t=setInterval(function(){i++;el.textContent=i<10?'0'+i:''+i;if(i>=num){clearInterval(t);el.textContent=num<10?'0'+num:''+num}},60);obs.unobserve(el)})},{threshold:.5});document.querySelectorAll('.card-num').forEach(function(el){obs.observe(el)})}();
 
-    /* 卡片效果 */
-    !function() {
-      document.querySelectorAll('.card').forEach(function(c) {
-        c.addEventListener('mousemove', function(e) { var r=this.getBoundingClientRect(); this.style.setProperty('--mx',(e.clientX-r.left)+'px'); this.style.setProperty('--my',(e.clientY-r.top)+'px'); });
-        if(!matchMedia('(hover:none)').matches) {
-          c.addEventListener('mousemove', function(e) { var r=this.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5; this.style.transform='translateY(-4px) perspective(800px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg)'; var g=this.querySelector('.card-glow'); if(g)g.style.setProperty('--ga',(Math.atan2(y,x)*180/Math.PI+90)+'deg'); });
-          c.addEventListener('mouseleave', function() { this.style.transform=''; var g=this.querySelector('.card-glow'); if(g)g.style.opacity=''; });
-        }
-      });
-    }();
+    /* ★ 优化：桌面端才绑定 3D 倾斜（移动端由 CSS hover:none 跳过） */
+    !function(){if(matchMedia('(hover:none)').matches)return;document.querySelectorAll('.card').forEach(function(c){c.addEventListener('mousemove',function(e){var r=this.getBoundingClientRect();this.style.setProperty('--mx',(e.clientX-r.left)+'px');this.style.setProperty('--my',(e.clientY-r.top)+'px');var x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;this.style.transform='translateY(-4px) perspective(800px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg)';var g=this.querySelector('.card-glow');if(g)g.style.setProperty('--ga',(Math.atan2(y,x)*180/Math.PI+90)+'deg')});c.addEventListener('mouseleave',function(){this.style.transform='';var g=this.querySelector('.card-glow');if(g)g.style.opacity=''})})}();
 
-    /* 涟漪 */
-    !function() {
-      document.addEventListener('click', function(e) {
-        var t = e.target.closest('.card,.mp-btn,.ctrl-btn,.contact-btn,.mp-mode-btn,.egg-close,.modal-btn,.joke-btn');
-        if(!t) return;
-        var r=t.getBoundingClientRect(), d=document.createElement('div');
-        d.className='ripple'; d.style.cssText='left:'+(e.clientX-r.left)+'px;top:'+(e.clientY-r.top)+'px;width:20px;height:20px';
-        t.style.position='relative'; t.style.overflow='hidden'; t.appendChild(d);
-        setTimeout(function(){d.remove();},600);
-      });
-    }();
+    /* 涟漪效果 */
+    !function(){document.addEventListener('click',function(e){var t=e.target.closest('.card,.mp-btn,.ctrl-btn,.contact-btn,.mp-mode-btn,.egg-close,.modal-btn,.joke-btn');if(!t)return;var r=t.getBoundingClientRect(),d=document.createElement('div');d.className='ripple';d.style.cssText='left:'+(e.clientX-r.left)+'px;top:'+(e.clientY-r.top)+'px;width:20px;height:20px';t.style.position='relative';t.style.overflow='hidden';t.appendChild(d);setTimeout(function(){d.remove()},600)})}();
 
     /* 每日一笑 */
-    !function() {
-      var n=document.getElementById('jokeNotif'), tg=document.getElementById('jokeTag'), tx=document.getElementById('jokeText'), btn=document.getElementById('jokeBtn'), ct=document.getElementById('jokeCounter'), seen=0, prev=-1;
-      btn.addEventListener('click', function() {
-        n.classList.add('slide-out');
-        setTimeout(function() {
-          var idx; do{idx=Math.floor(Math.random()*JOKES.length)}while(idx===prev&&JOKES.length>1); prev=idx;
-          var p=JOKES[idx].split('|'), type=p[0], text=p[1];
-          tg.textContent={j:'段子',k:'冷知识',g:'梗'}[type]||'趣闻'; tg.className='joke-tag t-'+type; tx.textContent=text;
-          seen++; ct.textContent=seen+' / '+JOKES.length; n.classList.remove('slide-out');
-        },300);
-      });
-    }();
+    !function(){var n=document.getElementById('jokeNotif'),tg=document.getElementById('jokeTag'),tx=document.getElementById('jokeText'),btn=document.getElementById('jokeBtn'),ct=document.getElementById('jokeCounter'),seen=0,prev=-1;btn.addEventListener('click',function(){n.classList.add('slide-out');setTimeout(function(){var idx;do{idx=Math.floor(Math.random()*JOKES.length)}while(idx===prev&&JOKES.length>1);prev=idx;var p=JOKES[idx].split('|'),type=p[0],text=p[1];tg.textContent={j:'段子',k:'冷知识',g:'梗'}[type]||'趣闻';tg.className='joke-tag t-'+type;tx.textContent=text;seen++;ct.textContent=seen+' / '+JOKES.length;n.classList.remove('slide-out')},300)})}();
 
-    /* 弹窗/联系/彩蛋 */
-    (function() {
-      var modal=document.getElementById('modal'), mi=document.getElementById('modal-iframe'), mt=document.getElementById('modal-title'), mf=document.getElementById('modal-file'), cf='';
-      document.querySelectorAll('.card-kw[data-keyword]').forEach(function(el){el.textContent=el.getAttribute('data-keyword')||el.textContent;});
-      document.querySelectorAll('.card[data-file]').forEach(function(card){card.addEventListener('click',function(e){e.preventDefault();cf=this.getAttribute('data-file');mt.textContent=this.querySelector('.card-title').textContent;mf.textContent=cf;mi.src=cf;modal.classList.add('active');document.body.style.overflow='hidden';});});
-      function closeModal(){modal.classList.remove('active');mi.src='about:blank';document.body.style.overflow='';}
-      document.getElementById('btn-close').addEventListener('click',closeModal);
-      modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
-      document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(modal.classList.contains('active'))closeModal();if(document.getElementById('egg-overlay').classList.contains('show'))document.getElementById('egg-overlay').classList.remove('show');if(document.getElementById('music-player').classList.contains('open'))document.getElementById('music-player').classList.remove('open');}});
-      document.getElementById('btn-new-tab').addEventListener('click',function(){if(cf)window.open(cf,'_blank');});
-    })();
-
-    (function() {
-      var btn=document.getElementById('contact-btn'), panel=document.getElementById('contact-panel'), isOpen=false;
-      window.closeContact=function(){isOpen=false;panel.classList.remove('open');btn.classList.remove('open');};
-      btn.addEventListener('click',function(e){e.stopPropagation();isOpen=!isOpen;panel.classList.toggle('open',isOpen);btn.classList.toggle('open',isOpen);});
-      document.addEventListener('click',function(e){if(isOpen&&!panel.contains(e.target)&&e.target!==btn&&!btn.contains(e.target))closeContact();});
-      function doCopy(t){if(isSecureContext&&navigator.clipboard){navigator.clipboard.writeText(t).then(function(){showToast('已复制：'+t)}).catch(function(){fb(t);});return;}fb(t);}
-      function fb(t){try{var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.focus();a.setSelectionRange(0,99999);if(document.execCommand('copy')){showToast('已复制：'+t);document.body.removeChild(a);return;}document.body.removeChild(a);}catch(e){}prompt('请长按复制：',t);}
-      document.getElementById('cp-qq').addEventListener('click',function(e){e.preventDefault();e.stopPropagation();doCopy('3189847874');});
-      document.getElementById('cp-group').addEventListener('click',function(e){e.preventDefault();e.stopPropagation();doCopy('802039558');});
-    })();
-
-    (function() {
-      var eggs=[{emoji:'📱',title:'隐藏成就解锁！',text:'没有完美的手机，只有适合你的手机。'},{emoji:'😅',title:'彩蛋第二层',text:'参数没输过，体验没赢过。'},{emoji:'🤓',title:'无聊大师',text:'十五次……放下手机看看窗外也不错。'}];
-      var count=0, overlay=document.getElementById('egg-overlay');
-      document.getElementById('logo-icon').addEventListener('click',function(){count++;var idx=-1;if(count===5)idx=0;else if(count===10)idx=1;else if(count>=15){idx=2;count=0;}if(idx>=0){document.getElementById('egg-emoji').textContent=eggs[idx].emoji;document.getElementById('egg-title').textContent=eggs[idx].title;document.getElementById('egg-text').textContent=eggs[idx].text;overlay.classList.add('show');}});
-      document.getElementById('egg-close').addEventListener('click',function(){overlay.classList.remove('show');});
-      overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('show');});
-      var ts=document.getElementById('tip-secret'), tc=0;
-      ts.addEventListener('click',function(){tc++;if(tc>=3){ts.textContent=' — 你自己用着开心就好';ts.style.color='var(--accent)';ts.style.opacity='1';setTimeout(function(){ts.textContent='';ts.style.opacity='';},4000);tc=0;}});
-    })();
+    /* 弹窗 / 联系面板 / 彩蛋 */
+    (function(){var modal=document.getElementById('modal'),mi=document.getElementById('modal-iframe'),mt=document.getElementById('modal-title'),mf=document.getElementById('modal-file'),cf='';document.querySelectorAll('.card-kw[data-keyword]').forEach(function(el){el.textContent=el.getAttribute('data-keyword')||el.textContent});document.querySelectorAll('.card[data-file]').forEach(function(card){card.addEventListener('click',function(e){e.preventDefault();cf=this.getAttribute('data-file');mt.textContent=this.querySelector('.card-title').textContent;mf.textContent=cf;mi.src=cf;modal.classList.add('active');document.body.style.overflow='hidden'})});function closeModal(){modal.classList.remove('active');mi.src='about:blank';document.body.style.overflow=''}document.getElementById('btn-close').addEventListener('click',closeModal);modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(modal.classList.contains('active'))closeModal();if(document.getElementById('egg-overlay').classList.contains('show'))document.getElementById('egg-overlay').classList.remove('show');if(document.getElementById('music-player').classList.contains('open'))document.getElementById('music-player').classList.remove('open')}});document.getElementById('btn-new-tab').addEventListener('click',function(){if(cf)window.open(cf,'_blank')})})();
+    (function(){var btn=document.getElementById('contact-btn'),panel=document.getElementById('contact-panel'),isOpen=false;window.closeContact=function(){isOpen=false;panel.classList.remove('open');btn.classList.remove('open')};btn.addEventListener('click',function(e){e.stopPropagation();isOpen=!isOpen;panel.classList.toggle('open',isOpen);btn.classList.toggle('open',isOpen)});document.addEventListener('click',function(e){if(isOpen&&!panel.contains(e.target)&&e.target!==btn&&!btn.contains(e.target))closeContact()});function doCopy(t){if(isSecureContext&&navigator.clipboard){navigator.clipboard.writeText(t).then(function(){showToast('已复制：'+t)}).catch(function(){fb(t)});return}fb(t)}function fb(t){try{var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.focus();a.setSelectionRange(0,99999);if(document.execCommand('copy')){showToast('已复制：'+t);document.body.removeChild(a);return}document.body.removeChild(a)}catch(e){}prompt('请长按复制：',t)}document.getElementById('cp-qq').addEventListener('click',function(e){e.preventDefault();e.stopPropagation();doCopy('3189847874')});document.getElementById('cp-group').addEventListener('click',function(e){e.preventDefault();e.stopPropagation();doCopy('802039558')})})();
+    (function(){var eggs=[{emoji:'\uD83D\uDCF1',title:'隐藏成就解锁！',text:'没有完美的手机，只有适合你的手机。'},{emoji:'\uD83D\uDE05',title:'彩蛋第二层',text:'参数没输过，体验没赢过。'},{emoji:'\uD83E\uDD13',title:'无聊大师',text:'十五次……放下手机看看窗外也不错。'}];var count=0,overlay=document.getElementById('egg-overlay');document.getElementById('logo-icon').addEventListener('click',function(){count++;var idx=-1;if(count===5)idx=0;else if(count===10)idx=1;else if(count>=15){idx=2;count=0}if(idx>=0){document.getElementById('egg-emoji').textContent=eggs[idx].emoji;document.getElementById('egg-title').textContent=eggs[idx].title;document.getElementById('egg-text').textContent=eggs[idx].text;overlay.classList.add('show')}});document.getElementById('egg-close').addEventListener('click',function(){overlay.classList.remove('show')});overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('show')});var ts=document.getElementById('tip-secret'),tc=0;ts.addEventListener('click',function(){tc++;if(tc>=3){ts.textContent=' — 你自己用着开心就好';ts.style.color='var(--accent)';ts.style.opacity='1';setTimeout(function(){ts.textContent='';ts.style.opacity=''},4000);tc=0}})})();
 
     /* 音乐播放器 */
-    ;(function() {
-      var VOL=.35, FADE=2000;
-      var tracks=PLAYLIST.filter(function(s){return s&&s.trim()}).map(function(s){return s.trim()});
-      var cur=0,isDrag=false,plOpen=false,fadedIn=false,playing=false,loopMode='list';
-      var pl=document.getElementById('music-player'),tr=document.getElementById('mp-trigger'),cb=document.getElementById('mp-close'),sn=document.getElementById('mp-song'),ss=document.getElementById('mp-sub'),fb=document.getElementById('mp-fill'),pw=document.getElementById('mp-progress'),tn=document.getElementById('mp-time-now'),ta=document.getElementById('mp-time-total'),pb=document.getElementById('mp-play'),pv=document.getElementById('mp-prev'),nx=document.getElementById('mp-next'),vs=document.getElementById('mp-vol'),vi=document.getElementById('mp-vol-icon'),pe=document.getElementById('mp-playlist'),sc=document.getElementById('mp-song-click'),sp=document.getElementById('splash'),spSkip=document.getElementById('splash-skip');
-      var bl=document.getElementById('mp-loop-list'),bs=document.getElementById('mp-loop-single'),bh=document.getElementById('mp-loop-shuffle');
-      var rc=document.getElementById('ringCircle'),rcC=2*Math.PI*28;
-      var vh=document.getElementById('volHud'),vhI=document.getElementById('volHudIcon'),vhV=document.getElementById('volHudVal'),vhT=null;
-      var vizBars=[],eqBars=[],eqInterval=null;
-      if(!tracks.length){sn.textContent='暂无歌曲';ss.textContent='请添加歌曲';renderPL();sp.classList.add('hidden');return;}
-      var audio=new Audio();audio.preload='auto';audio.playsinline=true;audio.src=tracks[0];document.body.appendChild(audio);
-      (function(){var vc=document.getElementById('mpViz');for(var i=0;i<12;i++){var b=document.createElement('div');b.className='viz-bar';b.style.height='2px';vc.appendChild(b);vizBars.push(b);}eqBars=document.querySelectorAll('.eq-bar');})();
-      function fmt(s){if(!s||isNaN(s))return'0:00';var m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec;}
-      function dn(f){return f.replace(/\.(mp[34a]|m4a|wav|ogg|flac|aac)$/i,'');}
-      function startEQ(){if(eqInterval)return;eqInterval=setInterval(function(){vizBars.forEach(function(b){b.style.height=(Math.random()*34+4)+'px'});eqBars.forEach(function(b){b.style.height=(Math.random()*18+4)+'px'})},120);}
-      function stopEQ(){clearInterval(eqInterval);eqInterval=null;vizBars.forEach(function(b){b.style.height='2px'});eqBars.forEach(function(b){b.style.height='3px'});}
-      function setPlaying(v){if(v){pl.classList.add('playing');pb.textContent='⏸';setCardsGlow(true);startEQ();}else{pl.classList.remove('playing');pl.classList.remove('muted-state');pb.textContent='▶';setCardsGlow(false);stopEQ();}}
-      function setCardsGlow(on){document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('playing-glow',on);});}
-      function fadeIn(){if(fadedIn)return;fadedIn=true;var n=Math.round(FADE/50),d=VOL/n,i=0,t=setInterval(function(){i++;audio.volume=Math.min(audio.volume+d,VOL);vs.value=Math.round(audio.volume*100);if(i>=n){audio.volume=VOL;vs.value=Math.round(VOL*100);clearInterval(t)}},50);}
-      function loadTrack(idx){cur=idx;sn.classList.add('switching');fb.classList.add('resetting');setTimeout(function(){sn.classList.remove('switching');fb.classList.remove('resetting')},400);audio.src=tracks[idx];sn.textContent=dn(tracks[idx]);ss.textContent='第 '+(idx+1)+'/'+tracks.length+' 首';fb.style.width='0%';tn.textContent='0:00';ta.textContent='0:00';fadedIn=false;playing=false;rc.style.strokeDashoffset=rcC;renderPL();}
-      function doPlay(){if(!tracks.length)return;if(!fadedIn)audio.volume=0;audio.play().then(function(){playing=true;setPlaying(true);if(!fadedIn)fadeIn()}).catch(function(){});}
-      function togglePlay(){if(!tracks.length)return;if(audio.paused)doPlay();else{audio.pause();setPlaying(false);}}
-      function showVH(icon,val){vhI.textContent=icon;vhV.textContent=val+'%';vh.classList.add('show');clearTimeout(vhT);vhT=setTimeout(function(){vh.classList.remove('show')},800);}
-      function next(){if(!tracks.length)return;if(loopMode==='single'){audio.currentTime=0;doPlay();}else if(loopMode==='shuffle'){var r;do{r=Math.floor(Math.random()*tracks.length)}while(r===cur&&tracks.length>1);loadTrack(r);doPlay();}else{loadTrack((cur+1)%tracks.length);doPlay();}}
-      function prev(){if(!tracks.length)return;if(loopMode==='shuffle'){var r;do{r=Math.floor(Math.random()*tracks.length)}while(r===cur&&tracks.length>1);loadTrack(r);doPlay();}else{loadTrack((cur-1+tracks.length)%tracks.length);doPlay();}}
-      function setLM(m){loopMode=m;bl.classList.toggle('active',m==='list');bs.classList.toggle('active',m==='single');bh.classList.toggle('active',m==='shuffle');showToast('已切换为：'+{list:'列表循环',single:'单曲循环',shuffle:'随机播放'}[m]);}
-      bl.addEventListener('click',function(e){e.stopPropagation();setLM('list')});bs.addEventListener('click',function(e){e.stopPropagation();setLM('single')});bh.addEventListener('click',function(e){e.stopPropagation();setLM('shuffle')});
-      function renderPL(){pe.innerHTML='';if(!tracks.length){pe.innerHTML='<div class="mp-empty">暂无歌曲</div>';return;}tracks.forEach(function(t,i){var d=document.createElement('div');d.className='mp-pl-item'+(i===cur?' active':'');d.innerHTML='<span class="mp-pl-num">'+(i===cur?'▶':(i+1))+'</span><span class="mp-pl-name">'+dn(t)+'</span>';d.addEventListener('click',function(){loadTrack(i);doPlay()});pe.appendChild(d);});}
-      function seekTo(e){var r=pw.getBoundingClientRect(),cx=e.clientX!==undefined?e.clientX:e.touches[0].clientX,p=Math.max(0,Math.min(1,(cx-r.left)/r.width));fb.style.width=(p*100)+'%';if(audio.duration){audio.currentTime=p*audio.duration;tn.textContent=fmt(audio.currentTime);}}
-      pw.addEventListener('pointerdown',function(e){if(!tracks.length||!audio.duration)return;isDrag=true;pw.classList.add('dragging');pw.setPointerCapture(e.pointerId);seekTo(e);});
-      pw.addEventListener('pointermove',function(e){if(isDrag)seekTo(e);});
-      pw.addEventListener('pointerup',function(){isDrag=false;pw.classList.remove('dragging');});
-      audio.addEventListener('timeupdate',function(){if(isDrag||!audio.duration)return;var p=audio.currentTime/audio.duration;fb.style.width=(p*100)+'%';tn.textContent=fmt(audio.currentTime);rc.style.strokeDashoffset=rcC*(1-p);});
-      audio.addEventListener('ended',next);audio.addEventListener('loadedmetadata',function(){ta.textContent=fmt(audio.duration);});audio.addEventListener('error',function(){ss.textContent='文件加载失败'});
-      tr.addEventListener('click',function(e){e.stopPropagation();pl.classList.toggle('open')});
-      cb.addEventListener('click',function(e){e.stopPropagation();pl.classList.remove('open')});
-      pb.addEventListener('click',function(e){e.stopPropagation();togglePlay()});pv.addEventListener('click',function(e){e.stopPropagation();prev()});nx.addEventListener('click',function(e){e.stopPropagation();next()});
-      sc.addEventListener('click',function(e){e.stopPropagation();plOpen=!plOpen;pe.classList.toggle('show',plOpen)});
-      vs.addEventListener('input',function(){fadedIn=true;audio.muted=false;audio.volume=this.value/100;var v=this.value;vi.textContent=v==0?'🔇':v<50?'🔉':'🔊';showVH(vi.textContent,v);if(v>0)pl.classList.remove('muted-state');});
-      vi.addEventListener('click',function(){fadedIn=true;if(audio.volume>0){audio._pv=audio.volume;audio.volume=0;vs.value=0;vi.textContent='🔇';showVH('🔇',0);pl.classList.add('muted-state')}else{audio.volume=audio._pv||VOL;vs.value=Math.round(audio.volume*100);var v=vs.value;vi.textContent=v<50?'🔉':'🔊';showVH(vi.textContent,v);pl.classList.remove('muted-state')}});
-      document.addEventListener('click',function(e){if(pl.classList.contains('open')&&!pl.contains(e.target))pl.classList.remove('open')});
-      sn.textContent=dn(tracks[0]);ss.textContent='第 1/'+tracks.length+' 首';renderPL();
-      document.addEventListener('visibilitychange',function(){var vis=!document.hidden;document.querySelectorAll('.particle,.hero-orb,.splash-geo').forEach(function(el){el.style.animationPlayState=vis?'running':'paused'});});
-      if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:dn(tracks[0]),artist:'手机原理科普'});}
-      function enterSite(){if(sp.classList.contains('hidden'))return;sp.classList.add('hidden');audio.volume=0;fadedIn=false;doPlay();}
-      sp.addEventListener('click',function(e){if(e.target===spSkip||spSkip.contains(e.target))return;enterSite()});
-      document.addEventListener('keydown',function enterOnce(e){if(!sp.classList.contains('hidden')){enterSite();document.removeEventListener('keydown',enterOnce)}});
-      spSkip.addEventListener('click',function(e){e.stopPropagation();sp.classList.add('hidden')});
-    })();
+    ;(function(){var VOL=.35,FADE=2000;var tracks=PLAYLIST.filter(function(s){return s&&s.trim()}).map(function(s){return s.trim()});var cur=0,isDrag=false,plOpen=false,fadedIn=false,playing=false,loopMode='list';var pl=document.getElementById('music-player'),tr=document.getElementById('mp-trigger'),cb=document.getElementById('mp-close'),sn=document.getElementById('mp-song'),ss=document.getElementById('mp-sub'),fb=document.getElementById('mp-fill'),pw=document.getElementById('mp-progress'),tn=document.getElementById('mp-time-now'),ta=document.getElementById('mp-time-total'),pb=document.getElementById('mp-play'),pv=document.getElementById('mp-prev'),nx=document.getElementById('mp-next'),vs=document.getElementById('mp-vol'),vi=document.getElementById('mp-vol-icon'),pe=document.getElementById('mp-playlist'),sc=document.getElementById('mp-song-click'),sp=document.getElementById('splash'),spSkip=document.getElementById('splash-skip');var bl=document.getElementById('mp-loop-list'),bs=document.getElementById('mp-loop-single'),bh=document.getElementById('mp-loop-shuffle');var rc=document.getElementById('ringCircle'),rcC=2*Math.PI*28;var vh=document.getElementById('volHud'),vhI=document.getElementById('volHudIcon'),vhV=document.getElementById('volHudVal'),vhT=null;var vizBars=[],eqBars=[],eqInterval=null;if(!tracks.length){sn.textContent='暂无歌曲';ss.textContent='请添加歌曲';renderPL();sp.classList.add('hidden');return}var audio=new Audio();audio.preload='auto';audio.playsinline=true;audio.src=tracks[0];document.body.appendChild(audio);(function(){var vc=document.getElementById('mpViz');for(var i=0;i<12;i++){var b=document.createElement('div');b.className='viz-bar';b.style.height='2px';vc.appendChild(b);vizBars.push(b)}eqBars=document.querySelectorAll('.eq-bar')})();function fmt(s){if(!s||isNaN(s))return'0:00';var m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}function dn(f){return f.replace(/\.(mp[34a]|m4a|wav|ogg|flac|aac)$/i,'')}function startEQ(){if(eqInterval)return;eqInterval=setInterval(function(){vizBars.forEach(function(b){b.style.height=(Math.random()*34+4)+'px'});eqBars.forEach(function(b){b.style.height=(Math.random()*18+4)+'px'})},120)}function stopEQ(){clearInterval(eqInterval);eqInterval=null;vizBars.forEach(function(b){b.style.height='2px'});eqBars.forEach(function(b){b.style.height='3px'})}function setPlaying(v){if(v){pl.classList.add('playing');pb.textContent='⏸';setCardsGlow(true);startEQ()}else{pl.classList.remove('playing');pl.classList.remove('muted-state');pb.textContent='▶';setCardsGlow(false);stopEQ()}}function setCardsGlow(on){document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('playing-glow',on)})}function fadeIn(){if(fadedIn)return;fadedIn=true;var n=Math.round(FADE/50),d=VOL/n,i=0,t=setInterval(function(){i++;audio.volume=Math.min(audio.volume+d,VOL);vs.value=Math.round(audio.volume*100);if(i>=n){audio.volume=VOL;vs.value=Math.round(VOL*100);clearInterval(t)}},50)}function loadTrack(idx){cur=idx;sn.classList.add('switching');fb.classList.add('resetting');setTimeout(function(){sn.classList.remove('switching');fb.classList.remove('resetting')},400);audio.src=tracks[idx];sn.textContent=dn(tracks[idx]);ss.textContent='第 '+(idx+1)+'/'+tracks.length+' 首';fb.style.width='0%';tn.textContent='0:00';ta.textContent='0:00';fadedIn=false;playing=false;rc.style.strokeDashoffset=rcC;renderPL()}function doPlay(){if(!tracks.length)return;if(!fadedIn)audio.volume=0;audio.play().then(function(){playing=true;setPlaying(true);if(!fadedIn)fadeIn()}).catch(function(){})}function togglePlay(){if(!tracks.length)return;if(audio.paused)doPlay();else{audio.pause();setPlaying(false)}}function showVH(icon,val){vhI.textContent=icon;vhV.textContent=val+'%';vh.classList.add('show');clearTimeout(vhT);vhT=setTimeout(function(){vh.classList.remove('show')},800)}function next(){if(!tracks.length)return;if(loopMode==='single'){audio.currentTime=0;doPlay()}else if(loopMode==='shuffle'){var r;do{r=Math.floor(Math.random()*tracks.length)}while(r===cur&&tracks.length>1);loadTrack(r);doPlay()}else{loadTrack((cur+1)%tracks.length);doPlay()}}function prev(){if(!tracks.length)return;if(loopMode==='shuffle'){var r;do{r=Math.floor(Math.random()*tracks.length)}while(r===cur&&tracks.length>1);loadTrack(r);doPlay()}else{loadTrack((cur-1+tracks.length)%tracks.length);doPlay()}}function setLM(m){loopMode=m;bl.classList.toggle('active',m==='list');bs.classList.toggle('active',m==='single');bh.classList.toggle('active',m==='shuffle');showToast('已切换为：'+{list:'列表循环',single:'单曲循环',shuffle:'随机播放'}[m])}bl.addEventListener('click',function(e){e.stopPropagation();setLM('list')});bs.addEventListener('click',function(e){e.stopPropagation();setLM('single')});bh.addEventListener('click',function(e){e.stopPropagation();setLM('shuffle')});function renderPL(){pe.innerHTML='';if(!tracks.length){pe.innerHTML='<div class="mp-empty">暂无歌曲</div>';return}tracks.forEach(function(t,i){var d=document.createElement('div');d.className='mp-pl-item'+(i===cur?' active':'');d.innerHTML='<span class="mp-pl-num">'+(i===cur?'▶':(i+1))+'</span><span class="mp-pl-name">'+dn(t)+'</span>';d.addEventListener('click',function(){loadTrack(i);doPlay()});pe.appendChild(d)})}function seekTo(e){var r=pw.getBoundingClientRect(),cx=e.clientX!==undefined?e.clientX:e.touches[0].clientX,p=Math.max(0,Math.min(1,(cx-r.left)/r.width));fb.style.width=(p*100)+'%';if(audio.duration){audio.currentTime=p*audio.duration;tn.textContent=fmt(audio.currentTime)}}pw.addEventListener('pointerdown',function(e){if(!tracks.length||!audio.duration)return;isDrag=true;pw.classList.add('dragging');pw.setPointerCapture(e.pointerId);seekTo(e)});pw.addEventListener('pointermove',function(e){if(isDrag)seekTo(e)});pw.addEventListener('pointerup',function(){isDrag=false;pw.classList.remove('dragging')});audio.addEventListener('timeupdate',function(){if(isDrag||!audio.duration)return;var p=audio.currentTime/audio.duration;fb.style.width=(p*100)+'%';tn.textContent=fmt(audio.currentTime);rc.style.strokeDashoffset=rcC*(1-p)});audio.addEventListener('ended',next);audio.addEventListener('loadedmetadata',function(){ta.textContent=fmt(audio.duration)});audio.addEventListener('error',function(){ss.textContent='文件加载失败'});tr.addEventListener('click',function(e){e.stopPropagation();pl.classList.toggle('open')});cb.addEventListener('click',function(e){e.stopPropagation();pl.classList.remove('open')});pb.addEventListener('click',function(e){e.stopPropagation();togglePlay()});pv.addEventListener('click',function(e){e.stopPropagation();prev()});nx.addEventListener('click',function(e){e.stopPropagation();next()});sc.addEventListener('click',function(e){e.stopPropagation();plOpen=!plOpen;pe.classList.toggle('show',plOpen)});vs.addEventListener('input',function(){fadedIn=true;audio.muted=false;audio.volume=this.value/100;var v=this.value;vi.textContent=v==0?'🔇':v<50?'🔉':'🔊';showVH(vi.textContent,v);if(v>0)pl.classList.remove('muted-state')});vi.addEventListener('click',function(){fadedIn=true;if(audio.volume>0){audio._pv=audio.volume;audio.volume=0;vs.value=0;vi.textContent='🔇';showVH('🔇',0);pl.classList.add('muted-state')}else{audio.volume=audio._pv||VOL;vs.value=Math.round(audio.volume*100);var v=vs.value;vi.textContent=v<50?'🔉':'🔊';showVH(vi.textContent,v);pl.classList.remove('muted-state')}});document.addEventListener('click',function(e){if(pl.classList.contains('open')&&!pl.contains(e.target))pl.classList.remove('open')});sn.textContent=dn(tracks[0]);ss.textContent='第 1/'+tracks.length+' 首';renderPL();document.addEventListener('visibilitychange',function(){var vis=!document.hidden;document.querySelectorAll('.particle,.hero-orb,.splash-geo').forEach(function(el){el.style.animationPlayState=vis?'running':'paused'})});if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:dn(tracks[0]),artist:'手机原理科普'})}function enterSite(){if(sp.classList.contains('hidden'))return;sp.classList.add('hidden');audio.volume=0;fadedIn=false;doPlay()}sp.addEventListener('click',function(e){if(e.target===spSkip||spSkip.contains(e.target))return;enterSite()});document.addEventListener('keydown',function enterOnce(e){if(!sp.classList.contains('hidden')){enterSite();document.removeEventListener('keydown',enterOnce)}});spSkip.addEventListener('click',function(e){e.stopPropagation();sp.classList.add('hidden')})})();
   </script>
 </body>
 </html>
